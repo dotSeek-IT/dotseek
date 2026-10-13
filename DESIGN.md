@@ -205,7 +205,7 @@ input. Scroll-linked effects use CSS scroll timelines with `@supports` fallbacks
 | assistant | `EnquiryControls` | Replaces the chat input during the enquiry: wrapping pill option buttons (`aria-pressed` for multi-select, check icon when selected), an "Other" pill that opens an inline text field, text/email/textarea fields with inline validation (warning colour), a solid yellow primary action plus underlined text actions (Skip, Start again, Cancel), and consent copy on review. |
 | layout | `CookieNotice` | Fixed bottom-left notice ("No tracking cookies"), dismissed via local storage. Full-width on ≤559px. |
 | layout | `Footer` | Contact strip, brand/contact, 4 link columns, social, oversized outline wordmark |
-| common | `Button` | `primary` (yellow) / `secondary` (white outline) / `ghost`, sizes `sm/md/lg`. Always a link. |
+| common | `Button` | `primary` (yellow, trailing arrow) / `secondary` (white outline; hover fills white with dark text) / `ghost`, sizes `sm/md/lg`. With `href` it renders a link; without `href` it renders a `<button>` for in-page actions (e.g. "Start in chat"), with a disabled state. Optional static leading `icon`. One primary per button group. |
 | common | `Badge` | `eyebrow` (dark chip, soft-yellow text), `tag` (yellow), `status` (success/warning/brand/neutral) |
 | common | `SectionHeading` | Eyebrow + gradient h2 + intro. `align`, `size`. |
 | common | `GradientText` | Yellow highlight phrase inside headings |

@@ -80,6 +80,41 @@
   transform: translateX(3px);
 }
 
+/* Leading icon: same size as the arrow, but static. */
+.icon {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+}
+
+/* <button> variant: no native chrome, and a clear disabled state. */
+button.button {
+  font: inherit;
+  font-size: var(--ds-text-button);
+  font-weight: var(--ds-weight-medium);
+  line-height: 1.2;
+  background-color: transparent;
+}
+
+button.primary {
+  background: var(--ds-color-brand);
+}
+
+button.lg {
+  font-size: var(--ds-text-body);
+}
+
+button.sm {
+  font-size: var(--ds-text-body-sm);
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 @media (max-width: 479px) {
   .md,
   .lg {

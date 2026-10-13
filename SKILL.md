@@ -74,7 +74,7 @@ src/
 - One component per file, named export, and a matching `Name.module.css` next to it.
 - Join class names with `[a, b && c].filter(Boolean).join(" ")`. No classnames library.
 - Use the `@/*` path alias for imports.
-- Every CTA is a `<Button href>`, which renders a `Link` for internal routes and `<a>` for anchors, `mailto:` and `tel:`.
+- Every CTA uses `<Button>`. With `href` it renders a `Link` (internal routes) or `<a>` (anchors, `mailto:`, `tel:`); without `href` it renders a `<button>` for in-page actions. Never hand-build buttons from `Button.module.css` classes. In each button group, make the main action `primary` and the alternatives `secondary`.
 - Home anchors in navigation use `/#id` so they work from secondary pages.
 - New icons go in `Icon.tsx`'s `paths` map: 24px grid, stroke-based, `currentColor`.
 
