@@ -105,7 +105,8 @@
   font-size: var(--ds-text-body);
   font-weight: var(--ds-weight-regular);
   color: var(--ds-color-text-muted);
-  scroll-margin-top: calc(var(--ds-header-height) + var(--ds-space-16));
+  /* Adds to the global scroll-padding-top, which already clears the header. */
+  scroll-margin-top: var(--ds-space-8);
 }
 
 .industryList {

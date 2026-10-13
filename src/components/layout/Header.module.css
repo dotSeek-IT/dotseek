@@ -50,8 +50,35 @@
   transition: color var(--ds-duration-fast) ease;
 }
 
+.navLink {
+  position: relative;
+}
+
 .navLink:hover {
   color: var(--ds-color-text);
+}
+
+/* Active: white text with a short signal-yellow bar under the label. */
+.navLinkActive {
+  color: var(--ds-color-text);
+}
+
+.navLink::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0.1rem;
+  width: 16px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ds-color-brand);
+  box-shadow: 0 0 8px rgba(236, 241, 94, 0.6);
+  transform: translateX(-50%) scaleX(0);
+  transition: transform var(--ds-duration-base) var(--ds-ease-out);
+}
+
+.navLinkActive::after {
+  transform: translateX(-50%) scaleX(1);
 }
 
 .actions {
@@ -111,6 +138,29 @@
 .mobileLink:hover svg {
   color: var(--ds-color-brand);
   transform: translateX(3px);
+}
+
+/* Active: yellow label with a yellow rail on the left. */
+.mobileLinkActive {
+  position: relative;
+  padding-left: var(--ds-space-4);
+  color: var(--ds-color-brand);
+}
+
+.mobileLinkActive::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 25%;
+  bottom: 25%;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--ds-color-brand);
+  box-shadow: 0 0 8px rgba(236, 241, 94, 0.6);
+}
+
+.mobileLinkActive svg {
+  color: var(--ds-color-brand);
 }
 
 .mobileCta {

@@ -1,17 +1,27 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { mainNav, site } from "@/content/site";
 import { Button } from "@/components/common/Button";
 import { Icon } from "@/components/common/Icon";
 import { Logo } from "@/components/common/Logo";
+import { useActiveNav } from "./useActiveNav";
 import styles from "./Header.module.css";
+
+const navHrefs = mainNav.map((item) => item.href);
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const { active, select, pathname } = useActiveNav(navHrefs);
+
+  // Close the mobile menu whenever the route changes.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -66,13 +76,21 @@ export function Header() {
 
         <nav aria-label="Main" className={styles.desktopNav}>
           <ul role="list" className={styles.navList}>
-            {mainNav.map((item) => (
-              <li key={item.href}>
-                <a href={item.href} className={styles.navLink}>
-                  {item.label}
-                </a>
-              </li>
-            ))}
+            {mainNav.map((item) => {
+              const current = item.href === active;
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={[styles.navLink, current && styles.navLinkActive].filter(Boolean).join(" ")}
+                    aria-current={current ? (item.href.startsWith("/#") ? "location" : "page") : undefined}
+                    onClick={() => select(item.href)}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
@@ -102,14 +120,25 @@ export function Header() {
       >
         <nav aria-label="Mobile">
           <ul role="list" className={styles.mobileList}>
-            {mainNav.map((item) => (
-              <li key={item.href}>
-                <a href={item.href} className={styles.mobileLink} onClick={() => close(false)}>
-                  {item.label}
-                  <Icon name="arrow" />
-                </a>
-              </li>
-            ))}
+            {mainNav.map((item) => {
+              const current = item.href === active;
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={[styles.mobileLink, current && styles.mobileLinkActive].filter(Boolean).join(" ")}
+                    aria-current={current ? (item.href.startsWith("/#") ? "location" : "page") : undefined}
+                    onClick={() => {
+                      select(item.href);
+                      close(false);
+                    }}
+                  >
+                    {item.label}
+                    <Icon name="arrow" />
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
         <Button href={site.talkCta.href} size="lg" className={styles.mobileCta} onClick={() => close(false)}>

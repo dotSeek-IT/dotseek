@@ -100,6 +100,7 @@ src/
 | Assistant (AI) | Live answers come from Claude via `app/api/assistant/route.ts`; the system prompt is built from site content in `lib/assistant/systemPrompt.ts`, so updating `content/*` updates what the assistant knows. Don't put dates or other changing values in the system prompt (it is prompt-cached). |
 | Assistant (offline) | `content/assistant.ts` intents power the quick-reply chips and the fallback answers when the API is unavailable. Answers may only restate what the site already says. Add a label to `intentLabels` for any intent used as a chip. |
 | Chat enquiry | Questions live in `content/enquiry.ts` (`choice`, `multi`, `text`, `email`; `other: true` adds an "Other" text field; `optional: true` adds Skip). Answers go only to `/api/enquiry` (email), never to the AI. Open it from any page with `window.dispatchEvent(new Event(START_ENQUIRY_EVENT))` or `<StartEnquiryButton />`. |
+| Nav active state | `layout/useActiveNav.ts`. To make a new homepage section highlight a nav item, add its id to `SPY_TARGETS` in page order (use `href: null` for sections without a nav item). Nav links use `next/link` for client-side routing. Don't give in-page targets a big `scroll-margin-top`: it adds to the global `scroll-padding-top`. |
 | Search metadata | Sitewide defaults and structured data live in `app/layout.tsx`. Sitemap and robots are in `app/sitemap.ts` and `app/robots.ts` (`dynamic = "force-static"` for export). |
 
 ## Visual rules (summary of DESIGN.md)
