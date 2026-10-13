@@ -1,0 +1,97 @@
+.page {
+  position: relative;
+  isolation: isolate;
+  padding-top: calc(var(--ds-header-height) + var(--ds-space-20));
+  padding-bottom: var(--ds-section-space);
+}
+
+.grid {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 520px;
+  z-index: -1;
+  mask-image: radial-gradient(60% 80% at 50% 0%, #000, transparent 80%);
+  -webkit-mask-image: radial-gradient(60% 80% at 50% 0%, #000, transparent 80%);
+}
+
+.header {
+  display: grid;
+  justify-items: start;
+  gap: var(--ds-space-5);
+  margin-bottom: var(--ds-space-12);
+}
+
+.title {
+  font-size: var(--ds-text-h1);
+  font-weight: var(--ds-weight-regular);
+  line-height: var(--ds-leading-heading);
+  letter-spacing: var(--ds-tracking-heading);
+  background: var(--ds-gradient-heading);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.intro {
+  font-size: var(--ds-text-body-lg);
+  color: var(--ds-color-text-muted);
+}
+
+.section {
+  padding-block: var(--ds-space-8);
+  border-top: 1px solid var(--ds-color-border);
+}
+
+.section h2 {
+  margin-bottom: var(--ds-space-3);
+  font-size: var(--ds-text-h3);
+  font-weight: var(--ds-weight-regular);
+}
+
+.section p {
+  color: var(--ds-color-text-muted);
+}
+
+.section p + p,
+.section p + .list {
+  margin-top: var(--ds-space-3);
+}
+
+.updated {
+  font-size: var(--ds-text-body-sm);
+  color: var(--ds-color-text-subtle);
+}
+
+.list {
+  display: grid;
+  gap: var(--ds-space-3);
+  margin: var(--ds-space-3) 0 0;
+  padding-left: var(--ds-space-5);
+  color: var(--ds-color-text-muted);
+}
+
+.list li::marker {
+  color: var(--ds-color-brand);
+}
+
+.notice {
+  padding: var(--ds-space-5) var(--ds-space-6);
+  border-radius: var(--ds-radius-card);
+  background: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border-strong);
+  color: var(--ds-color-text-muted);
+}
+
+.notice a {
+  color: var(--ds-color-brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-4);
+  margin-top: var(--ds-space-12);
+}

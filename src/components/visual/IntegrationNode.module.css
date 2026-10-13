@@ -1,0 +1,63 @@
+.layer {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-4);
+  padding-inline: var(--ds-gutter);
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, rgba(236, 241, 94, 0.5) 0 6px, transparent 6px 12px);
+  background-size: 24px 1px;
+  animation: line-flow 1.2s linear infinite;
+}
+
+.line:last-child {
+  animation-direction: reverse;
+}
+
+.core {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  padding: 0.55rem 1.1rem 0.55rem 0.55rem;
+  border-radius: var(--ds-radius-pill);
+  background: var(--ds-color-surface-elevated);
+  border: 1px solid rgba(236, 241, 94, 0.45);
+  box-shadow: var(--ds-glow-gradient);
+  font-size: var(--ds-text-body-sm);
+  color: var(--ds-color-text);
+  white-space: nowrap;
+}
+
+.coreIcon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--ds-color-brand);
+  color: var(--ds-color-text-on-brand);
+}
+
+.coreIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ds-color-success);
+  box-shadow: 0 0 10px var(--ds-color-success);
+  animation: ds-pulse 2s ease-in-out infinite;
+}
+
+@keyframes line-flow {
+  to {
+    background-position: 24px 0;
+  }
+}

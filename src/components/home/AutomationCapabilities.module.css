@@ -1,0 +1,44 @@
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--ds-space-5);
+}
+
+.bento > * {
+  display: flex;
+}
+
+.agents {
+  grid-column: span 7;
+}
+
+.workflow {
+  grid-column: span 5;
+}
+
+.third {
+  grid-column: span 4;
+}
+
+.insights {
+  grid-column: span 12;
+}
+
+@media (max-width: 1023px) {
+  .agents,
+  .insights {
+    grid-column: span 12;
+  }
+
+  .workflow,
+  .third {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 679px) {
+  .third,
+  .third:last-of-type {
+    grid-column: span 12;
+  }
+}

@@ -1,0 +1,131 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: clamp(var(--ds-space-4), 2.2vw, var(--ds-space-8));
+  border-radius: var(--ds-radius-card);
+  background: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border);
+  transition:
+    border-color var(--ds-duration-base) ease,
+    transform var(--ds-duration-slow) var(--ds-ease-out),
+    box-shadow var(--ds-duration-slow) var(--ds-ease-out);
+}
+
+.card:hover {
+  border-color: var(--ds-color-border-strong);
+  transform: translateY(-4px);
+  box-shadow: var(--ds-shadow-hover);
+}
+
+.well {
+  position: relative;
+  isolation: isolate;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: clamp(var(--ds-space-4), 2vw, var(--ds-space-6));
+  border-radius: var(--ds-radius-card);
+  background: var(--ds-color-surface-sunken);
+  border: 1px solid var(--ds-color-border);
+  overflow: hidden;
+  min-height: 240px;
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ds-gradient-corner-glow);
+  opacity: 0.55;
+  transition: opacity var(--ds-duration-slow) var(--ds-ease-out);
+}
+
+.card:hover .glow {
+  opacity: 0.85;
+}
+
+.visual {
+  width: 100%;
+  container-type: inline-size;
+}
+
+.text {
+  padding-top: var(--ds-space-6);
+}
+
+.title {
+  font-size: var(--ds-text-h4);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-color-text);
+}
+
+.body {
+  margin-top: var(--ds-space-2);
+  max-width: 520px;
+  font-size: var(--ds-text-body-sm);
+  color: var(--ds-color-text-muted);
+}
+
+/* Split: text left, visual right (wide editorial card). */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: var(--ds-space-10);
+}
+
+.split .well {
+  order: 2;
+}
+
+.split .text {
+  order: 1;
+  padding-top: 0;
+}
+
+.split .title {
+  font-size: var(--ds-text-h3);
+  font-weight: var(--ds-weight-regular);
+}
+
+.split .body {
+  font-size: var(--ds-text-body);
+}
+
+@media (max-width: 767px) {
+  .split {
+    grid-template-columns: 1fr;
+    gap: var(--ds-space-6);
+  }
+
+  .split .well {
+    order: 1;
+  }
+
+  .split .text {
+    order: 2;
+  }
+
+  .well {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 479px) {
+  .card {
+    padding: var(--ds-space-3) var(--ds-space-3) var(--ds-space-5);
+  }
+
+  .well {
+    padding: var(--ds-space-3);
+  }
+
+  .text {
+    padding: var(--ds-space-5) var(--ds-space-2) 0;
+  }
+
+  .split .text {
+    padding: 0 var(--ds-space-2);
+  }
+}

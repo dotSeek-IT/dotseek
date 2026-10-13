@@ -1,0 +1,77 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--ds-space-8);
+  border-radius: var(--ds-radius-card);
+  background: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border);
+  transition:
+    border-color var(--ds-duration-base) ease,
+    transform var(--ds-duration-slow) var(--ds-ease-out);
+}
+
+.card:hover {
+  border-color: var(--ds-color-border-strong);
+  transform: translateY(-3px);
+}
+
+.icon {
+  color: var(--ds-color-brand);
+  margin-bottom: var(--ds-space-6);
+}
+
+.icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.meta {
+  margin-bottom: var(--ds-space-2);
+  font-size: var(--ds-text-caption);
+  letter-spacing: var(--ds-tracking-label);
+  text-transform: uppercase;
+  color: var(--ds-color-text-subtle);
+}
+
+.title {
+  font-size: var(--ds-text-h4);
+  font-weight: var(--ds-weight-regular);
+  color: var(--ds-color-text);
+}
+
+.body {
+  margin-top: var(--ds-space-2);
+  font-size: var(--ds-text-body-sm);
+  color: var(--ds-color-text-muted);
+}
+
+/* Mobile: icon sits beside the text to halve card height. */
+@media (max-width: 639px) {
+  .card {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    column-gap: var(--ds-space-4);
+    padding: var(--ds-space-5);
+  }
+
+  .icon {
+    grid-row: span 3;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    border-radius: var(--ds-radius-button);
+    background: var(--ds-color-surface-elevated);
+  }
+
+  .icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .meta {
+    margin-bottom: var(--ds-space-1);
+  }
+}

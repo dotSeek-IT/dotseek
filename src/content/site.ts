@@ -1,0 +1,82 @@
+/**
+ * Site-wide content: navigation, footer, company details.
+ * Copy lives here (not in components) so pages stay presentational.
+ */
+
+export const site = {
+  name: "DotSeek",
+  /** Production origin. Used for canonical URLs, sitemap and structured data. */
+  url: "https://dotseek.co.uk",
+  /** Search-result title and description for the homepage (and site default). */
+  seoTitle: "DotSeek | AI Business Automation Solutions UK",
+  seoDescription:
+    "DotSeek builds AI agents, workflow automation and system integrations that cut repetitive work and connect your CRM, ERP and data. Talk to our UK team.",
+  category: "AI Business Automation Solutions",
+  tagline: "AI automation built around your business.",
+  description:
+    "DotSeek designs AI agents, intelligent workflow automation, system integrations and custom business software that reduce repetitive work and connect people, data and systems.",
+  email: "seekingsupport@dotseek.co.uk",
+  phone: "+44 20 4625 3317",
+  location: "Swansea, United Kingdom",
+  primaryCta: { label: "Start Automating", href: "/contact" },
+  talkCta: { label: "Talk to an AI Automation Expert", href: "/contact" },
+};
+
+export type NavItem = { label: string; href: string };
+
+export const mainNav: NavItem[] = [
+  { label: "Solutions", href: "/#solutions" },
+  { label: "AI Automation", href: "/#capabilities" },
+  { label: "AI Agents", href: "/#agents" },
+  { label: "Industries", href: "/#industries" },
+  { label: "Services", href: "/#process" },
+  { label: "About", href: "/about" },
+  { label: "Insights", href: "/insights" },
+];
+
+export const footerColumns: { title: string; links: NavItem[] }[] = [
+  {
+    title: "Solutions",
+    links: [
+      { label: "AI Automation", href: "/#capabilities" },
+      { label: "AI Agents", href: "/#agents" },
+      { label: "Workflow Automation", href: "/#workflow" },
+      { label: "System Integration", href: "/#integrations" },
+      { label: "Custom Software", href: "/#solutions" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Contact", href: "/contact" },
+      { label: "Careers", href: "/careers" },
+      { label: "Insights", href: "/insights" },
+    ],
+  },
+  {
+    title: "Industries",
+    links: [
+      { label: "Professional Services", href: "/#industries" },
+      { label: "Retail", href: "/#industries" },
+      { label: "Healthcare", href: "/#industries" },
+      { label: "Education", href: "/#industries" },
+      { label: "Property", href: "/#industries" },
+      { label: "Finance", href: "/#industries" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Privacy", href: "/privacy" },
+      { label: "Cookies", href: "/cookies" },
+      { label: "Terms", href: "/terms" },
+    ],
+  },
+];
+
+// LinkedIn URL is assumed: confirm before launch.
+export const socialLinks = [
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/dotseek", icon: "linkedin" },
+  { label: "GitHub", href: "https://github.com/dotSeek", icon: "github" },
+] as const;

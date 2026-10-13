@@ -1,0 +1,94 @@
+.cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: var(--ds-section-space) calc(var(--ds-section-space) + var(--ds-space-10));
+}
+
+/* Perspective grid floor receding to a glowing horizon (reference CTA). */
+.floor {
+  position: absolute;
+  left: -50%;
+  right: -50%;
+  bottom: 0;
+  height: 70%;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(236, 241, 94, 0.22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(236, 241, 94, 0.22) 1px, transparent 1px);
+  background-size: 72px 72px;
+  transform: perspective(500px) rotateX(62deg);
+  transform-origin: center top;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 35%, #000 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 35%, #000 70%, transparent 100%);
+  animation: floor-move 6s linear infinite;
+}
+
+.cta::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  z-index: -1;
+  width: min(900px, 120vw);
+  height: 360px;
+  translate: -50% 0;
+  background: radial-gradient(closest-side, rgba(236, 241, 94, 0.14), transparent);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ds-space-6);
+  max-width: 860px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.title {
+  font-size: var(--ds-text-display-lg);
+  font-weight: var(--ds-weight-regular);
+  line-height: var(--ds-leading-display);
+  letter-spacing: var(--ds-tracking-display);
+  text-wrap: balance;
+}
+
+.lead {
+  background: var(--ds-gradient-heading);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.body {
+  max-width: 580px;
+  font-size: var(--ds-text-body-lg);
+  color: var(--ds-color-text-muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--ds-space-4);
+  margin-top: var(--ds-space-2);
+}
+
+@keyframes floor-move {
+  to {
+    background-position: 0 72px;
+  }
+}
+
+@media (max-width: 479px) {
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .actions a {
+    width: 100%;
+  }
+}

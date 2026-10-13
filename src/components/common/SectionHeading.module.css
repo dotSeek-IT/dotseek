@@ -1,0 +1,45 @@
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-5);
+  max-width: var(--ds-heading-max);
+  margin-bottom: clamp(var(--ds-space-10), 5vw, var(--ds-space-16));
+}
+
+.center {
+  align-items: center;
+  text-align: center;
+  margin-inline: auto;
+}
+
+.left {
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* Regular-weight heading with white→grey gradient fill (reference signature). */
+.title {
+  font-size: var(--ds-text-h2);
+  font-weight: var(--ds-weight-regular);
+  line-height: var(--ds-leading-heading);
+  letter-spacing: var(--ds-tracking-heading);
+  text-wrap: balance;
+  background: var(--ds-gradient-heading);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.large {
+  font-size: var(--ds-text-display-lg);
+  line-height: var(--ds-leading-display);
+  letter-spacing: var(--ds-tracking-display);
+}
+
+.body {
+  max-width: var(--ds-text-max);
+  font-size: var(--ds-text-body);
+  color: var(--ds-color-text-muted);
+  text-wrap: pretty;
+}

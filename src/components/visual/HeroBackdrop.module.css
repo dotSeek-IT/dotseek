@@ -1,0 +1,205 @@
+.backdrop {
+  --cell: var(--ds-grid-size);
+  --mx: 50%;
+  --my: 30%;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Base hairline grid, anchored top-left so beams/cells align to its lines. */
+.grid,
+.spotlight {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--ds-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ds-grid-line) 1px, transparent 1px);
+  background-size: var(--cell) var(--cell);
+  /* Offset so a vertical grid line sits exactly under the scroll flow line. */
+  background-position: var(--flow-x, 0px) 0;
+}
+
+.grid {
+  animation: grid-in 1.6s var(--ds-ease-out) both;
+}
+
+/* Brighter grid revealed around the pointer. */
+.spotlight {
+  background-image:
+    linear-gradient(rgba(236, 241, 94, 0.28) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(236, 241, 94, 0.28) 1px, transparent 1px);
+  mask-image: radial-gradient(260px circle at var(--mx) var(--my), #000, transparent 70%);
+  -webkit-mask-image: radial-gradient(260px circle at var(--mx) var(--my), #000, transparent 70%);
+  opacity: 0;
+  transition: opacity var(--ds-duration-slow) var(--ds-ease-out);
+}
+
+.backdrop[data-active="true"] .spotlight {
+  opacity: 1;
+}
+
+/* Grid cells that softly light up and fade. */
+.cell {
+  position: absolute;
+  left: calc(var(--flow-x, 0px) + var(--col) * var(--cell));
+  top: calc(var(--row) * var(--cell));
+  width: var(--cell);
+  height: var(--cell);
+  background: linear-gradient(135deg, rgba(236, 241, 94, 0.1), rgba(236, 241, 94, 0.02));
+  box-shadow: inset 0 0 0 1px rgba(236, 241, 94, 0.22);
+  opacity: 0;
+  animation: cell-pulse 7s var(--ds-ease-in-out) infinite;
+}
+
+/* Light beams travelling along grid lines. */
+.beam {
+  position: absolute;
+  opacity: 0;
+  animation-name: beam-x;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+.h {
+  top: calc(var(--line) * var(--cell));
+  left: 0;
+  width: 220px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(236, 241, 94, 0.9) 70%, #fff);
+  box-shadow: 0 0 12px 1px rgba(236, 241, 94, 0.45);
+}
+
+.v {
+  left: calc(var(--flow-x, 0px) + var(--line) * var(--cell));
+  top: 0;
+  width: 1px;
+  height: 180px;
+  background: linear-gradient(180deg, transparent, rgba(236, 241, 94, 0.9) 70%, #fff);
+  box-shadow: 0 0 12px 1px rgba(236, 241, 94, 0.45);
+  animation-name: beam-y;
+}
+
+.h.reverse {
+  animation-direction: reverse;
+  background: linear-gradient(270deg, transparent, rgba(236, 241, 94, 0.9) 70%, #fff);
+}
+
+.v.reverse {
+  animation-direction: reverse;
+  background: linear-gradient(0deg, transparent, rgba(236, 241, 94, 0.9) 70%, #fff);
+}
+
+/* Particle field (bottom-left glow, reference signature). */
+.particles {
+  position: absolute;
+  inset: 0;
+}
+
+.particles::before {
+  content: "";
+  position: absolute;
+  left: -8%;
+  top: 55%;
+  width: 40%;
+  height: 50%;
+  background: radial-gradient(closest-side, rgba(236, 241, 94, 0.16), transparent);
+  filter: blur(10px);
+}
+
+.particles span {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--ds-color-brand);
+  box-shadow: 0 0 6px rgba(236, 241, 94, 0.9);
+  animation: twinkle 4s var(--ds-ease-in-out) infinite both;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(75% 65% at 50% 32%, transparent 35%, var(--ds-color-page) 92%),
+    linear-gradient(180deg, transparent 65%, var(--ds-color-page));
+}
+
+@keyframes grid-in {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes cell-pulse {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  20%,
+  45% {
+    opacity: 1;
+  }
+}
+
+@keyframes beam-x {
+  0% {
+    opacity: 0;
+    transform: translateX(-240px);
+  }
+  8% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: translateX(110vw);
+  }
+}
+
+@keyframes beam-y {
+  0% {
+    opacity: 0;
+    transform: translateY(-200px);
+  }
+  8% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: translateY(1100px);
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.1;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beam,
+  .cell {
+    display: none;
+  }
+
+  .particles span {
+    animation: none;
+    opacity: 0.5;
+  }
+}

@@ -1,0 +1,116 @@
+.visual {
+  position: relative;
+  width: 100%;
+  max-width: 1120px;
+  animation: visual-in 1.2s var(--ds-ease-out) 900ms both;
+}
+
+.frame {
+  position: relative;
+  padding: clamp(6px, 1vw, 12px);
+  border-radius: calc(var(--ds-radius-mockup) + 8px);
+  border: 1px solid var(--ds-color-border);
+  background: rgba(20, 22, 23, 0.6);
+}
+
+/* Yellow corner glow behind the frame: the reference's signature accent. */
+.cornerGlow {
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--ds-gradient-corner-glow);
+  filter: blur(2px);
+  opacity: 0.9;
+}
+
+.float {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  padding: 0.7rem 0.95rem;
+  border-radius: var(--ds-radius-card);
+  background: rgba(27, 29, 32, 0.92);
+  border: 1px solid var(--ds-color-border-strong);
+  box-shadow: var(--ds-shadow-float);
+  backdrop-filter: blur(10px);
+  font-size: var(--ds-text-caption);
+  animation: ds-float 6s var(--ds-ease-in-out) infinite;
+}
+
+.float strong {
+  display: block;
+  color: var(--ds-color-text);
+  font-weight: var(--ds-weight-medium);
+  font-size: var(--ds-text-label);
+}
+
+.float small {
+  color: var(--ds-color-text-subtle);
+}
+
+.floatIcon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ds-radius-badge);
+  background: var(--ds-color-brand);
+  color: var(--ds-color-text-on-brand);
+}
+
+.floatIcon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.floatLeft {
+  left: -36px;
+  top: 30%;
+}
+
+.floatRight {
+  right: -36px;
+  bottom: 14%;
+  animation-delay: -3s;
+}
+
+/* Scroll-linked: the mockup starts tilted back and flattens as it scrolls in. */
+@supports (animation-timeline: view()) {
+  .frame {
+    transform-origin: 50% 0;
+    animation: tilt-flat linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 45%;
+  }
+}
+
+@keyframes tilt-flat {
+  from {
+    transform: perspective(1600px) rotateX(22deg) scale(0.9);
+  }
+  to {
+    transform: perspective(1600px) rotateX(0deg) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame {
+    animation: none;
+  }
+}
+
+@keyframes visual-in {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+}
+
+/* Floating cards only where they can sit in the side margin without covering UI. */
+@media (max-width: 1279px) {
+  .float {
+    display: none;
+  }
+}

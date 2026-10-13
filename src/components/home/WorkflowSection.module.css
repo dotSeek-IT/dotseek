@@ -1,0 +1,274 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(var(--ds-space-8), 4vw, var(--ds-space-16));
+  align-items: start;
+}
+
+/* ---------- Tabs: numbered list with yellow active rail (reference highlight list) ---------- */
+.tabs {
+  display: grid;
+  gap: var(--ds-space-1);
+  border-left: 1px solid var(--ds-color-border-strong);
+}
+
+.tab {
+  position: relative;
+  display: flex;
+  gap: var(--ds-space-5);
+  align-items: flex-start;
+  width: 100%;
+  padding: var(--ds-space-5) var(--ds-space-6);
+  border: 0;
+  background: transparent;
+  text-align: left;
+  color: var(--ds-color-text-subtle);
+  transition:
+    color var(--ds-duration-base) ease,
+    background-color var(--ds-duration-base) ease;
+}
+
+.tab::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--ds-color-brand);
+  transform: scaleY(0);
+  transition: transform var(--ds-duration-slow) var(--ds-ease-out);
+}
+
+.tab:hover {
+  color: var(--ds-color-text-muted);
+}
+
+.tabActive {
+  color: var(--ds-color-text);
+  background: linear-gradient(90deg, rgba(236, 241, 94, 0.06), transparent 70%);
+}
+
+.tabActive::before {
+  transform: scaleY(1);
+}
+
+.number {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--ds-color-border-strong);
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-label);
+  transition: all var(--ds-duration-base) ease;
+}
+
+.tabActive .number {
+  border-color: var(--ds-color-brand);
+  background: var(--ds-color-brand);
+  color: var(--ds-color-text-on-brand);
+  box-shadow: var(--ds-glow-ai);
+}
+
+.tabText {
+  display: grid;
+  gap: 2px;
+}
+
+.tag {
+  font-size: var(--ds-text-label);
+  letter-spacing: var(--ds-tracking-label);
+  text-transform: uppercase;
+  color: var(--ds-color-brand-soft);
+  opacity: 0.8;
+}
+
+.tabTitle {
+  font-size: var(--ds-text-h4);
+  line-height: 1.35;
+}
+
+.progress {
+  position: absolute;
+  left: var(--ds-space-6);
+  right: var(--ds-space-6);
+  bottom: 0;
+  height: 1px;
+  background: var(--ds-color-brand);
+  transform-origin: left;
+  animation: progress 7s linear both;
+}
+
+/* ---------- Panel ---------- */
+.panel {
+  position: sticky;
+  top: calc(var(--ds-header-height) + var(--ds-space-6));
+}
+
+.panelInner {
+  display: grid;
+  gap: var(--ds-space-6);
+  animation: panel-in 500ms var(--ds-ease-out);
+}
+
+.visualWell {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(var(--ds-space-4), 3vw, var(--ds-space-10));
+  border-radius: var(--ds-radius-panel);
+  background: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border);
+  overflow: hidden;
+  min-height: 340px;
+  display: grid;
+  align-items: center;
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ds-gradient-corner-glow);
+  opacity: 0.6;
+}
+
+.panelText {
+  display: grid;
+  gap: var(--ds-space-3);
+  color: var(--ds-color-text-muted);
+}
+
+.panelTitle {
+  font-size: var(--ds-text-h3);
+  font-weight: var(--ds-weight-regular);
+  color: var(--ds-color-text);
+  line-height: var(--ds-leading-heading);
+}
+
+.panelNumber {
+  color: var(--ds-color-brand);
+  font-family: var(--ds-font-mono);
+}
+
+.points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-2) var(--ds-space-6);
+  margin: var(--ds-space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.points li {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  font-size: var(--ds-text-body-sm);
+  color: var(--ds-color-text);
+}
+
+.points svg {
+  width: 18px;
+  height: 18px;
+  padding: 3px;
+  border-radius: 4px;
+  background: var(--ds-color-surface-elevated);
+  color: var(--ds-color-brand);
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ---------- Tablet/mobile: tabs become a horizontal number rail ---------- */
+@media (max-width: 959px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs {
+    display: flex;
+    gap: var(--ds-space-2);
+    overflow-x: auto;
+    border-left: 0;
+    border-bottom: 1px solid var(--ds-color-border-strong);
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    flex: none;
+    width: auto;
+    align-items: center;
+    gap: var(--ds-space-3);
+    padding: var(--ds-space-3) var(--ds-space-4);
+  }
+
+  .tab::before {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: -1px;
+    width: auto;
+    height: 2px;
+    transform: scaleX(0);
+  }
+
+  .tabActive::before {
+    transform: scaleX(1);
+  }
+
+  .tabTitle {
+    display: none;
+  }
+
+  .tag {
+    font-size: var(--ds-text-body-sm);
+    letter-spacing: 0;
+    text-transform: none;
+    opacity: 1;
+    color: inherit;
+  }
+
+  .number {
+    width: 30px;
+    height: 30px;
+  }
+
+  .panel {
+    position: static;
+  }
+
+  .progress {
+    display: none;
+  }
+
+  .visualWell {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 479px) {
+  .visualWell {
+    padding: var(--ds-space-3);
+    border-radius: var(--ds-radius-card);
+  }
+}

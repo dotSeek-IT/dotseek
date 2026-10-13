@@ -1,0 +1,32 @@
+.section {
+  position: relative;
+  padding-block: var(--ds-section-space);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ds-space-8);
+}
+
+.text {
+  --p: 0;
+  max-width: 1100px;
+  font-size: clamp(1.75rem, 1.1rem + 2.9vw, 3.5rem);
+  font-weight: var(--ds-weight-light);
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+
+/* Each word brightens once overall progress passes its position. */
+.word {
+  color: var(--ds-color-text);
+  opacity: clamp(0.14, calc((var(--p) * (var(--n) + 4) - var(--i)) / 4), 1);
+  transition: opacity 120ms linear;
+}
+
+.word:nth-child(n + 15):nth-child(-n + 17) {
+  color: var(--ds-color-brand);
+}

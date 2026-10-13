@@ -1,0 +1,129 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-top: calc(var(--ds-header-height) + clamp(3.5rem, 2rem + 6vw, 7rem));
+  padding-bottom: var(--ds-section-space-sm);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ds-space-10);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ds-space-6);
+  max-width: var(--ds-hero-text-max);
+  text-align: center;
+}
+
+.title {
+  font-size: var(--ds-text-display-xl);
+  font-weight: var(--ds-weight-regular);
+  line-height: var(--ds-leading-display);
+  letter-spacing: var(--ds-tracking-display);
+  text-wrap: balance;
+}
+
+/* Word-by-word blur-in reveal. */
+.word {
+  display: inline-block;
+  animation: word-in 1s var(--ds-ease-out) both;
+  animation-delay: calc(150ms + var(--w) * 70ms);
+}
+
+.lead {
+  color: var(--ds-color-text);
+}
+
+.highlight {
+  background: var(--ds-gradient-highlight);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation:
+    word-in 1s var(--ds-ease-out) both,
+    shimmer 6s var(--ds-ease-in-out) 1.6s infinite;
+  animation-delay: calc(150ms + var(--w) * 70ms), 1.6s;
+}
+
+.body {
+  max-width: 660px;
+  font-size: var(--ds-text-body-lg);
+  color: var(--ds-color-text-muted);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--ds-space-4);
+  margin-top: var(--ds-space-2);
+}
+
+.ticker {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.enter {
+  animation: hero-in var(--ds-duration-reveal) var(--ds-ease-out) both;
+}
+
+.d2 {
+  animation-delay: 650ms;
+}
+
+.d3 {
+  animation-delay: 800ms;
+}
+
+.d4 {
+  animation-delay: 1000ms;
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(6px);
+  }
+}
+
+@keyframes word-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+    filter: blur(10px);
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@media (max-width: 479px) {
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .actions a {
+    width: 100%;
+  }
+}

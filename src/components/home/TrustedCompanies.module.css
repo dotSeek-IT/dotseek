@@ -1,0 +1,11 @@
+.section {
+  padding-block: var(--ds-section-space-sm);
+}
+
+.title {
+  margin-bottom: var(--ds-space-10);
+  font-size: var(--ds-text-body-lg);
+  font-weight: var(--ds-weight-regular);
+  text-align: center;
+  color: var(--ds-color-text-muted);
+}

@@ -1,0 +1,88 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-2);
+  border-radius: var(--ds-radius-button);
+  border: 1px solid transparent;
+  font-size: var(--ds-text-button);
+  font-weight: var(--ds-weight-medium);
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  transition:
+    transform var(--ds-duration-base) var(--ds-ease-out),
+    box-shadow var(--ds-duration-base) var(--ds-ease-out),
+    background-color var(--ds-duration-base) var(--ds-ease-out),
+    border-color var(--ds-duration-base) var(--ds-ease-out),
+    color var(--ds-duration-base) var(--ds-ease-out);
+}
+
+.md {
+  padding: 0.8rem 1.4rem;
+}
+
+.lg {
+  padding: 0.95rem 1.75rem;
+  font-size: var(--ds-text-body);
+}
+
+.sm {
+  padding: 0.55rem 1rem;
+  font-size: var(--ds-text-body-sm);
+}
+
+/* Primary: solid signal yellow, dark text. */
+.primary {
+  background: var(--ds-color-brand);
+  color: var(--ds-color-text-on-brand);
+}
+
+.primary:hover {
+  background: var(--ds-color-brand-strong);
+  box-shadow: var(--ds-glow-gradient);
+  transform: translateY(-2px);
+}
+
+/* Secondary: hairline white outline (reference "Learn More"). */
+.secondary {
+  background: transparent;
+  color: var(--ds-color-text);
+  border-color: var(--ds-color-border-bright);
+}
+
+.secondary:hover {
+  background: var(--ds-color-text);
+  color: var(--ds-color-text-on-brand);
+  transform: translateY(-2px);
+}
+
+.ghost {
+  padding-inline: 0;
+  color: var(--ds-color-text);
+}
+
+.ghost:hover {
+  color: var(--ds-color-brand);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+.arrow {
+  width: 1.1em;
+  height: 1.1em;
+  transition: transform var(--ds-duration-base) var(--ds-ease-out);
+}
+
+.button:hover .arrow {
+  transform: translateX(3px);
+}
+
+@media (max-width: 479px) {
+  .md,
+  .lg {
+    white-space: normal;
+  }
+}

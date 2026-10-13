@@ -1,0 +1,25 @@
+.section {
+  position: relative;
+  isolation: isolate;
+}
+
+.default {
+  background: transparent;
+}
+
+.raised {
+  background: var(--ds-color-bg-secondary);
+  border-block: 1px solid var(--ds-color-border);
+}
+
+.space-default {
+  padding-block: var(--ds-section-space);
+}
+
+.space-compact {
+  padding-block: var(--ds-section-space-sm);
+}
+
+.space-none {
+  padding-block: 0;
+}

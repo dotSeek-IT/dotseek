@@ -1,0 +1,9 @@
+.highlight {
+  background: var(--ds-gradient-highlight);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}

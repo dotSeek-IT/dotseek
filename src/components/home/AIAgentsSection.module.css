@@ -1,0 +1,128 @@
+/* Split header: title left, copy right (reference integration header). */
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--ds-space-10) var(--ds-space-16);
+  align-items: end;
+  margin-bottom: clamp(var(--ds-space-10), 5vw, var(--ds-space-16));
+}
+
+.headLeft {
+  display: grid;
+  gap: var(--ds-space-5);
+  justify-items: start;
+}
+
+.title {
+  font-size: var(--ds-text-h2);
+  font-weight: var(--ds-weight-regular);
+  line-height: var(--ds-leading-heading);
+  letter-spacing: var(--ds-tracking-heading);
+  text-wrap: balance;
+}
+
+.titleGradient {
+  background: var(--ds-gradient-heading);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.headRight {
+  display: grid;
+  gap: var(--ds-space-5);
+  color: var(--ds-color-text-muted);
+}
+
+.guardrails {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ds-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guardrails li {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  font-size: var(--ds-text-body-sm);
+  color: var(--ds-color-text);
+}
+
+.guardrails svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--ds-color-brand);
+}
+
+.swipeHint {
+  display: none;
+  align-items: center;
+  gap: var(--ds-space-2);
+  margin-bottom: var(--ds-space-4);
+  font-size: var(--ds-text-label);
+  color: var(--ds-color-text-subtle);
+}
+
+.swipeHint svg {
+  width: 16px;
+  height: 16px;
+  color: var(--ds-color-brand);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ds-space-5);
+  margin: 0;
+  padding: 0;
+}
+
+@media (max-width: 1023px) {
+  .header {
+    grid-template-columns: 1fr;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  .grid,
+  .guardrails {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile: agents become a swipeable snap carousel instead of a long stack. */
+@media (max-width: 639px) {
+  /* ul.grid outranks the global ul[role="list"] padding reset. */
+  ul.grid {
+    display: flex;
+    gap: var(--ds-space-3);
+    margin-inline: calc(var(--ds-gutter) * -1);
+    padding: 0 var(--ds-gutter) var(--ds-space-4);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--ds-gutter);
+    scrollbar-width: none;
+  }
+
+  .grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .grid > li {
+    flex: 0 0 84%;
+    scroll-snap-align: start;
+  }
+
+  .swipeHint {
+    display: flex;
+  }
+}

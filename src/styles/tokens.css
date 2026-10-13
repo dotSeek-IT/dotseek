@@ -1,0 +1,154 @@
+/*
+ * DotSeek design tokens: the single source of truth for visual values.
+ * Benchmark: CodeGen (codiegen-template.webflow.io/home/home-1) design language,
+ * rebranded for DotSeek: graphite-black canvas, signal-yellow highlights,
+ * white→grey gradient headings, hairline-bordered surfaces.
+ * Components reference these variables; never hardcode values. See DESIGN.md.
+ */
+:root {
+  /* ---------- Colour: backgrounds ---------- */
+  --ds-color-page: #0b0c10;             /* page canvas */
+  --ds-color-bg-primary: #0b0c10;       /* default section */
+  --ds-color-bg-secondary: #111315;     /* raised band (highlight / systems) */
+
+  /* ---------- Colour: surfaces ---------- */
+  --ds-color-surface: #141617;          /* cards */
+  --ds-color-surface-elevated: #1b1d20; /* hovered card, mockup chrome, inputs */
+  --ds-color-surface-sunken: #0f1012;   /* mockup canvas, code wells */
+  --ds-color-paper: #e9eaec;            /* scanned-document illustration */
+  --ds-color-paper-ink: #b9bbc0;
+  --ds-color-paper-line: #cfd1d5;
+  --ds-color-chart-neutral: #4a4d52;    /* secondary chart series */
+
+  /* ---------- Colour: text ---------- */
+  --ds-color-text: #ffffff;
+  --ds-color-text-heading-end: #a2a2a2; /* end stop of heading gradient */
+  --ds-color-text-muted: #a3a3a3;       /* body copy (AA on page + surface) */
+  --ds-color-text-subtle: #7d7f84;      /* captions, meta */
+  --ds-color-text-on-brand: #0b0c10;
+
+  /* ---------- Colour: borders ---------- */
+  --ds-color-border: #1f2123;
+  --ds-color-border-strong: #2c2f33;
+  --ds-color-border-bright: rgba(255, 255, 255, 0.72);
+
+  /* ---------- Colour: brand ---------- */
+  --ds-color-brand: #ecf15e;            /* DotSeek signal yellow: primary */
+  --ds-color-brand-soft: #f2f5a8;       /* secondary accent / gradient end */
+  --ds-color-brand-strong: #f4f87a;     /* hover */
+  --ds-color-gradient-start: #ecf15e;
+  --ds-color-gradient-mid: #f0f383;
+  --ds-color-gradient-end: #f2f5a8;
+  --ds-color-success: #5fd69b;
+  --ds-color-warning: #f5a524;
+  --ds-color-info: #8fa8ff;
+  --ds-color-hover: rgba(236, 241, 94, 0.08);
+  --ds-color-glow: rgba(236, 241, 94, 0.32);
+  --ds-color-focus: #ecf15e;
+
+  /* ---------- Gradients ---------- */
+  --ds-gradient-heading: linear-gradient(90deg, var(--ds-color-text) 0%, var(--ds-color-text) 30%, var(--ds-color-text-heading-end) 100%);
+  --ds-gradient-highlight: linear-gradient(90deg, var(--ds-color-gradient-start), var(--ds-color-gradient-end));
+  --ds-gradient-corner-glow: radial-gradient(120% 90% at 0% 0%, rgba(236, 241, 94, 0.55) 0%, rgba(236, 241, 94, 0.12) 28%, transparent 55%);
+  --ds-gradient-hero-glow: radial-gradient(38% 45% at 4% 92%, rgba(236, 241, 94, 0.22), transparent 70%),
+    radial-gradient(50% 40% at 50% 0%, rgba(255, 255, 255, 0.05), transparent 70%);
+  --ds-grid-line: rgba(255, 255, 255, 0.045);
+
+  /* ---------- Typography ---------- */
+  --ds-font-sans: var(--font-ubuntu), "Ubuntu", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --ds-font-mono: var(--font-ubuntu-mono), "Ubuntu Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --ds-text-display-xl: clamp(2.375rem, 1.35rem + 4.3vw, 4.25rem);  /* 38 → 68px hero */
+  --ds-text-display-lg: clamp(2.125rem, 1.3rem + 3.4vw, 3.5rem);    /* 34 → 56px */
+  --ds-text-h1: clamp(2rem, 1.35rem + 2.7vw, 3.25rem);              /* 32 → 52px */
+  --ds-text-h2: clamp(1.75rem, 1.3rem + 1.9vw, 3rem);               /* 28 → 48px section */
+  --ds-text-h3: clamp(1.375rem, 1.2rem + 0.75vw, 1.75rem);          /* 22 → 28px */
+  --ds-text-h4: clamp(1.125rem, 1.05rem + 0.3vw, 1.25rem);          /* 18 → 20px */
+  --ds-text-body-lg: clamp(1.0625rem, 1rem + 0.2vw, 1.125rem);      /* 17 → 18px */
+  --ds-text-body: 1rem;                                             /* 16px */
+  --ds-text-body-sm: 0.875rem;                                      /* 14px */
+  --ds-text-label: 0.8125rem;                                       /* 13px */
+  --ds-text-caption: 0.75rem;                                       /* 12px */
+  --ds-text-micro: 0.6875rem;                                       /* 11px: mockup UI only */
+  --ds-text-button: 0.9375rem;                                      /* 15px */
+  --ds-text-nav: 0.875rem;                                          /* 14px */
+
+  --ds-leading-display: 1.14;
+  --ds-leading-heading: 1.2;
+  --ds-leading-body: 1.6;
+  --ds-tracking-display: -0.025em;
+  --ds-tracking-heading: -0.015em;
+  --ds-tracking-label: 0.06em;
+
+  --ds-weight-light: 300;
+  --ds-weight-regular: 400;   /* headings use regular: the reference look */
+  --ds-weight-medium: 500;
+  --ds-weight-bold: 700;
+
+  /* ---------- Spacing (4px base) ---------- */
+  --ds-space-1: 0.25rem;  /* 4 */
+  --ds-space-2: 0.5rem;   /* 8 */
+  --ds-space-3: 0.75rem;  /* 12 */
+  --ds-space-4: 1rem;     /* 16 */
+  --ds-space-5: 1.25rem;  /* 20 */
+  --ds-space-6: 1.5rem;   /* 24 */
+  --ds-space-8: 2rem;     /* 32 */
+  --ds-space-10: 2.5rem;  /* 40 */
+  --ds-space-12: 3rem;    /* 48 */
+  --ds-space-16: 4rem;    /* 64 */
+  --ds-space-20: 5rem;    /* 80 */
+  --ds-space-28: 7rem;    /* 112 */
+
+  /* ---------- Layout ---------- */
+  --ds-container-max: 1280px;
+  --ds-container-narrow: 880px;
+  --ds-gutter: 1.25rem;                                      /* mobile padding 20px */
+  --ds-section-space: clamp(4.5rem, 3rem + 5vw, 7rem);       /* 72 → 112px */
+  --ds-section-space-sm: clamp(3rem, 2.25rem + 3vw, 5rem);   /* 48 → 80px */
+  --ds-hero-text-max: 920px;
+  --ds-text-max: 640px;
+  --ds-heading-max: 780px;
+  --ds-header-height: 72px;
+  --ds-grid-size: 64px;                                      /* background grid cell */
+
+  /* ---------- Radius ---------- */
+  --ds-radius-badge: 6px;
+  --ds-radius-button: 8px;
+  --ds-radius-card: 10px;
+  --ds-radius-image: 10px;
+  --ds-radius-mockup: 12px;
+  --ds-radius-panel: 16px;
+  --ds-radius-pill: 999px;
+
+  /* ---------- Shadow & glow ---------- */
+  --ds-shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 18px 40px -24px rgba(0, 0, 0, 0.8);
+  --ds-shadow-float: 0 30px 70px -20px rgba(0, 0, 0, 0.85), 0 0 0 1px var(--ds-color-border-strong);
+  --ds-shadow-hover: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 24px 50px -24px rgba(0, 0, 0, 0.9);
+  --ds-shadow-inner: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --ds-glow-ai: 0 0 0 4px rgba(236, 241, 94, 0.12), 0 0 24px rgba(236, 241, 94, 0.45);
+  --ds-glow-gradient: 0 10px 40px -10px rgba(236, 241, 94, 0.45);
+
+  /* ---------- Motion ---------- */
+  --ds-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ds-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ds-duration-fast: 160ms;
+  --ds-duration-base: 240ms;
+  --ds-duration-slow: 600ms;
+  --ds-duration-reveal: 900ms;
+  --ds-stagger: 80ms;
+
+  /* ---------- Z-index ---------- */
+  --ds-z-header: 50;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --ds-gutter: 2rem;      /* tablet padding 32px */
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --ds-gutter: 3.75rem;   /* desktop padding 60px (reference: 61px) */
+  }
+}

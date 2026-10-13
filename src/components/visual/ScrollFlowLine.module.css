@@ -1,0 +1,129 @@
+.probe {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.flow {
+  --flow-x: 24px;
+  --start: 120px;
+  --length: 0px;
+  --head: 0px;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Faint dashed rail showing the full path ahead. */
+.track {
+  position: absolute;
+  left: var(--flow-x);
+  top: var(--start);
+  width: 1px;
+  height: var(--length);
+  background: repeating-linear-gradient(180deg, var(--ds-color-border-strong) 0 6px, transparent 6px 12px);
+  mask-image: linear-gradient(180deg, transparent, #000 4%, #000 96%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 4%, #000 96%, transparent);
+}
+
+/* Drawn portion: scrubbed by scroll, retracts on scroll up. */
+.fill {
+  position: absolute;
+  left: var(--flow-x);
+  top: var(--start);
+  width: 1px;
+  height: var(--head);
+  background: linear-gradient(180deg, transparent, rgba(236, 241, 94, 0.55) 120px, var(--ds-color-brand));
+  box-shadow: 0 0 8px rgba(236, 241, 94, 0.45);
+}
+
+/* Glowing head with a short comet trail. */
+.head {
+  position: absolute;
+  left: var(--flow-x);
+  top: calc(var(--start) + var(--head));
+  width: 9px;
+  height: 9px;
+  translate: -4px -4px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 0 3px rgba(236, 241, 94, 0.35),
+    0 0 18px 4px rgba(236, 241, 94, 0.75);
+}
+
+.head::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  width: 1px;
+  height: 90px;
+  background: linear-gradient(180deg, transparent, #fff);
+  filter: blur(0.4px);
+}
+
+/* Section nodes + connectors that join the line to the content edge. */
+.node {
+  position: absolute;
+  left: var(--flow-x);
+  width: 11px;
+  height: 11px;
+  translate: -5px -5px;
+  border-radius: 50%;
+  background: var(--ds-color-page);
+  border: 1px solid var(--ds-color-border-strong);
+  transition:
+    border-color var(--ds-duration-base) ease,
+    background-color var(--ds-duration-base) ease,
+    box-shadow var(--ds-duration-base) ease;
+}
+
+.node[data-lit] {
+  border-color: var(--ds-color-brand);
+  background: var(--ds-color-brand);
+  box-shadow: var(--ds-glow-ai);
+}
+
+.connector {
+  position: absolute;
+  left: 10px;
+  top: 4px;
+  width: var(--connector, 0px);
+  height: 1px;
+  background: linear-gradient(90deg, var(--ds-color-brand), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--ds-duration-slow) var(--ds-ease-out);
+}
+
+.node[data-lit] .connector {
+  transform: scaleX(1);
+}
+
+@media (max-width: 767px) {
+  .connector {
+    display: none;
+  }
+
+  .node {
+    width: 7px;
+    height: 7px;
+    translate: -3px -3px;
+  }
+
+  .head {
+    width: 7px;
+    height: 7px;
+    translate: -3px -3px;
+  }
+
+  .head::before {
+    left: 3px;
+    bottom: 3px;
+    height: 60px;
+  }
+}
