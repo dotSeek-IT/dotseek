@@ -14,8 +14,8 @@ const AUTO_ADVANCE_MS = 7000;
 
 /**
  * Numbered Capture → Measure storytelling as an ARIA tablist.
- * Auto-advances while visible until the visitor interacts; never under
- * prefers-reduced-motion.
+ * Auto-advances on wide screens while visible until the visitor interacts;
+ * never on narrow screens or under prefers-reduced-motion.
  */
 export function WorkflowSection() {
   const [active, setActive] = useState(0);
@@ -26,7 +26,14 @@ export function WorkflowSection() {
   const stages = workflow.stages;
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setAuto(false);
+    // No auto-advance under reduced motion, or on narrow screens where the
+    // stacked panel changes height and would shift the page while reading.
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      window.matchMedia("(max-width: 959px)").matches
+    ) {
+      setAuto(false);
+    }
     const node = rootRef.current;
     if (!node) return;
     const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.35 });

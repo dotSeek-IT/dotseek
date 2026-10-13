@@ -36,9 +36,10 @@
   }
 }
 
+/* Phones: every bento card is full width. */
 @media (max-width: 679px) {
-  .third,
-  .third:last-of-type {
+  .workflow,
+  .third {
     grid-column: span 12;
   }
 }

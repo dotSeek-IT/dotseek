@@ -184,7 +184,7 @@ durations `fast 160ms`, `base 240ms`, `slow 600ms`, `reveal 900ms`, and `--ds-st
 | Data flow | `ds-dash` / `line-flow` dashed connectors (hub, automation layer) |
 | Number/progress reveal | Workflow progress rail (7s), ring fill, bar grow in mockups |
 | Hover lift | Cards `translateY(-3/-4px)` with border brighten; buttons `-2px` |
-| Workflow storytelling | Auto-advancing tabs while in view. Stops on any interaction and is never used under reduced motion. |
+| Workflow storytelling | Auto-advancing tabs while in view on wide screens (≥960px). Stops on any interaction. Never used under reduced motion or on narrow screens, where the stacked panel would change height and shift the page. |
 | CTA glow | Perspective grid floor drifting toward the viewer with a radial yellow horizon |
 
 `prefers-reduced-motion: reduce` disables all transitions and animations

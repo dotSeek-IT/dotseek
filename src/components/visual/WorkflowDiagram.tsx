@@ -66,18 +66,18 @@ function UnderstandView() {
           <span className={styles.key}>&quot;crm_match&quot;</span>: <span className={styles.str}>&quot;company/88213&quot;</span>,{"\n"}
           <span className={styles.ln}>5</span>
           {"  "}
-          <span className={styles.key}>&quot;items&quot;</span>: [{"{ "}
-          <span className={styles.key}>&quot;sku&quot;</span>: <span className={styles.str}>&quot;LIC-PRO&quot;</span>,{" "}
-          <span className={styles.key}>&quot;qty&quot;</span>: <span className={styles.num}>40</span>
-          {" }"}],{"\n"}
+          <span className={styles.key}>&quot;product&quot;</span>: <span className={styles.str}>&quot;LIC-PRO&quot;</span>,{"\n"}
           <span className={styles.ln}>6</span>
           {"  "}
-          <span className={styles.key}>&quot;urgency&quot;</span>: <span className={styles.str}>&quot;this_week&quot;</span>,{"\n"}
+          <span className={styles.key}>&quot;quantity&quot;</span>: <span className={styles.num}>40</span>,{"\n"}
           <span className={styles.ln}>7</span>
+          {"  "}
+          <span className={styles.key}>&quot;urgency&quot;</span>: <span className={styles.str}>&quot;this_week&quot;</span>,{"\n"}
+          <span className={styles.ln}>8</span>
           {"  "}
           <span className={styles.key}>&quot;confidence&quot;</span>: <span className={styles.num}>0.97</span>
           {"\n"}
-          <span className={styles.ln}>8</span>
+          <span className={styles.ln}>9</span>
           {"}"}
           <span className={styles.caret} />
         </code>
