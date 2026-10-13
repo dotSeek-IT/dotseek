@@ -12,7 +12,7 @@
 | **Category** | AI Business Automation Solutions Company |
 | **Location** | Swansea, United Kingdom |
 | **Contact** | seekingsupport@dotseek.co.uk · +44 20 4625 3317 |
-| **Domain** | dotseek.co.uk |
+| **Domain** | www.dotseek.co.uk (apex redirects to www) |
 
 **Core message:** DotSeek uses AI, intelligent automation and custom software to
 simplify business operations, reduce repetitive work and connect people, data
@@ -158,13 +158,15 @@ a clone of the reference. See `DESIGN.md` for the full system.
 
 - [ ] Confirm the LinkedIn URL (`src/content/site.ts`; it is currently an assumed URL).
 - [ ] Have a solicitor review the Privacy policy, Cookie policy and Terms of use (`src/content/pages.ts`).
-- [ ] Confirm the production domain (`site.url` in `src/content/site.ts`, currently https://dotseek.co.uk).
+- [ ] Confirm the production domain (`site.url` in `src/content/site.ts`, now https://www.dotseek.co.uk).
 - [ ] Verify the site in Google Search Console: build with `GOOGLE_SITE_VERIFICATION=<token>` and submit `/sitemap.xml`.
 - [ ] Replace the illustrative case study with a real one when approved.
 - [ ] Decide on a contact form/backend. CTAs currently use `mailto:` / `tel:` via `/contact`.
 - [ ] Set `ANTHROPIC_API_KEY` in production (without it the chat uses offline answers), and set a spend limit in the Anthropic Console.
 - [ ] Set SMTP credentials (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, optional `ENQUIRY_TO`/`ENQUIRY_FROM`) so chat enquiries are emailed.
-- [ ] Choose hosting that runs Next.js server routes (e.g. Vercel). Static-only hosting such as GitHub Pages no longer works.
+- [x] Hosting: Vercel project `dotseek` in the `dotseek` team (https://dotseek-mu.vercel.app). Static-only hosting such as GitHub Pages no longer works.
+- [ ] Verify `www.dotseek.co.uk` and `dotseek.co.uk` in Vercel (TXT records at `_vercel` in GoDaddy DNS), then remove them from the old Vercel account.
+- [ ] Install the Vercel GitHub app on the `dotSeek-IT` organisation so pushes to `main` deploy automatically.
 - [ ] For high traffic, replace the in-memory rate limiter with a shared store.
 
 ## 11. Future expansion rules

@@ -6,7 +6,7 @@
 export const site = {
   name: "DotSeek",
   /** Production origin. Used for canonical URLs, sitemap and structured data. */
-  url: "https://dotseek.co.uk",
+  url: "https://www.dotseek.co.uk",
   /** Search-result title and description for the homepage (and site default). */
   seoTitle: "DotSeek | AI Business Automation Solutions UK",
   seoDescription:
