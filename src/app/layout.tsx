@@ -1,9 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Ubuntu, Ubuntu_Mono } from "next/font/google";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { CookieNotice } from "@/components/layout/CookieNotice";
-import { DotSeekAssistant } from "@/components/assistant/DotSeekAssistant";
 import { site, socialLinks } from "@/content/site";
 import "./globals.css";
 
@@ -76,7 +72,6 @@ const structuredData = {
       logo: `${site.url}/icon.svg`,
       description: site.description,
       email: site.email,
-      telephone: site.phone,
       address: { "@type": "PostalAddress", addressLocality: "Swansea", addressCountry: "GB" },
       sameAs: socialLinks.map((link) => link.href),
     },
@@ -98,16 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: motionScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       </head>
-      <body>
-        <a href="#main" className="skip-link">
-          Skip to content
-        </a>
-        <Header />
-        <main id="main">{children}</main>
-        <Footer />
-        <CookieNotice />
-        <DotSeekAssistant />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

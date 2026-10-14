@@ -41,6 +41,8 @@ export function Header() {
   useEffect(() => {
     if (!open) return;
     document.body.style.overflow = "hidden";
+    // Lets other fixed UI (e.g. the chat launcher) step aside while the menu is open.
+    document.documentElement.dataset.menuOpen = "true";
     // Keyboard users land on the first link. For taps and clicks, focus the
     // panel itself instead: focus stays inside the menu (screen readers, Tab
     // order) without a focus ring on "Solutions" that looks like a selection.
@@ -71,6 +73,7 @@ export function Header() {
     mq.addEventListener("change", onChange);
     return () => {
       document.body.style.overflow = "";
+      delete document.documentElement.dataset.menuOpen;
       document.removeEventListener("keydown", onKey);
       mq.removeEventListener("change", onChange);
     };
@@ -122,6 +125,8 @@ export function Header() {
           </button>
         </div>
       </div>
+
+      {open && <div className={styles.backdrop} aria-hidden="true" onClick={() => close()} />}
 
       <div
         id="mobile-menu"

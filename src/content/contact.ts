@@ -22,7 +22,7 @@ export const contact = {
   title: "Let's Talk About What You Want to Automate",
   seoTitle: "Contact DotSeek, AI Business Automation Experts",
   description:
-    "Contact DotSeek about AI agents, workflow automation and system integration. Email seekingsupport@dotseek.co.uk or call +44 20 4625 3317. Based in Swansea, UK.",
+    "Contact DotSeek about AI agents, workflow automation and system integration. Email seekingsupport@dotseek.co.uk or start an enquiry with the DotSeek Assistant. Based in Swansea, UK.",
   intro:
     "Tell us about the repetitive work slowing your team down. We'll reply with how DotSeek would approach it and the best next step, with no obligation.",
   methods: [
@@ -33,14 +33,6 @@ export const contact = {
       detail: "Best for new enquiries and project details.",
       href: `mailto:${site.email}`,
       action: "Send an email",
-    },
-    {
-      icon: "phone",
-      label: "Phone",
-      value: site.phone,
-      detail: "Speak to the team about your project.",
-      href: `tel:${site.phone.replace(/\s/g, "")}`,
-      action: "Call us",
     },
     {
       icon: "location",

@@ -5,10 +5,10 @@
  */
 
 export const hero = {
-  eyebrow: "AI Business Automation Solutions for growing teams",
+  eyebrow: "AI business automation and digital solutions",
   titleLead: "Build a Smarter Business With",
   titleHighlight: "AI Automation",
-  body: "DotSeek designs intelligent automation systems, AI agents and connected business applications that remove repetitive work and help your teams operate faster.",
+  body: "DotSeek designs AI automation, AI agents, websites, web and mobile apps and connected business systems that remove repetitive work and help your teams operate faster. Bring us the problem; we'll shape the solution.",
   primary: { label: "Explore AI Automation", href: "#capabilities" },
   secondary: { label: "Talk to Our Team", href: "/contact" },
 };
@@ -307,7 +307,7 @@ export const cta = {
   highlight: "Now make it work intelligently.",
   body: "Build AI-powered workflows, connected systems and intelligent business operations with DotSeek.",
   primary: { label: "Start Your Automation Journey", href: "mailto:seekingsupport@dotseek.co.uk?subject=Automation%20enquiry" },
-  secondary: { label: "Talk to DotSeek", href: "tel:+442046253317" },
+  secondary: { label: "Talk to DotSeek", href: "/contact" },
 };
 
 export const faqs = {
@@ -332,7 +332,7 @@ export const faqs = {
     },
     {
       q: "How is a project priced?",
-      a: "Every project is scoped individually after discovery, with a fixed or phased proposal based on the workflows, integrations and support you need.",
+      a: "Pricing follows your business stage, from a basic website through business web applications and custom software to AI and enterprise systems. Ask the AI consultant for an indicative estimate with a minimum, recommended and maximum price for your exact requirement, within your budget; the final quotation is confirmed by our team.",
     },
   ],
 };

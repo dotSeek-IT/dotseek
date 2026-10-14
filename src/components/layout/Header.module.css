@@ -114,6 +114,66 @@
   display: none;
 }
 
+/* Dims the page behind the tablet dropdown; tap to close. Phones use a
+   full-screen panel, so the backdrop only shows from 560px. */
+.backdrop {
+  display: none;
+}
+
+@media (min-width: 560px) and (max-width: 1023px) {
+  /* No backdrop-filter while open, so the fixed backdrop is positioned
+     against the viewport rather than the header. */
+  .open {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .bar {
+    position: relative;
+    z-index: 2;
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: var(--ds-header-height) 0 0 0;
+    z-index: 0;
+    background: rgba(5, 6, 8, 0.6);
+    animation: fade-in var(--ds-duration-base) ease;
+  }
+
+  /* Tablet: a right-aligned dropdown card sized to its content. */
+  .mobilePanel {
+    position: absolute;
+    top: calc(var(--ds-header-height) + var(--ds-space-2));
+    right: var(--ds-gutter);
+    z-index: 1;
+    width: min(400px, calc(100vw - 2 * var(--ds-gutter)));
+    height: auto;
+    max-height: calc(100dvh - var(--ds-header-height) - var(--ds-space-8));
+    padding: var(--ds-space-2) var(--ds-space-5) var(--ds-space-5);
+    border: 1px solid var(--ds-color-border-strong);
+    border-radius: var(--ds-radius-panel);
+    background: var(--ds-color-surface);
+    box-shadow: var(--ds-shadow-float);
+  }
+
+  .mobileLink {
+    font-size: var(--ds-text-body);
+    padding-block: 0.85rem;
+  }
+
+  .mobileList li:last-child .mobileLink {
+    border-bottom: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
 /* The panel receives focus on tap so focus stays in the menu; it is not
    itself interactive, so it shows no ring. Links keep their focus rings. */
 .mobilePanel:focus {

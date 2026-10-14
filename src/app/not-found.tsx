@@ -1,8 +1,10 @@
 import { Button } from "@/components/common/Button";
 import { Container } from "@/components/layout/Container";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 
 export default function NotFound() {
   return (
+    <SiteChrome>
     <Container size="narrow">
       <div style={{ paddingBlock: "calc(var(--ds-header-height) + var(--ds-space-20)) var(--ds-section-space)", display: "grid", gap: "var(--ds-space-5)", justifyItems: "start" }}>
         <h1 style={{ fontSize: "var(--ds-text-h1)", fontWeight: "var(--ds-weight-regular)" }}>Page not found</h1>
@@ -10,5 +12,6 @@ export default function NotFound() {
         <Button href="/">Back to home</Button>
       </div>
     </Container>
+    </SiteChrome>
   );
 }

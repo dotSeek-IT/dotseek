@@ -123,7 +123,7 @@ export function IntegrationVisual() {
   const systems = ["CRM", "ERP", "Email", "SQL", "Stripe", "Teams"];
   return (
     <div className={styles.hub}>
-      <svg className={styles.hubLines} viewBox="0 0 300 180" preserveAspectRatio="none" aria-hidden="true">
+      <svg className={styles.hubLines} viewBox="0 0 300 180" width="300" height="180" preserveAspectRatio="none" aria-hidden="true">
         {[
           [40, 30],
           [150, 18],

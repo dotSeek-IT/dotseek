@@ -2,10 +2,10 @@ import Link from "next/link";
 import styles from "./Logo.module.css";
 
 /** DotSeek wordmark: a signal-yellow "seek" ring around a dot, plus the name. */
-export function Logo({ className }: { className?: string }) {
+export function Logo({ className, target }: { className?: string; target?: "_top" }) {
   return (
-    <Link href="/" className={[styles.logo, className].filter(Boolean).join(" ")} aria-label="DotSeek home">
-      <svg className={styles.mark} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+    <Link href="/" target={target} className={[styles.logo, className].filter(Boolean).join(" ")} aria-label="DotSeek home">
+      <svg className={styles.mark} viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false">
         <circle cx="16" cy="16" r="11.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeDasharray="52 20" strokeLinecap="round" />
         <circle cx="16" cy="16" r="4.4" fill="currentColor" />
         <circle cx="27.2" cy="8" r="2" fill="currentColor" />

@@ -156,7 +156,7 @@ function MeasureView() {
     <MockWindow title="Automation performance" toolbar={<Badge variant="tag">Last 30 days</Badge>}>
       <div className={styles.measure}>
         <div className={styles.ring}>
-          <svg viewBox="0 0 120 120" aria-hidden="true">
+          <svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
             <circle cx="60" cy="60" r="48" className={styles.ringTrack} />
             <circle cx="60" cy="60" r="48" className={styles.ringValue} />
           </svg>

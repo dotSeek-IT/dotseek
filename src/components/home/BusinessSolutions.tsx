@@ -11,9 +11,9 @@ const icons: IconName[] = ["sales", "support", "ops", "finance", "chart"];
 
 export function BusinessSolutions() {
   return (
-    <Section id="solutions" labelledBy="solutions-title">
+    <Section id="departments" labelledBy="departments-title">
       <SectionHeading
-        id="solutions-title"
+        id="departments-title"
         eyebrow={solutions.eyebrow}
         title={
           <>

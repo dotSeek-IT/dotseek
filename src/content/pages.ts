@@ -20,7 +20,7 @@ export type SimplePage = {
   status: "published" | "draft";
 };
 
-const LAST_UPDATED = "13 October 2026";
+const LAST_UPDATED = "14 October 2026";
 
 export const pages: SimplePage[] = [
   {
@@ -90,7 +90,7 @@ export const pages: SimplePage[] = [
         heading: "Who we are",
         body: [
           "DotSeek is an AI business automation company based in Swansea, United Kingdom. We are the data controller for the personal information described in this policy.",
-          "For any privacy question or request, email seekingsupport@dotseek.co.uk or call +44 20 4625 3317.",
+          "For any privacy question or request, email seekingsupport@dotseek.co.uk.",
         ],
       },
       {
@@ -123,16 +123,17 @@ export const pages: SimplePage[] = [
       {
         heading: "DotSeek Assistant (AI chat)",
         body: [
-          "The DotSeek Assistant is an AI chat powered by Claude, a model provided by Anthropic. When you send a message, the conversation so far is sent from our server to Anthropic to generate a reply. We don't save conversations in a database, and the chat is cleared when you close or reload the page.",
+          "The DotSeek Assistant is an AI chat powered by Claude, a model provided by Anthropic. When you send a message, the conversation so far is sent from our server to Anthropic to generate a reply. We don't save general chat conversations, and the chat is cleared when you close or reload the page.",
           "Anthropic processes these messages as our service provider under its commercial terms and does not use them to train its models. Like any web service, our hosting provider may record technical request data, such as your IP address, for security and to prevent misuse.",
-          "If you start an enquiry in the chat, the answers you give (such as your name, company, email, phone number and project details) are emailed directly to our team so we can reply. Enquiry answers are not sent to our AI provider.",
+          "If you start an enquiry in the chat, your project answers are sent to Anthropic so the assistant can suggest a suitable solution and prepare a project brief for you to review. You can edit any answer before sending.",
+          "When you send an enquiry, your answers, the project brief and, if you tick the box, a copy of the chat are saved securely in our enquiry system and emailed to our team. We email you a private link where you can follow the conversation with our team and reply. Anyone with that link can view the enquiry, so please keep it private.",
           "Please don't share sensitive personal information, passwords or confidential business documents in the chat. AI answers can contain mistakes, so confirm anything important with our team.",
         ],
       },
       {
         heading: "Sharing your information",
         body: [
-          "We never sell your personal information. We share it only with trusted providers who help us run our business, such as email, hosting and IT service providers, and Anthropic for the DotSeek Assistant, and with professional advisers or authorities where the law requires it. These providers may only use your information on our instructions.",
+          "We never sell your personal information. We share it only with trusted providers who help us run our business, such as email, hosting, database and IT service providers, and Anthropic for the DotSeek Assistant, and with professional advisers or authorities where the law requires it. These providers may only use your information on our instructions.",
           "If information is transferred outside the UK, we make sure appropriate safeguards are in place, such as UK adequacy regulations or the International Data Transfer Agreement.",
         ],
       },
@@ -196,7 +197,8 @@ export const pages: SimplePage[] = [
       {
         heading: "Cookies we use",
         body: [
-          "This website does not set any cookies, and we do not use analytics, advertising or social media tracking.",
+          "This website does not set any cookies for visitors, and we do not use analytics, advertising or social media tracking.",
+          "Our private team area (for DotSeek staff only) sets one strictly necessary cookie, ds_admin, when a team member signs in. It keeps them signed in for up to 12 hours and is never set for visitors.",
         ],
       },
       {
@@ -209,7 +211,7 @@ export const pages: SimplePage[] = [
       {
         heading: "Third-party services",
         body: [
-          "The DotSeek Assistant chat does not use cookies or local storage. Your conversation disappears when you close or reload the page. Messages are sent to our AI provider to generate replies; see our Privacy policy.",
+          "The DotSeek Assistant chat does not use cookies or local storage. Your conversation disappears when you close or reload the page, unless you choose to include it with an enquiry. Messages are sent to our AI provider to generate replies; see our Privacy policy.",
           "Our fonts are hosted on our own website, so no third-party requests are made when the page loads. If you follow a link to another website, such as LinkedIn or GitHub, that website's own cookie policy applies.",
         ],
       },
@@ -243,7 +245,7 @@ export const pages: SimplePage[] = [
       {
         heading: "Who we are",
         body: [
-          "The website is operated by DotSeek, an AI business automation company based in Swansea, United Kingdom. You can contact us at seekingsupport@dotseek.co.uk or on +44 20 4625 3317.",
+          "The website is operated by DotSeek, an AI business automation company based in Swansea, United Kingdom. You can contact us at seekingsupport@dotseek.co.uk.",
         ],
       },
       {

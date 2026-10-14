@@ -10,13 +10,12 @@ export const site = {
   /** Search-result title and description for the homepage (and site default). */
   seoTitle: "DotSeek | AI Business Automation Solutions UK",
   seoDescription:
-    "DotSeek builds AI agents, workflow automation and system integrations that cut repetitive work and connect your CRM, ERP and data. Talk to our UK team.",
-  category: "AI Business Automation Solutions",
+    "DotSeek builds AI automation, AI agents, websites, web and mobile apps and system integrations for UK businesses. Describe your problem and get a tailored plan.",
+  category: "AI Business Automation & Digital Solutions",
   tagline: "AI automation built around your business.",
   description:
-    "DotSeek designs AI agents, intelligent workflow automation, system integrations and custom business software that reduce repetitive work and connect people, data and systems.",
+    "DotSeek designs AI automation, AI agents, websites, web and mobile apps, custom software and system integrations that reduce repetitive work and connect people, data and systems.",
   email: "seekingsupport@dotseek.co.uk",
-  phone: "+44 20 4625 3317",
   location: "Swansea, United Kingdom",
   primaryCta: { label: "Start Automating", href: "/contact" },
   talkCta: { label: "Talk to an AI Automation Expert", href: "/contact" },
@@ -41,8 +40,9 @@ export const footerColumns: { title: string; links: NavItem[] }[] = [
       { label: "AI Automation", href: "/#capabilities" },
       { label: "AI Agents", href: "/#agents" },
       { label: "Workflow Automation", href: "/#workflow" },
+      { label: "Websites & Web Platforms", href: "/#solutions" },
+      { label: "Web & Mobile Apps", href: "/#solutions" },
       { label: "System Integration", href: "/#integrations" },
-      { label: "Custom Software", href: "/#solutions" },
     ],
   },
   {

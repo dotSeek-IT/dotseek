@@ -26,10 +26,10 @@ export const assistantMeta = {
   offlineStatus: "Automated answers",
   offlineDisclaimer: "Automated answers based on this website. Your messages aren't stored or sent anywhere.",
   greeting: [
-    "Hi, I'm the DotSeek Assistant. I can answer questions about AI automation, AI agents, integrations and how working with DotSeek works.",
-    "What would you like to know?",
+    "Hi, I'm the DotSeek AI consultant. Tell me about your business problem or goal, and I'll suggest the right solution: AI automation, AI agents, a website, a web or mobile app, custom software, integrations or reporting.",
+    "Not sure what you need? That's fine. Describe the problem in your own words, or start an enquiry and I'll guide you.",
   ],
-  starters: ["enquiry", "services", "agents", "integrations", "pricing"],
+  starters: ["enquiry", "reference", "services", "website", "software"],
   inputPlaceholder: "Ask about automation, agents, pricing…",
   disclaimer:
     "AI answers can be wrong, so please confirm details with the team. Messages are processed by our AI provider to generate replies. Please don't share sensitive information.",
@@ -46,11 +46,29 @@ export const intents: Intent[] = [
     id: "services",
     keywords: ["service", "services", "what do you do", "offer", "help with", "solutions", "capabilities", "dotseek do"],
     answer: [
-      "DotSeek is an AI business automation company. We help businesses remove repetitive work and connect their systems.",
+      "DotSeek is an AI business solutions company. AI automation is our core, and we also build websites, web and mobile apps, custom software, CRM and ERP systems, AI agents and chatbots, integrations and reporting.",
       "That includes AI agents, workflow automation, document and data automation, CRM and ERP integration, customer service automation, AI insights and custom software.",
     ],
-    links: [{ label: "See capabilities", href: "/#capabilities" }],
-    next: ["agents", "workflow", "documents", "integrations"],
+    links: [{ label: "See all solutions", href: "/#solutions" }],
+    next: ["enquiry", "website", "software", "agents"],
+  },
+  {
+    id: "website",
+    keywords: ["website", "web site", "site", "redesign", "ecommerce", "e-commerce", "online shop", "landing page", "frontend", "front end", "portal", "admin portal", "wordpress"],
+    answer: [
+      "Yes, DotSeek builds websites and web platforms: new sites, redesigns of existing ones, frontend-only builds, backends and APIs for existing sites, admin portals, e-commerce and payments, and AI features such as chatbots.",
+      "Start an enquiry and I'll ask a few questions tailored to your website project.",
+    ],
+    next: ["enquiry", "software", "pricing"],
+  },
+  {
+    id: "software",
+    keywords: ["software", "app", "apps", "application", "mobile app", "mobile", "ios", "iphone", "android", "app store", "web app", "crm", "erp", "system", "platform", "internal tool", "database app"],
+    answer: [
+      "DotSeek builds web apps, iOS and Android apps, or both together on one shared system, as well as custom business software, CRM and ERP solutions and improvements to systems you already have, with automation and AI built in where it helps.",
+      "Start an enquiry and I'll ask the right questions about your users, platforms, features and integrations.",
+    ],
+    next: ["enquiry", "integrations", "pricing"],
   },
   {
     id: "agents",
@@ -113,10 +131,11 @@ export const intents: Intent[] = [
   },
   {
     id: "pricing",
-    keywords: ["price", "pricing", "cost", "costs", "how much", "budget", "quote", "fee", "fees", "expensive", "cheap"],
+    keywords: ["price", "pricing", "cost", "costs", "how much", "budget", "quote", "quotation", "estimate", "fee", "fees", "expensive", "cheap", "architecture", "hosting", "infrastructure"],
     answer: [
-      "Every project is scoped individually after a discovery phase, with a fixed or phased proposal based on the workflows, integrations and support you need.",
-      "The quickest way to get an idea for your situation is to tell us about the process you want to automate.",
+      "Pricing follows your business stage: very basic websites start from £100, Starter sites about £300 to £1,000+, Growth web apps about £1,000 to £3,000+, Advanced software, apps and AI about £3,000 to £10,000+, and enterprise systems are custom quoted.",
+      "Start an enquiry and I'll prepare an AI-generated indicative estimate for your exact requirement, with minimum, recommended and maximum prices, a phased plan for your budget and a market comparison. You can also tell us your preferred budget.",
+      "Every final quotation is confirmed by the DotSeek team after reviewing your requirements.",
     ],
     next: ["enquiry", "timeline", "process"],
   },
@@ -170,13 +189,12 @@ export const intents: Intent[] = [
     id: "contact",
     keywords: ["contact", "talk", "speak", "call", "phone", "email", "human", "person", "team", "book", "meeting", "demo", "consultation", "get in touch"],
     answer: [
-      `You can email the team at ${site.email} or call ${site.phone}.`,
+      `You can email the team at ${site.email}, or start an enquiry right here in the chat and the team will reply by email.`,
       "The contact page has an email template that helps you describe the process you'd like to automate.",
     ],
     links: [
       { label: "Contact page", href: "/contact" },
       { label: "Email us", href: `mailto:${site.email}` },
-      { label: "Call us", href: `tel:${site.phone.replace(/\s/g, "")}` },
     ],
     next: ["enquiry", "pricing", "process"],
   },
@@ -204,7 +222,10 @@ export const intents: Intent[] = [
 
 /** Labels used for quick-reply chips. */
 export const intentLabels: Record<string, string> = {
+  reference: "Have a reference website or app?",
   services: "What do you do?",
+  website: "A website",
+  software: "A web or mobile app",
   agents: "AI agents",
   workflow: "Workflow automation",
   documents: "Document automation",
@@ -219,6 +240,7 @@ export const intentLabels: Record<string, string> = {
   results: "Results",
   contact: "Talk to the team",
   enquiry: "Start an enquiry",
+  consult: "I'm not sure what I need",
   location: "Where are you based?",
   careers: "Careers",
 };

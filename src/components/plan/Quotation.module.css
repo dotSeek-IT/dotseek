@@ -1,0 +1,669 @@
+/* Final quotation: a paper document inside a dark modal. View-only (no download). */
+
+.dialog {
+  width: min(920px, calc(100vw - 32px));
+  height: min(94dvh, 1100px);
+  max-width: none;
+  max-height: none;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ds-radius-panel);
+  background: var(--ds-color-surface-elevated);
+  color: var(--ds-color-doc-text);
+  overflow: hidden;
+}
+
+.dialog[open] {
+  animation: quote-in var(--ds-duration-base) var(--ds-ease-out);
+}
+
+.dialog::backdrop {
+  background: rgba(5, 6, 8, 0.8);
+  backdrop-filter: blur(6px);
+}
+
+@keyframes quote-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.close {
+  position: absolute;
+  top: var(--ds-space-3);
+  right: var(--ds-space-3);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--ds-color-border-strong);
+  border-radius: var(--ds-radius-button);
+  background: var(--ds-color-page);
+  color: var(--ds-color-text);
+}
+
+.close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.close:focus-visible,
+.gate button:focus-visible,
+.actions button:focus-visible {
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: 3px;
+}
+
+/* ---------- Email gate: a compact card sized to its content ---------- */
+.dialogGate {
+  width: min(440px, calc(100vw - 32px));
+  /* A modal dialog stretches between its insets unless sized to its content. */
+  height: fit-content;
+  border: 1px solid var(--ds-color-border-strong);
+}
+
+.gate {
+  display: grid;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-8) var(--ds-space-6) var(--ds-space-6);
+  color: var(--ds-color-text-muted);
+  font-size: var(--ds-text-body-sm);
+}
+
+.gateKicker {
+  color: var(--ds-color-brand);
+  font-size: var(--ds-text-caption);
+  letter-spacing: var(--ds-tracking-label);
+  text-transform: uppercase;
+}
+
+.gateTitle {
+  padding-right: var(--ds-space-8);
+  color: var(--ds-color-text);
+  font-size: var(--ds-text-h4);
+  font-weight: var(--ds-weight-regular);
+  line-height: 1.2;
+}
+
+.gateText {
+  margin-bottom: var(--ds-space-2);
+  line-height: 1.5;
+}
+
+.gate label {
+  margin-top: var(--ds-space-1);
+  color: var(--ds-color-text);
+  font-size: var(--ds-text-label);
+}
+
+.gate input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--ds-color-border-strong);
+  border-radius: var(--ds-radius-button);
+  background: var(--ds-color-surface-sunken);
+  color: var(--ds-color-text);
+  font: inherit;
+  font-size: 16px;
+}
+
+.gate input:focus-visible {
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: 0;
+}
+
+.gateError {
+  color: var(--ds-color-warning);
+}
+
+.gateButton,
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-2);
+  min-height: 46px;
+  margin-top: var(--ds-space-3);
+  padding: 0 var(--ds-space-5);
+  border: 0;
+  border-radius: var(--ds-radius-button);
+  background: var(--ds-color-brand);
+  color: var(--ds-color-text-on-brand);
+  font-size: var(--ds-text-button);
+  font-weight: var(--ds-weight-medium);
+}
+
+.gateButton:hover,
+.primary:hover {
+  background: var(--ds-color-brand-strong);
+}
+
+.gateButton svg,
+.primary svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gateNote {
+  margin-top: var(--ds-space-1);
+  font-size: var(--ds-text-caption);
+  color: var(--ds-color-text-subtle);
+}
+
+.gateNote a {
+  color: var(--ds-color-text);
+  text-decoration: underline;
+}
+
+/* ---------- Document ---------- */
+.scroll {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--ds-space-8) var(--ds-space-6);
+}
+
+.sheet {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--ds-space-10) var(--ds-space-10) var(--ds-space-8);
+  border-radius: 6px;
+  background: var(--ds-color-doc-bg);
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+
+
+
+
+
+/* Modern letterhead: a dark brand band across the top of the sheet. */
+.letterhead {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-4);
+  margin: calc(var(--ds-space-10) * -1) calc(var(--ds-space-10) * -1) 0;
+  padding: var(--ds-space-6) var(--ds-space-10);
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 180% at 0% 0%, rgba(236, 241, 94, 0.18), transparent 55%),
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.07) 1px, transparent 0) 0 0 / 14px 14px,
+    var(--ds-color-page);
+  color: var(--ds-color-text);
+}
+
+/* Brand shape: a large "seek ring" with its dot, echoing the logo, in the right corner. */
+.letterhead::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -70px;
+  right: 120px;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  border: 22px solid rgba(236, 241, 94, 0.16);
+  border-left-color: transparent;
+  transform: rotate(-35deg);
+  box-shadow: 140px 30px 0 -92px rgba(236, 241, 94, 0.3);
+}
+
+.letterhead::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ds-color-brand), rgba(236, 241, 94, 0.15));
+}
+
+.brand {
+  display: grid;
+  gap: 4px;
+}
+
+.brand p {
+  color: var(--ds-color-text-muted);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ds-color-text);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.logo svg {
+  width: 30px;
+  height: 30px;
+  color: var(--ds-color-brand);
+}
+
+.company {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  font-style: normal;
+  color: var(--ds-color-doc-band-text);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.company span:first-child {
+  color: var(--ds-color-brand);
+  font-weight: 600;
+}
+
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--ds-space-4);
+  margin: var(--ds-space-6) 0 var(--ds-space-5);
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--ds-color-brand);
+  color: var(--ds-color-doc-ink);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.docTitle {
+  margin-top: var(--ds-space-2);
+  color: var(--ds-color-doc-ink);
+  font-size: 34px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.project {
+  color: var(--ds-color-doc-muted);
+  font-size: 15px;
+}
+
+.meta {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  font-size: 12px;
+}
+
+.meta div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ds-space-4);
+}
+
+.meta dt {
+  color: var(--ds-color-doc-subtle);
+}
+
+.meta dd {
+  margin: 0;
+  color: var(--ds-color-doc-text);
+  font-weight: 500;
+}
+
+.parties {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+  padding: var(--ds-space-4);
+  border-radius: 6px;
+  background: var(--ds-color-doc-tint);
+  color: var(--ds-color-doc-muted);
+  font-size: 13px;
+}
+
+.label {
+  margin-bottom: 4px;
+  color: var(--ds-color-doc-subtle);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.strong {
+  color: var(--ds-color-doc-ink);
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--ds-color-doc-subtle);
+}
+
+.section {
+  margin-top: var(--ds-space-6);
+}
+
+.section h2,
+.twoCol h2 {
+  margin-bottom: var(--ds-space-2);
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--ds-color-doc-ink);
+  color: var(--ds-color-doc-ink);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.items {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.items th {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--ds-color-doc-line-strong);
+  color: var(--ds-color-doc-subtle);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.items td {
+  padding: 9px 6px;
+  border-bottom: 1px solid var(--ds-color-doc-line-soft);
+  vertical-align: top;
+  color: var(--ds-color-doc-text);
+}
+
+.items tbody tr:nth-child(even) td {
+  background: var(--ds-color-doc-zebra);
+}
+
+.index {
+  width: 28px;
+  color: var(--ds-color-doc-faint) !important;
+}
+
+.desc {
+  display: block;
+  margin-top: 2px;
+  color: var(--ds-color-doc-subtle);
+  font-size: 12px;
+}
+
+.num {
+  text-align: right !important;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.totals {
+  display: grid;
+  gap: 4px;
+  width: min(100%, 340px);
+  margin: var(--ds-space-3) 0 var(--ds-space-2) auto;
+}
+
+.totals div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ds-space-4);
+  font-size: 13px;
+}
+
+.totals dt {
+  color: var(--ds-color-doc-muted);
+}
+
+.totals dd {
+  margin: 0;
+  color: var(--ds-color-doc-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.offerRow dt,
+.offerRow dd {
+  color: var(--ds-color-doc-accent-ink) !important;
+  font-weight: 600;
+}
+
+.grand {
+  margin-top: 4px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: var(--ds-color-doc-ink);
+}
+
+.grand dt,
+.grand dd {
+  color: var(--ds-color-doc-bg) !important;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.grand dd {
+  color: var(--ds-color-brand) !important;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-6);
+  margin-top: var(--ds-space-6);
+}
+
+.list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  font-size: 13px;
+}
+
+.list div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ds-space-3);
+}
+
+.list dt {
+  color: var(--ds-color-doc-muted);
+}
+
+.list dd {
+  margin: 0;
+  color: var(--ds-color-doc-text);
+  text-align: right;
+}
+
+.phases {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.phases li {
+  padding-left: 12px;
+  border-left: 3px solid var(--ds-color-brand);
+}
+
+.phaseHead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ds-space-3);
+}
+
+.terms {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--ds-color-doc-muted);
+  font-size: 12px;
+}
+
+/* Quotation notice: smaller print, clearly separated from the figures. */
+.notice {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-4) var(--ds-space-6);
+  margin-top: var(--ds-space-8);
+  padding: var(--ds-space-5);
+  border: 1px solid var(--ds-color-doc-line);
+  border-left: 4px solid var(--ds-color-brand);
+  border-radius: 6px;
+  background: var(--ds-color-doc-tint-soft);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ds-color-doc-muted);
+}
+
+.noticeBlock h2 {
+  margin-bottom: 4px;
+  color: var(--ds-color-doc-ink);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.noticeBlock p + p {
+  margin-top: 4px;
+}
+
+.noticeBlock ul {
+  margin: 4px 0;
+  padding-left: 16px;
+  columns: 2;
+  column-gap: var(--ds-space-4);
+}
+
+.noticeBlock:last-child {
+  grid-column: 1 / -1;
+}
+
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--ds-color-doc-ink);
+  color: var(--ds-color-doc-bg);
+  font-size: 11px;
+}
+
+.steps li + li::before {
+  content: "→ ";
+  color: var(--ds-color-brand);
+}
+
+.footer {
+  margin-top: var(--ds-space-8);
+  padding-top: var(--ds-space-3);
+  border-top: 1px solid var(--ds-color-doc-line);
+  color: var(--ds-color-doc-faint);
+  font-size: 11px;
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--ds-space-3);
+  max-width: 800px;
+  margin: var(--ds-space-5) auto 0;
+}
+
+.secondary {
+  min-height: 46px;
+  margin-top: var(--ds-space-4);
+  padding: 0 var(--ds-space-5);
+  border: 1px solid var(--ds-color-border-bright);
+  border-radius: var(--ds-radius-button);
+  background: transparent;
+  color: var(--ds-color-text);
+  font-size: var(--ds-text-button);
+}
+
+.secondary:hover {
+  background: var(--ds-color-text);
+  color: var(--ds-color-text-on-brand);
+}
+
+/* View in the page only. */
+@media print {
+  .dialog {
+    display: none !important;
+  }
+}
+
+@media (max-width: 699px) {
+  .dialog:not(.dialogGate) {
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .scroll {
+    padding: var(--ds-space-12) var(--ds-space-3) var(--ds-space-5);
+  }
+
+  .sheet {
+    padding: var(--ds-space-6) var(--ds-space-4);
+  }
+
+  .letterhead {
+    margin: calc(var(--ds-space-6) * -1) calc(var(--ds-space-4) * -1) 0;
+    padding: var(--ds-space-5) var(--ds-space-4);
+  }
+
+  .company {
+    justify-items: start;
+  }
+
+  .parties,
+  .twoCol,
+  .notice {
+    grid-template-columns: 1fr;
+  }
+
+  .items th:nth-child(3),
+  .items td:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open] {
+    animation: none;
+  }
+}

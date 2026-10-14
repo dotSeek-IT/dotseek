@@ -18,6 +18,22 @@
   --ds-color-paper: #e9eaec;            /* scanned-document illustration */
   --ds-color-paper-ink: #b9bbc0;
   --ds-color-paper-line: #cfd1d5;
+
+  /* Document (quotation sheet): a light page inside the dark UI */
+  --ds-color-doc-bg: #ffffff;
+  --ds-color-doc-ink: #0b0c10;          /* headings, strong text */
+  --ds-color-doc-text: #16181c;         /* body text, figures */
+  --ds-color-doc-muted: #4b4f56;        /* secondary text */
+  --ds-color-doc-subtle: #6b6f76;       /* labels, captions */
+  --ds-color-doc-faint: #9a9ea5;        /* indexes, footer */
+  --ds-color-doc-line: #e6e7e9;         /* rules */
+  --ds-color-doc-line-soft: #eeeff1;    /* table rows */
+  --ds-color-doc-line-strong: #d9dadd;  /* table header rule */
+  --ds-color-doc-tint: #f6f7f2;         /* parties strip */
+  --ds-color-doc-tint-soft: #fbfbf8;    /* notice panel */
+  --ds-color-doc-zebra: #fafafa;
+  --ds-color-doc-accent-ink: #6d7210;   /* yellow-family text readable on white (offer line) */
+  --ds-color-doc-band-text: #c9cbcf;    /* contact details on the dark letterhead */
   --ds-color-chart-neutral: #4a4d52;    /* secondary chart series */
 
   /* ---------- Colour: text ---------- */

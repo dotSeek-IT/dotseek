@@ -1,0 +1,21 @@
+import type { ReactNode } from "react";
+import { DotSeekAssistant } from "@/components/assistant/DotSeekAssistant";
+import { CookieNotice } from "./CookieNotice";
+import { Footer } from "./Footer";
+import { Header } from "./Header";
+
+/** Public website chrome: skip link, header, footer, cookie notice and the AI consultant. */
+export function SiteChrome({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
+      <Header />
+      <main id="main">{children}</main>
+      <Footer />
+      <CookieNotice />
+      <DotSeekAssistant />
+    </>
+  );
+}

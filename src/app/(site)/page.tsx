@@ -1,6 +1,8 @@
 import { Hero } from "@/components/home/Hero";
 import { TrustedCompanies } from "@/components/home/TrustedCompanies";
 import { ManifestoSection } from "@/components/home/ManifestoSection";
+import { SolutionsCatalogue } from "@/components/home/SolutionsCatalogue";
+import { PocketMoneyBand } from "@/components/home/PocketMoneyBand";
 import { AutomationCapabilities } from "@/components/home/AutomationCapabilities";
 import { WorkflowSection } from "@/components/home/WorkflowSection";
 import { AIAgentsSection } from "@/components/home/AIAgentsSection";
@@ -20,7 +22,9 @@ export default function HomePage() {
       <ScrollFlowLine />
       <Hero />
       <TrustedCompanies />
+      <PocketMoneyBand />
       <ManifestoSection />
+      <SolutionsCatalogue />
       <AutomationCapabilities />
       <WorkflowSection />
       <AIAgentsSection />

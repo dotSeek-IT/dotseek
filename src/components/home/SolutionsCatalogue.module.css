@@ -1,0 +1,143 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+  margin: 0;
+  padding: 0;
+}
+
+.grid > li {
+  display: flex;
+}
+
+/* Core offer (AI automation) spans two columns. */
+.featured {
+  grid-column: span 2;
+}
+
+/* Full-width band under the two rows of solutions. */
+.consultItem {
+  grid-column: 1 / -1;
+}
+
+.card,
+.consult {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-3);
+  width: 100%;
+  padding: var(--ds-space-6);
+  border-radius: var(--ds-radius-card);
+  background: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border);
+  transition:
+    border-color var(--ds-duration-base) ease,
+    transform var(--ds-duration-slow) var(--ds-ease-out);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ds-space-2);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--ds-radius-button);
+  background: var(--ds-color-surface-elevated);
+  border: 1px solid var(--ds-color-border-strong);
+  color: var(--ds-color-brand);
+}
+
+.icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.core {
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--ds-radius-pill);
+  background: var(--ds-color-brand);
+  color: var(--ds-color-text-on-brand);
+  font-size: var(--ds-text-caption);
+  font-weight: var(--ds-weight-medium);
+}
+
+.title {
+  font-size: var(--ds-text-h4);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-color-text);
+}
+
+.summary {
+  font-size: var(--ds-text-body-sm);
+  color: var(--ds-color-text-muted);
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 var(--ds-space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.examples li {
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--ds-radius-badge);
+  border: 1px solid var(--ds-color-border-strong);
+  font-size: var(--ds-text-caption);
+  color: var(--ds-color-text-muted);
+}
+
+.action {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+/* "Not sure what you need?" card. */
+.consult {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: rgba(236, 241, 94, 0.35);
+}
+
+.consultGlow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ds-gradient-corner-glow);
+  opacity: 0.5;
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .featured,
+  .consultItem {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 599px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .featured,
+  .consultItem {
+    grid-column: auto;
+  }
+}

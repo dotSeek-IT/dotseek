@@ -8,10 +8,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * activate. `null` means "no nav item" (e.g. sections the menu doesn't list).
  */
 const SPY_TARGETS: { id: string; href: string | null }[] = [
+  { id: "solutions", href: "/#solutions" },
   { id: "capabilities", href: "/#capabilities" },
   { id: "workflow", href: "/#capabilities" },
   { id: "agents", href: "/#agents" },
-  { id: "solutions", href: "/#solutions" },
+  { id: "departments", href: null },
   { id: "industries", href: "/#industries" },
   { id: "systems", href: null },
   { id: "process", href: "/#process" },

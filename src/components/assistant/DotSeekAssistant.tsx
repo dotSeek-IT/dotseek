@@ -10,23 +10,31 @@ import {
   type AssistantLink,
   type Intent,
 } from "@/content/assistant";
-import { enquiryCopy, enquiryIntro, enquiryLabels, enquirySteps, type EnquiryAnswers } from "@/content/enquiry";
-import { site } from "@/content/site";
+import { solutionById, type SolutionId } from "@/content/solutions";
 import { Icon } from "@/components/common/Icon";
-import { EnquiryControls, type EnquiryPhase } from "./EnquiryControls";
+import dynamic from "next/dynamic";
+import { PlanCard } from "@/components/plan/PlanCard";
+import { ReferenceCard } from "@/components/plan/ReferenceCard";
+import { EnquiryModal } from "./EnquiryModal";
+import { offerFor } from "@/lib/plan/offer";
+import { EnquiryControls } from "./EnquiryControls";
+import { EnquiryReview } from "./EnquiryReview";
+import { enquiryMailto, solutionNoun, solutionTitle, useEnquiry } from "./useEnquiry";
 import styles from "./DotSeekAssistant.module.css";
 
-/** Dispatch this window event (e.g. from a page button) to open the chat enquiry. */
+/** The full estimate & architecture view is loaded the first time it opens. */
+const PlanDialog = dynamic(() => import("@/components/plan/PlanDialog").then((m) => m.PlanDialog), { ssr: false });
+
+/**
+ * Dispatch this window event from any page to open the chat enquiry:
+ *   window.dispatchEvent(new CustomEvent(START_ENQUIRY_EVENT, { detail: { solution: "website" } }))
+ * `detail.solution` is optional (no solution = ask what they need; "consult" = describe the problem).
+ */
 export const START_ENQUIRY_EVENT = "dotseek:start-enquiry";
+export type StartEnquiryDetail = { solution?: SolutionId | "consult" | "reference" };
 
-type EnquiryState = { step: number; answers: EnquiryAnswers; phase: EnquiryPhase; error?: string };
-
-function enquirySummary(answers: EnquiryAnswers): string {
-  return (Object.keys(enquiryLabels) as (keyof typeof enquiryLabels)[])
-    .filter((key) => answers[key])
-    .map((key) => `- ${enquiryLabels[key]}: ${answers[key]}`)
-    .join("\n");
-}
+/** In-band control frame from /api/assistant (consultant tool call). */
+const CONTROL_MARKER = "\u0001";
 
 type Message = {
   id: number;
@@ -35,8 +43,10 @@ type Message = {
   links?: AssistantLink[];
   /** True while the reply is still streaming in. */
   streaming?: boolean;
-  /** Enquiry-flow messages are never sent to the AI. */
+  /** Enquiry-flow messages are never sent to the AI chat endpoint. */
   kind?: "enquiry";
+  /** Consultant suggestion card: starts the tailored enquiry for this solution. */
+  startSolution?: SolutionId;
 };
 
 /** Marker the API sends when a partially streamed reply must be replaced. */
@@ -62,8 +72,8 @@ function matchIntent(input: string): Intent {
   return best;
 }
 
-/** Turns site paths (/contact, /#agents), emails and phone numbers into links. */
-const LINK_PATTERN = /(\/(?:#[a-z-]+|[a-z-]+(?:#[a-z-]+)?)(?=[\s.,;:!?)]|$)|[\w.+-]+@[\w-]+\.[\w.]+|\+44[\d ]{10,14}\d)/gi;
+/** Turns site paths (/contact, /#agents) and emails into links. */
+const LINK_PATTERN = /(\/(?:#[a-z-]+|[a-z-]+(?:#[a-z-]+)?)(?=[\s.,;:!?)]|$)|[\w.+-]+@[\w-]+\.[\w.]+)/gi;
 
 function linkify(text: string, onNavigate: () => void): ReactNode[] {
   return text.split(LINK_PATTERN).map((part, i) => {
@@ -75,9 +85,8 @@ function linkify(text: string, onNavigate: () => void): ReactNode[] {
         </Link>
       );
     }
-    const href = part.includes("@") ? `mailto:${part}` : `tel:${part.replace(/\s/g, "")}`;
     return (
-      <a key={i} href={href}>
+      <a key={i} href={`mailto:${part}`}>
         {part}
       </a>
     );
@@ -132,7 +141,6 @@ export function DotSeekAssistant() {
   const [seen, setSeen] = useState(false);
   /** Switches to built-in answers when the AI endpoint isn't available. */
   const [offline, setOffline] = useState(false);
-  const [enquiry, setEnquiry] = useState<EnquiryState | null>(null);
   const nextId = useRef(1);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -159,7 +167,8 @@ export function DotSeekAssistant() {
       document.body.style.overflow = "hidden";
     }
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
+      // The estimate dialog handles its own Esc; don't close the chat behind it.
+      if (event.key === "Escape" && !document.querySelector("dialog[open]")) close();
     };
     document.addEventListener("keydown", onKey);
     return () => {
@@ -176,7 +185,7 @@ export function DotSeekAssistant() {
   useLayoutEffect(() => {
     const log = logRef.current;
     if (log) log.scrollTop = log.scrollHeight;
-  }, [messages, enquiry?.step, enquiry?.phase]);
+  }, [messages]);
 
   useEffect(() => {
     const log = logRef.current;
@@ -259,16 +268,38 @@ export function DotSeekAssistant() {
         const { done, value } = await reader.read();
         if (done) break;
         received += decoder.decode(value, { stream: true });
-        const shown = received.includes(REPLACE_MARKER) ? received.split(REPLACE_MARKER).pop() ?? "" : received;
+        const visible = received.split(CONTROL_MARKER)[0];
+        const shown = visible.includes(REPLACE_MARKER) ? visible.split(REPLACE_MARKER).pop() ?? "" : visible;
         updateMessage(botId, { text: shown });
       }
-      const finalText = received.includes(REPLACE_MARKER) ? received.split(REPLACE_MARKER).pop() ?? "" : received;
-      if (!finalText.trim()) {
+      const [visible, control] = received.split(CONTROL_MARKER);
+      const finalText = visible.includes(REPLACE_MARKER) ? visible.split(REPLACE_MARKER).pop() ?? "" : visible;
+
+      // The consultant decided the visitor is ready: offer the tailored enquiry.
+      let startSolution: SolutionId | undefined;
+      let reason = "";
+      if (control) {
+        try {
+          const frame = JSON.parse(control) as { type?: string; solution?: string; reason?: string };
+          if (frame.type === "start_enquiry" && solutionById(frame.solution ?? "")) {
+            startSolution = frame.solution as SolutionId;
+            reason = frame.reason ?? "";
+          }
+        } catch {
+          /* ignore a malformed frame */
+        }
+      }
+
+      if (!finalText.trim() && !startSolution) {
         answerOffline(botId, question, intent);
         return;
       }
-      updateMessage(botId, { text: finalText, streaming: false });
-      setSuggestions(intent?.next ?? ["contact", "pricing", "process"]);
+      updateMessage(botId, {
+        text: [finalText.trim(), startSolution && reason && !finalText.includes(reason) ? reason : ""].filter(Boolean).join("\n\n"),
+        streaming: false,
+        startSolution,
+      });
+      setSuggestions(startSolution ? [] : intent?.next ?? ["enquiry", "pricing", "process"]);
     } catch {
       if (controller.signal.aborted) return;
       // Network or mid-stream failure: keep any partial answer, otherwise answer offline.
@@ -287,84 +318,74 @@ export function DotSeekAssistant() {
   };
 
   // ---------- Guided enquiry ----------
-  const pushEnquiry = (...items: Omit<Message, "id" | "kind">[]) =>
-    setMessages((list) => [...list, ...items.map((m) => ({ ...m, id: nextId.current++, kind: "enquiry" as const }))]);
+  const pushEnquiry = (from: "bot" | "user", text: string, extra: Partial<Message> = {}) =>
+    setMessages((list) => [...list, { id: nextId.current++, from, text, kind: "enquiry", ...extra }]);
 
-  const startEnquiry = useCallback(() => {
+  const chatTranscript = () =>
+    messages
+      .filter((m) => m.id !== 0 && m.text && !m.streaming && m.kind !== "enquiry")
+      .map((m) => ({ role: m.from === "user" ? ("user" as const) : ("assistant" as const), content: m.text }));
+
+  const enquiry = useEnquiry({
+    botSay: (text, extra) => pushEnquiry("bot", text, extra),
+    userSay: (text) => pushEnquiry("user", text),
+    transcript: chatTranscript,
+    hasTranscript: chatTranscript().some((t) => t.role === "user"),
+  });
+  const enquiryState = enquiry.state;
+  const plan = enquiry.plan;
+  const offerQuote = plan ? offerFor(enquiry.offer, plan.solution, plan.build) : null;
+  const [planOpen, setPlanOpen] = useState(false);
+  const [answersOpen, setAnswersOpen] = useState(false);
+  /** The customer's private enquiry page, shown in a modal after sending. */
+  const [enquiryView, setEnquiryView] = useState<{ url: string; title: string } | null>(null);
+  const planTitle = enquiryState?.brief?.title || `${solutionTitle(enquiryState?.answers.solution_id ?? plan?.solution)} plan`;
+
+  const modifyRequirements = () => {
+    setPlanOpen(false);
+    setAnswersOpen(true);
+    pushEnquiry("bot", "Choose any answer below to change it. Your estimate and architecture update automatically.");
+  };
+
+  const startEnquiry = (solution?: SolutionId | "consult" | "reference") => {
+    if (busy) return;
     setOpen(true);
     setSuggestions([]);
-    setEnquiry({ step: 0, answers: {}, phase: "asking" });
-    setMessages((list) => [
-      ...list,
-      { id: nextId.current++, from: "user", text: enquiryCopy.start, kind: "enquiry" },
-      { id: nextId.current++, from: "bot", text: enquiryIntro, kind: "enquiry" },
-      { id: nextId.current++, from: "bot", text: enquirySteps[0].question, kind: "enquiry" },
-    ]);
-  }, []);
-
-  const answerEnquiry = (value: string) => {
-    if (!enquiry) return;
-    const step = enquirySteps[enquiry.step];
-    const answers = { ...enquiry.answers, [step.id]: value };
-    const next = enquiry.step + 1;
-    pushEnquiry({ from: "user", text: value || enquiryCopy.skip });
-    if (next < enquirySteps.length) {
-      pushEnquiry({ from: "bot", text: enquirySteps[next].question });
-      setEnquiry({ step: next, answers, phase: "asking" });
-    } else {
-      pushEnquiry({ from: "bot", text: `${enquiryCopy.review}\n\n${enquirySummary(answers)}` });
-      setEnquiry({ step: next, answers, phase: "review" });
+    if (solution === "reference") {
+      enquiry.startReference();
+      return;
     }
-  };
-
-  const sendEnquiry = async () => {
-    if (!enquiry) return;
-    setEnquiry({ ...enquiry, phase: "sending", error: undefined });
-    try {
-      const response = await fetch("/api/enquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers: enquiry.answers }),
-      });
-      if (!response.ok) {
-        const { error } = (await response.json().catch(() => ({}))) as { error?: string };
-        throw new Error(response.status === 429 || response.status === 400 ? error : undefined);
-      }
-      pushEnquiry({ from: "bot", text: enquiryCopy.sent });
-      setEnquiry(null);
-      setSuggestions(assistantMeta.starters.filter((id) => id !== "enquiry"));
-    } catch (error) {
-      pushEnquiry({ from: "bot", text: enquiryCopy.failed });
-      setEnquiry({ ...enquiry, phase: "failed", error: error instanceof Error ? error.message || undefined : undefined });
+    if (solution === "consult") {
+      enquiry.start(undefined, { announce: "I'm not sure what I need" });
+      return;
     }
+    enquiry.start(solution);
   };
 
-  const restartEnquiry = () => {
-    pushEnquiry({ from: "bot", text: `Let's start again.\n\n${enquirySteps[0].question}` });
-    setEnquiry({ step: 0, answers: {}, phase: "asking" });
-  };
-
-  const cancelEnquiry = () => {
-    pushEnquiry({ from: "bot", text: enquiryCopy.cancelled });
-    setEnquiry(null);
-    setSuggestions(assistantMeta.starters);
-  };
-
-  const enquiryMailto = enquiry
-    ? `mailto:${site.email}?subject=${encodeURIComponent(`Website enquiry: ${enquiry.answers.area ?? "Automation"}`)}&body=${encodeURIComponent(
-        enquirySummary(enquiry.answers).replace(/^- /gm, ""),
-      )}`
-    : `mailto:${site.email}`;
-
-  // Let any page start the enquiry (e.g. the contact page button).
+  // Let any page start the enquiry (contact page, solution cards...).
   useEffect(() => {
-    const onStart = () => {
-      if (!enquiry) startEnquiry();
-      else setOpen(true);
+    const onStart = (event: Event) => {
+      const detail = (event as CustomEvent<StartEnquiryDetail | undefined>).detail;
+      if (enquiry.state) {
+        setOpen(true);
+        return;
+      }
+      startEnquiry(detail?.solution);
     };
     window.addEventListener(START_ENQUIRY_EVENT, onStart);
     return () => window.removeEventListener(START_ENQUIRY_EVENT, onStart);
-  }, [enquiry, startEnquiry]);
+  });
+
+  // After an enquiry finishes or is cancelled, bring back the starter chips.
+  const hadEnquiry = useRef(false);
+  useEffect(() => {
+    if (enquiryState) hadEnquiry.current = true;
+    else if (hadEnquiry.current) {
+      hadEnquiry.current = false;
+      setPlanOpen(false);
+      setSuggestions(assistantMeta.starters);
+    }
+  }, [enquiryState]);
 
   const onSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -376,6 +397,50 @@ export function DotSeekAssistant() {
 
   return (
     <div className={styles.root}>
+      {enquiryView && <EnquiryModal url={enquiryView.url} title={enquiryView.title} onClose={() => setEnquiryView(null)} />}
+      {planOpen && plan && enquiryState && (
+        <PlanDialog
+          plan={plan}
+          solutionTitle={solutionTitle(plan.solution)}
+          brief={enquiryState.brief}
+          briefStatus={enquiryState.briefStatus}
+          choices={enquiryState.choices}
+          onChoices={enquiry.setChoices}
+          onFitBudget={enquiry.fitBudget}
+          offer={offerQuote}
+          negotiation={enquiryState.negotiation}
+          onNegotiate={enquiry.setNegotiation}
+          reference={enquiryState.reference}
+          getOptions={enquiry.getOptions}
+          onApplyOption={enquiry.applyOption}
+          onMakeCheaper={enquiry.makeCheaper}
+          onContinue={
+            enquiryState.phase === "plan"
+              ? () => {
+                  setPlanOpen(false);
+                  enquiry.continueToSend();
+                }
+              : undefined
+          }
+          onConsult={
+            enquiryState.phase === "plan"
+              ? () => {
+                  setPlanOpen(false);
+                  enquiry.requestConsultation();
+                }
+              : undefined
+          }
+          onModify={modifyRequirements}
+          contact={{
+            name: enquiryState.answers.name,
+            email: enquiryState.answers.email,
+            company: enquiryState.answers.company,
+            phone: enquiryState.answers.phone,
+          }}
+          onContact={enquiry.setContact}
+          onClose={() => setPlanOpen(false)}
+        />
+      )}
       {open && (
         <section id={panelId} className={styles.panel} role="dialog" aria-label={assistantMeta.name}>
           <header className={styles.head}>
@@ -416,10 +481,44 @@ export function DotSeekAssistant() {
                       <p>{message.text}</p>
                     )}
                     {message.streaming && <span className={styles.caret} aria-hidden="true" />}
+                    {message.startSolution && (
+                      <span className={styles.links}>
+                        <button
+                          type="button"
+                          className={styles.startCard}
+                          onClick={() => startEnquiry(message.startSolution)}
+                          disabled={Boolean(enquiryState) || busy}
+                        >
+                          Start my {solutionNoun(message.startSolution)} enquiry <Icon name="arrow" />
+                        </button>
+                      </span>
+                    )}
                     {message.links && (
                       <span className={styles.links}>
                         {message.links.map((link) =>
-                          link.href.startsWith("/") ? (
+                          link.href.includes("/enquiry/") ? (
+                            // The private enquiry page opens in a modal, like the quotation, so the chat stays put.
+                            <button
+                              key={link.href}
+                              type="button"
+                              className={styles.linkButton}
+                              onClick={() =>
+                                setEnquiryView({
+                                  url: link.href,
+                                  title: `Your enquiry${message.text.match(/\((DS-[A-Z0-9]+)\)/)?.[1] ? ` ${message.text.match(/\((DS-[A-Z0-9]+)\)/)![1]}` : ""}`,
+                                })
+                              }
+                            >
+                              {link.label} <Icon name="arrow" />
+                            </button>
+                          ) : /^https?:\/\//.test(link.href) || link.href === "/privacy" ? (
+                            // Pages outside the site layout (the private enquiry page) or long reads
+                            // open in a new tab, so the chat, estimate and quotation stay as they are.
+                            <a key={link.href} href={link.href} target="_blank" rel="noopener">
+                              {link.label} <Icon name="arrow" />
+                              <span className="sr-only"> (opens in a new tab)</span>
+                            </a>
+                          ) : link.href.startsWith("/") ? (
                             <Link key={link.href} href={link.href} onClick={navigate}>
                               {link.label} <Icon name="arrow" />
                             </Link>
@@ -435,29 +534,81 @@ export function DotSeekAssistant() {
                 )}
               </div>
             ))}
+            {enquiryState?.reference && enquiry.referencePlan && (
+              <ReferenceCard analysis={enquiryState.reference} plan={enquiry.referencePlan} />
+            )}
+            {enquiryState && plan && enquiryState.planSeen && enquiryState.phase !== "recommending" && (
+              <PlanCard plan={plan} title={planTitle} offer={offerQuote} onOpen={() => setPlanOpen(true)} />
+            )}
+            {enquiryState?.phase === "plan" && (
+              <EnquiryReview
+                answers={enquiryState.answers}
+                briefStatus={enquiryState.briefStatus}
+                disabled={false}
+                onEdit={(id) => {
+                  setAnswersOpen(false);
+                  enquiry.edit(id);
+                }}
+                answersOnly
+                expanded={answersOpen}
+              />
+            )}
+            {enquiryState && ["review", "sending", "failed"].includes(enquiryState.phase) && (
+              <EnquiryReview
+                answers={enquiryState.answers}
+                brief={enquiryState.brief}
+                briefStatus={enquiryState.briefStatus}
+                disabled={enquiryState.phase === "sending"}
+                onEdit={enquiry.edit}
+              />
+            )}
           </div>
 
-          {enquiry ? (
+          {enquiryState ? (
             <EnquiryControls
-              key={`${enquiry.step}-${enquiry.phase}`}
-              step={enquirySteps[enquiry.step]}
-              phase={enquiry.phase}
-              error={enquiry.error}
-              mailtoHref={enquiryMailto}
-              onAnswer={answerEnquiry}
-              onSend={() => void sendEnquiry()}
-              onRestart={restartEnquiry}
-              onCancel={cancelEnquiry}
-              onNavigate={navigate}
+              key={`${enquiry.currentStep?.id ?? "none"}-${enquiryState.phase}-${enquiryState.editing ?? ""}`}
+              phase={enquiryState.phase}
+              step={enquiry.currentStep}
+              editing={Boolean(enquiryState.editing)}
+              solutions={enquiry.solutions}
+              recommendation={enquiryState.recommendation}
+              hasTranscript={chatTranscript().some((t) => t.role === "user")}
+              includeTranscript={enquiryState.includeTranscript}
+              hasPlan={Boolean(plan)}
+              emailCopy={enquiryState.emailCopy}
+              consultation={enquiryState.consultation}
+              onToggleEmailCopy={enquiry.setEmailCopy}
+              onToggleConsultation={enquiry.setConsultation}
+              onOpenPlan={() => setPlanOpen(true)}
+              onReference={(url) => void enquiry.submitReference(url)}
+              onSkipReference={enquiry.skipReference}
+              onContinue={enquiry.continueToSend}
+              onConsult={enquiry.requestConsultation}
+              error={enquiryState.error}
+              mailtoHref={enquiryMailto(enquiryState.answers, plan)}
+              onAnswer={enquiry.answer}
+              onChoose={enquiry.choose}
+              onSend={() => void enquiry.send()}
+              onRestart={enquiry.restart}
+              onCancel={enquiry.cancel}
+              onCancelEdit={enquiry.cancelEdit}
+              onToggleTranscript={enquiry.setIncludeTranscript}
             />
           ) : (
             <>
           {suggestions.length > 0 && !busy && (
             <div className={styles.chips} aria-label="Suggested questions">
               {suggestions.map((id) => {
+                if (id === "reference") {
+                  return (
+                    <button key={id} type="button" className={styles.chip} onClick={() => startEnquiry("reference")}>
+                      {intentLabels[id]}
+                    </button>
+                  );
+                }
                 if (id === "enquiry") {
                   return (
-                    <button key={id} type="button" className={`${styles.chip} ${styles.chipPrimary}`} onClick={startEnquiry}>
+                    <button key={id} type="button" className={`${styles.chip} ${styles.chipPrimary}`} onClick={() => startEnquiry()}>
                       {intentLabels[id]}
                     </button>
                   );
@@ -495,8 +646,8 @@ export function DotSeekAssistant() {
           )}
           <p className={styles.disclaimer}>
             {offline ? assistantMeta.offlineDisclaimer : assistantMeta.disclaimer}{" "}
-            <Link href="/privacy" onClick={navigate}>
-              Privacy
+            <Link href="/privacy" target="_blank" rel="noopener">
+              Privacy<span className="sr-only"> (opens in a new tab)</span>
             </Link>
           </p>
         </section>
@@ -521,7 +672,7 @@ export function DotSeekAssistant() {
 
 function AssistantMark() {
   return (
-    <svg viewBox="0 0 32 32" focusable="false">
+    <svg viewBox="0 0 32 32" width="22" height="22" focusable="false">
       <circle cx="16" cy="16" r="10.5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeDasharray="46 18" strokeLinecap="round" />
       <circle cx="16" cy="16" r="4" fill="currentColor" />
     </svg>

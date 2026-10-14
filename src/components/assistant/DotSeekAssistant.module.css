@@ -14,6 +14,11 @@
   pointer-events: auto;
 }
 
+/* Step aside while the site menu is open (Header sets data-menu-open). */
+:global(html[data-menu-open]) .root {
+  display: none;
+}
+
 /* ---------- Launcher ---------- */
 .launcher {
   position: relative;
@@ -260,7 +265,8 @@
   margin-top: 2px;
 }
 
-.links a {
+.links a,
+.linkButton {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -274,7 +280,19 @@
     color var(--ds-duration-fast) ease;
 }
 
-.links a:hover {
+.linkButton {
+  background: transparent;
+  font: inherit;
+  font-size: var(--ds-text-caption);
+}
+
+.linkButton:focus-visible {
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: 2px;
+}
+
+.links a:hover,
+.linkButton:hover {
   background: var(--ds-color-brand);
   color: var(--ds-color-text-on-brand);
 }
@@ -588,6 +606,192 @@
   cursor: not-allowed;
 }
 
+/* ---------- Consultant start card ---------- */
+.startCard {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  padding: 0.55rem 0.9rem;
+  border: 0;
+  border-radius: var(--ds-radius-button);
+  background: var(--ds-color-brand);
+  color: var(--ds-color-text-on-brand);
+  font-size: var(--ds-text-label);
+  font-weight: var(--ds-weight-medium);
+}
+
+.startCard:hover {
+  background: var(--ds-color-brand-strong);
+}
+
+.startCard:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.startCard svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ---------- AI thinking row ---------- */
+.thinkingRow {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  font-size: var(--ds-text-body-sm);
+  color: var(--ds-color-text-muted);
+}
+
+.typingInline {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.typingInline i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ds-color-brand);
+  animation: dot 1.1s ease-in-out infinite;
+}
+
+.typingInline i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typingInline i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* ---------- Review card (in the log) ---------- */
+.review {
+  display: grid;
+  gap: var(--ds-space-3);
+  margin-left: 36px;
+  animation: msg-in 260ms var(--ds-ease-out);
+}
+
+.briefBox {
+  display: grid;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-4);
+  border-radius: var(--ds-radius-card);
+  border: 1px solid rgba(236, 241, 94, 0.3);
+  background: rgba(236, 241, 94, 0.05);
+  font-size: var(--ds-text-body-sm);
+  color: var(--ds-color-text-muted);
+}
+
+.briefBox ul {
+  display: grid;
+  gap: 2px;
+  margin: 2px 0 0;
+  padding-left: 1.1rem;
+}
+
+.briefBox li::marker {
+  color: var(--ds-color-brand);
+}
+
+.reviewKicker {
+  font-size: var(--ds-text-micro);
+  letter-spacing: var(--ds-tracking-label);
+  text-transform: uppercase;
+  color: var(--ds-color-brand-soft);
+}
+
+.briefTitle {
+  font-size: var(--ds-text-body);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-color-text);
+}
+
+.briefListTitle {
+  margin-top: var(--ds-space-1);
+  font-size: var(--ds-text-caption);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-color-text);
+}
+
+.reviewNote {
+  font-size: var(--ds-text-micro);
+  color: var(--ds-color-text-subtle);
+}
+
+.reviewList {
+  display: grid;
+  margin: 0;
+  border-radius: var(--ds-radius-card);
+  border: 1px solid var(--ds-color-border);
+  background: var(--ds-color-surface-elevated);
+  overflow: hidden;
+}
+
+.reviewRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--ds-space-3);
+  padding: 0.6rem 0.8rem;
+  border-top: 1px solid var(--ds-color-border);
+  font-size: var(--ds-text-label);
+}
+
+.reviewRow:first-child {
+  border-top: 0;
+}
+
+.reviewRow dt {
+  grid-column: 1;
+  font-size: var(--ds-text-micro);
+  color: var(--ds-color-text-subtle);
+}
+
+.reviewRow dd {
+  grid-column: 1;
+  margin: 2px 0 0;
+  color: var(--ds-color-text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.editButton {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--ds-radius-badge);
+  border: 1px solid var(--ds-color-border-strong);
+  background: transparent;
+  color: var(--ds-color-text-muted);
+  font-size: var(--ds-text-caption);
+}
+
+.editButton:hover {
+  border-color: var(--ds-color-brand);
+  color: var(--ds-color-brand);
+}
+
+.editButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  font-size: var(--ds-text-caption);
+  color: var(--ds-color-text-muted);
+}
+
+.checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--ds-color-brand);
+}
+
 /* Touch devices (phones and tablets): 16px inputs stop iOS/iPadOS zooming on focus. */
 @media (pointer: coarse) {
   .input {
@@ -687,4 +891,22 @@
   .message {
     animation: none;
   }
+}
+
+/* Collapsible answers under the estimate card (plan step). */
+.reviewSummary {
+  cursor: pointer;
+  font-size: var(--ds-text-label);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-color-text);
+}
+
+.reviewSummary:focus-visible {
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+details[open] > .reviewSummary {
+  margin-bottom: var(--ds-space-2);
 }

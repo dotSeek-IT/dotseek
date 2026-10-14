@@ -16,6 +16,8 @@ type ButtonProps = {
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
+  /** For the <button> variant: "submit" inside forms. */
+  type?: "button" | "submit";
 };
 
 /**
@@ -34,6 +36,7 @@ export function Button({
   className,
   onClick,
   disabled,
+  type = "button",
 }: ButtonProps) {
   const showArrow = arrow ?? variant === "primary";
   const classes = [styles.button, styles[variant], styles[size], className].filter(Boolean).join(" ");
@@ -47,7 +50,7 @@ export function Button({
 
   if (!href) {
     return (
-      <button type="button" className={classes} onClick={onClick} disabled={disabled}>
+      <button type={type} className={classes} onClick={onClick} disabled={disabled}>
         {content}
       </button>
     );

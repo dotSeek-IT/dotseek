@@ -38,7 +38,6 @@ const contactSchema = {
       "@type": "ContactPoint",
       contactType: "sales",
       email: site.email,
-      telephone: site.phone,
       areaServed: "GB",
       availableLanguage: "English",
     },

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { footerColumns, site, socialLinks } from "@/content/site";
 import { Button } from "@/components/common/Button";
+import { StartEnquiryButton } from "@/components/assistant/StartEnquiryButton";
 import { Icon } from "@/components/common/Icon";
 import { Logo } from "@/components/common/Logo";
 import { Container } from "./Container";
@@ -21,9 +22,9 @@ export function Footer() {
             <Button href={`mailto:${site.email}`} size="md">
               Email our team
             </Button>
-            <Button href={`tel:${site.phone.replace(/\s/g, "")}`} variant="secondary" arrow={false}>
-              {site.phone}
-            </Button>
+            <StartEnquiryButton variant="secondary" size="md">
+              Start an enquiry
+            </StartEnquiryButton>
           </div>
         </div>
 
@@ -35,10 +36,6 @@ export function Footer() {
               <li>
                 <Icon name="mail" />
                 <a href={`mailto:${site.email}`}>{site.email}</a>
-              </li>
-              <li>
-                <Icon name="phone" />
-                <a href={`tel:${site.phone.replace(/\s/g, "")}`}>{site.phone}</a>
               </li>
               <li>
                 <Icon name="location" />
