@@ -15,6 +15,7 @@ import { Icon } from "@/components/common/Icon";
 import dynamic from "next/dynamic";
 import { PlanCard } from "@/components/plan/PlanCard";
 import { ReferenceCard } from "@/components/plan/ReferenceCard";
+import { solutionHeadline } from "@/lib/plan/headline";
 import { EnquiryModal } from "./EnquiryModal";
 import { offerFor } from "@/lib/plan/offer";
 import { EnquiryControls } from "./EnquiryControls";
@@ -339,7 +340,48 @@ export function DotSeekAssistant() {
   const [answersOpen, setAnswersOpen] = useState(false);
   /** The customer's private enquiry page, shown in a modal after sending. */
   const [enquiryView, setEnquiryView] = useState<{ url: string; title: string } | null>(null);
-  const planTitle = enquiryState?.brief?.title || `${solutionTitle(enquiryState?.answers.solution_id ?? plan?.solution)} plan`;
+  const planTitle =
+    enquiryState?.brief?.title ||
+    `${plan ? solutionHeadline(plan, solutionTitle(enquiryState?.answers.solution_id ?? plan.solution)).name : solutionTitle(enquiryState?.answers.solution_id)} plan`;
+
+  // The reference and estimate cards stay where they first appeared in the conversation, so the
+  // current question is always the last thing above the answer field (never hidden behind a card).
+  const showReferenceCard = Boolean(enquiryState?.reference && enquiry.referencePlan);
+  const showPlanCard = Boolean(enquiryState && plan && enquiryState.planSeen && enquiryState.phase !== "recommending");
+  const [cardAt, setCardAt] = useState<{ reference?: number; plan?: number }>({});
+  const questionText = enquiry.currentStep?.question;
+  useEffect(() => {
+    if (!enquiryState) {
+      if (cardAt.reference !== undefined || cardAt.plan !== undefined) setCardAt({});
+      return;
+    }
+    const last = messages[messages.length - 1];
+    // Just above the current question when it was asked in the same moment, otherwise at the end.
+    const at = last?.from === "bot" && questionText && last.text.includes(questionText) ? messages.length - 1 : messages.length;
+    const next = {
+      reference: showReferenceCard ? (cardAt.reference ?? at) : undefined,
+      plan: showPlanCard ? (cardAt.plan ?? at) : undefined,
+    };
+    if (next.reference !== cardAt.reference || next.plan !== cardAt.plan) setCardAt(next);
+  }, [enquiryState, showReferenceCard, showPlanCard, messages, questionText, cardAt]);
+
+  // Cards appear or settle after their message, so keep the newest question in view then too.
+  useLayoutEffect(() => {
+    const log = logRef.current;
+    if (log) log.scrollTop = log.scrollHeight;
+  }, [cardAt, showReferenceCard, showPlanCard, enquiry.currentStep?.id]);
+
+  /** Cards anchored before message `index` (the end of the log takes any not yet placed). */
+  const cardsAt = (index: number) => {
+    const end = index === messages.length;
+    const here = (pos: number | undefined) => pos === index || (end && (pos === undefined || pos > index));
+    return (
+      <>
+        {showReferenceCard && here(cardAt.reference) && <ReferenceCard analysis={enquiryState!.reference!} plan={enquiry.referencePlan!} />}
+        {showPlanCard && here(cardAt.plan) && <PlanCard plan={plan!} title={planTitle} offer={offerQuote} onOpen={() => setPlanOpen(true)} />}
+      </>
+    );
+  };
 
   const modifyRequirements = () => {
     setPlanOpen(false);
@@ -468,8 +510,10 @@ export function DotSeekAssistant() {
           </header>
 
           <div ref={logRef} className={styles.log} role="log" aria-live="polite" aria-relevant="additions" aria-busy={busy}>
-            {messages.map((message) => (
-              <div key={message.id} className={`${styles.message} ${styles[message.from]}`}>
+            {messages.map((message, index) => (
+              <Fragment key={message.id}>
+              {cardsAt(index)}
+              <div className={`${styles.message} ${styles[message.from]}`}>
                 {message.from === "bot" && (
                   <span className={styles.msgAvatar} aria-hidden="true">
                     <AssistantMark />
@@ -542,13 +586,9 @@ export function DotSeekAssistant() {
                   </div>
                 )}
               </div>
+              </Fragment>
             ))}
-            {enquiryState?.reference && enquiry.referencePlan && (
-              <ReferenceCard analysis={enquiryState.reference} plan={enquiry.referencePlan} />
-            )}
-            {enquiryState && plan && enquiryState.planSeen && enquiryState.phase !== "recommending" && (
-              <PlanCard plan={plan} title={planTitle} offer={offerQuote} onOpen={() => setPlanOpen(true)} />
-            )}
+            {cardsAt(messages.length)}
             {enquiryState?.phase === "plan" && (
               <EnquiryReview
                 answers={enquiryState.answers}
