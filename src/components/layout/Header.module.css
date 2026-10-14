@@ -114,6 +114,12 @@
   display: none;
 }
 
+/* The panel receives focus on tap so focus stays in the menu; it is not
+   itself interactive, so it shows no ring. Links keep their focus rings. */
+.mobilePanel:focus {
+  outline: none;
+}
+
 .mobileList {
   margin: 0;
   padding: 0;

@@ -16,6 +16,8 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  /** True when the menu was opened with Enter/Space rather than a tap or click. */
+  const openedByKeyboard = useRef(false);
   const { active, select, pathname } = useActiveNav(navHrefs);
 
   // Close the mobile menu whenever the route changes.
@@ -39,7 +41,12 @@ export function Header() {
   useEffect(() => {
     if (!open) return;
     document.body.style.overflow = "hidden";
-    panelRef.current?.querySelector<HTMLElement>("a")?.focus();
+    // Keyboard users land on the first link. For taps and clicks, focus the
+    // panel itself instead: focus stays inside the menu (screen readers, Tab
+    // order) without a focus ring on "Solutions" that looks like a selection.
+    const panel = panelRef.current;
+    if (openedByKeyboard.current) panel?.querySelector<HTMLElement>("a")?.focus();
+    else panel?.focus({ preventScroll: true });
 
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") close();
@@ -105,7 +112,11 @@ export function Header() {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
-            onClick={() => setOpen((value) => !value)}
+            onClick={(event) => {
+              // detail === 0 means the click came from the keyboard (Enter/Space).
+              openedByKeyboard.current = event.detail === 0;
+              setOpen((value) => !value);
+            }}
           >
             <Icon name={open ? "close" : "menu"} />
           </button>
@@ -115,6 +126,8 @@ export function Header() {
       <div
         id="mobile-menu"
         ref={panelRef}
+        tabIndex={-1}
+        aria-label="Site menu"
         className={styles.mobilePanel}
         hidden={!open}
       >
