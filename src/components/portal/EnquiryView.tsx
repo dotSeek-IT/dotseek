@@ -22,6 +22,18 @@ const formatDate = (iso: string) =>
 
 export { formatDate };
 
+/** Open enquiry whose latest message is from the customer: the team owes a reply. */
+export const needsReply = (e: Enquiry) => e.status !== "closed" && e.thread.at(-1)?.from === "customer";
+
+/** Up to two initials for the customer avatar. */
+export const initials = (name?: string) =>
+  (name ?? "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]!.toUpperCase())
+    .join("") || "?";
+
 /** Brief, answers and (optionally) the pre-enquiry chat for one enquiry. */
 export function EnquiryDetails({ enquiry, showTranscript }: { enquiry: Enquiry; showTranscript: boolean }) {
   const solution = solutionById(enquiry.solution);

@@ -49,7 +49,7 @@ src/
     (portal)/           # private pages: minimal top bar, noindex, no assistant
       layout.tsx
       actions.ts        #   server actions: login/logout, team reply, status, customer reply
-      admin/            #   inbox, login, enquiries/[id]
+      admin/            #   inbox, login, enquiries/[id], offers
       enquiry/[token]/  #   customer's private enquiry page
     api/
       assistant/route.ts          # streams the AI consultant (start_enquiry tool)
@@ -140,7 +140,7 @@ src/
 | Architecture rules | `recommendLevel` scores the requirement signals; keep the guards (Enterprise only for large or critical multi-region or fast-growth systems; customer accounts, payments or orders at least Level 2). Recommend the right architecture, not the most expensive: every "not needed" service needs an honest reason. Test changes with a script that calls `buildPlan` for small, medium and large scenarios. |
 | Scale questions | `opsSteps` in `content/enquiryFlows.ts` ask business questions only (users, team, regions, files, live updates, availability, security, growth); never ask customers to pick technologies. `lib/plan/signals.ts` reads them. |
 | Enquiry state | `assistant/useEnquiry.ts` is the client state machine (asking, recommending, choosing, plan, then contact questions, review, sending, failed). Plan choices (tier, provider, items on/off) live in `state.choices`; the plan engine is loaded with `import()` when an enquiry starts, and `PlanDialog` and the report load on first use, so the homepage stays light. Enquiry messages are tagged `kind: "enquiry"` and never sent to `/api/assistant`. |
-| Portal pages | Server components in `app/(portal)` with server actions in `actions.ts`. Check `isAdmin()` in every admin page and action. Customer actions are authorised only by the private token. Style with `components/portal/Portal.module.css`; submit with `<SubmitButton>` (a `Button type="submit"` with pending text). |
+| Portal pages | Server components in `app/(portal)` with server actions in `actions.ts`. Check `isAdmin()` in every admin page and action. Customer actions are authorised only by the private token. Wrap each page in `PortalFrame` (customer page, sign-in) or `AdminFrame` (signed-in admin) from `components/portal/Chrome.tsx`. Style shared cards, forms and threads with `components/portal/Portal.module.css` and admin layout (top bar, sign-in, inbox, pager, offers) with `components/portal/Admin.module.css`; submit with `<SubmitButton>` (a `Button type="submit"` with pending text, `variant` and `size`). The inbox paginates 10 per page via `?page=`, alongside `?status=` and `?q=`. |
 | Nav active state | `layout/useActiveNav.ts`. To make a new homepage section highlight a nav item, add its id to `SPY_TARGETS` in page order (use `href: null` for sections without a nav item). Nav links use `next/link` for client-side routing. Don't give in-page targets a big `scroll-margin-top`: it adds to the global `scroll-padding-top`. |
 | Search metadata | Sitewide defaults and structured data live in `app/layout.tsx`. Sitemap and robots are in `app/sitemap.ts` and `app/robots.ts` (`dynamic = "force-static"` for export). |
 

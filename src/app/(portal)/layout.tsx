@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Logo } from "@/components/common/Logo";
 import styles from "@/components/portal/Portal.module.css";
 
 /** Private pages (admin inbox, customer enquiry threads): no marketing chrome, never indexed. */
@@ -18,13 +17,8 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
             "if(window.top!==window.self){document.documentElement.dataset.embedded='1';document.addEventListener('keydown',function(e){if(e.key==='Escape')window.parent.postMessage('dotseek:close-enquiry',location.origin)})}",
         }}
       />
-      <header className={styles.topbar}>
-        {/* _top: when shown inside the chat's enquiry modal, the logo opens the site in the whole window. */}
-        <Logo target="_top" />
-      </header>
-      <main id="main" className={styles.main}>
-        {children}
-      </main>
+      {/* Each page renders its own top bar and main area (PortalFrame or AdminFrame). */}
+      {children}
     </div>
   );
 }
