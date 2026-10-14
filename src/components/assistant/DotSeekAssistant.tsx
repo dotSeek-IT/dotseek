@@ -73,6 +73,14 @@ function matchIntent(input: string): Intent {
   return best;
 }
 
+/** The first website or app link in a message (with or without https://), or null. */
+function linkIn(text: string): string | null {
+  const match = text.match(/\bhttps?:\/\/[^\s<>"']+|\bwww\.[^\s<>"']+|\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:com|co\.uk|org\.uk|uk|io|app|net|org|ai|dev|co|shop|store)(?:\/[^\s<>"']*)?/i);
+  // Email addresses (name@company.co.uk) are not links.
+  if (!match || /@/.test(match[0]) || text[(match.index ?? 0) - 1] === "@") return null;
+  return match[0].replace(/[.,;:!?)]+$/, "");
+}
+
 /** Turns site paths (/contact, /#agents) and emails into links. */
 const LINK_PATTERN = /(\/(?:#[a-z-]+|[a-z-]+(?:#[a-z-]+)?)(?=[\s.,;:!?)]|$)|[\w.+-]+@[\w-]+\.[\w.]+)/gi;
 
@@ -212,6 +220,15 @@ export function DotSeekAssistant() {
   const ask = async (text: string, intent?: Intent) => {
     const question = text.trim();
     if (!question || busy) return;
+
+    // A pasted website or app link starts the reference analysis, as if "Have a reference website or app?" was chosen.
+    const link = !intent && !enquiryState ? linkIn(question) : null;
+    if (link) {
+      setSuggestions([]);
+      setOpen(true);
+      enquiry.referenceFromChat(link);
+      return;
+    }
 
     if (offline) {
       const botMessageId = nextId.current++;

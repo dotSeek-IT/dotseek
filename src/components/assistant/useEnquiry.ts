@@ -289,9 +289,10 @@ export function useEnquiry({
   };
 
   /** Analyse the pasted reference, then continue with business and budget questions. */
-  const submitReference = async (url: string) => {
-    if (!state) return;
-    userSay(url);
+  const submitReference = async (url: string, from: EnquiryState | null = state, opts: { quiet?: boolean } = {}) => {
+    if (!from) return;
+    const state = from; // the enquiry being continued (a fresh one when the link came from the normal chat)
+    if (!opts.quiet) userSay(url);
     setState({ ...state, phase: "analysing" });
     try {
       const response = await fetch("/api/reference", {
@@ -312,6 +313,15 @@ export function useEnquiry({
       botSay(`${error instanceof Error ? error.message : "We couldn't analyse that link."} You can try another link, or continue without a reference.`);
       setState({ ...state, phase: "reference" });
     }
+  };
+
+  /** A link pasted into the normal chat: treat it as a reference and analyse it straight away. */
+  const referenceFromChat = (url: string) => {
+    userSay(url);
+    botSay(
+      "Thanks, I'll use that link as a reference: I'll look at the publicly visible page to understand the layout style, features and likely complexity, then estimate a similar solution and cheaper options. DotSeek builds an original solution with your own branding and content; we never copy another site.",
+    );
+    void submitReference(url, { ...fresh(), phase: "reference" }, { quiet: true });
   };
 
   /** Continue the normal consultation without a reference. */
@@ -511,6 +521,7 @@ export function useEnquiry({
     makeCheaper,
     startReference,
     submitReference,
+    referenceFromChat,
     skipReference,
     offer,
     setContact,
