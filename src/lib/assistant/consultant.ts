@@ -8,7 +8,7 @@ import { ITEM_IDS, itemById, tierById } from "@/content/pricing";
 import type { Plan } from "@/lib/plan/build";
 import { REFERENCE_FEATURE_IDS, type ReferenceAnalysis, type ReferenceFeature } from "@/lib/plan/reference";
 import type { ReferenceSignals } from "@/lib/reference/analyse";
-import { FALLBACK, MODEL } from "./http";
+import { anthropicClient, FALLBACK, MODEL } from "./http";
 import { SYSTEM_PROMPT } from "./systemPrompt";
 
 /**
@@ -51,7 +51,7 @@ const system: Anthropic.Beta.BetaTextBlockParam[] = [
 ];
 
 export async function recommendSolution(problem: string): Promise<Recommendation | null> {
-  const client = new Anthropic();
+  const client = anthropicClient();
   const response = await client.beta.messages.parse({
     model: MODEL,
     max_tokens: 4000,
@@ -98,7 +98,7 @@ export async function summariseEnquiry(
     ? `\n\nEarlier chat with the visitor:\n${transcript.map((t) => `${t.role}: ${t.content}`).join("\n")}`
     : "";
 
-  const client = new Anthropic();
+  const client = anthropicClient();
   const response = await client.beta.messages.parse({
     model: MODEL,
     max_tokens: 6000,
@@ -138,7 +138,7 @@ const ReferenceOut = z.object({
  * suggest copying the reference.
  */
 export async function analyseReferenceWithAI(signals: ReferenceSignals): Promise<Omit<ReferenceAnalysis, "url" | "host" | "title" | "services" | "evidence" | "responsive" | "source"> | null> {
-  const client = new Anthropic();
+  const client = anthropicClient();
   const response = await client.beta.messages.parse({
     model: MODEL,
     max_tokens: 4000,

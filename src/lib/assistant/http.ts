@@ -10,6 +10,15 @@ export const FALLBACK = { betas: ["server-side-fallback-2026-07-01"], fallbacks:
 
 export const aiConfigured = () => Boolean(process.env.ANTHROPIC_API_KEY);
 
+/**
+ * Anthropic client. Keys created outside a workspace must name one, so
+ * ANTHROPIC_WORKSPACE_ID (optional) is sent as the anthropic-workspace-id header.
+ */
+export function anthropicClient(): Anthropic {
+  const workspace = process.env.ANTHROPIC_WORKSPACE_ID?.trim();
+  return new Anthropic(workspace ? { defaultHeaders: { "anthropic-workspace-id": workspace } } : {});
+}
+
 /** Rejects cross-site calls: only this site's own pages may use the APIs. */
 export function sameOrigin(request: Request): boolean {
   const origin = request.headers.get("origin");

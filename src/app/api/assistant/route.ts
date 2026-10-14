@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { SYSTEM_PROMPT } from "@/lib/assistant/systemPrompt";
 import {
+  anthropicClient,
   FALLBACK,
   MODEL,
   aiConfigured,
@@ -79,7 +80,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const client = new Anthropic();
+  const client = anthropicClient();
   const encoder = new TextEncoder();
 
   const claude = client.beta.messages.stream({

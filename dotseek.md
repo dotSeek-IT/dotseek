@@ -258,7 +258,7 @@ a clone of the reference. See `DESIGN.md` for the full system.
 - [ ] Set `ADMIN_PASSWORD` (and optionally `ADMIN_SECRET`) in Vercel to enable the `/admin` inbox.
 - [ ] **Confirm the price catalogue before launch** (`src/content/pricing.ts`): item price ranges, scope multipliers, overhead shares, infrastructure monthly ranges, maintenance, market multipliers and exchange rates, and provider cost factors are DotSeek's starting assumptions. Update `pricingMeta.reviewed` and `marketMeta` whenever they change.
 - [ ] Decide whether to run a new customer offer (`/admin/offers`; off by default).
-- [ ] Set `ANTHROPIC_API_KEY` in production (without it the chat uses offline answers), and set a spend limit in the Anthropic Console.
+- [ ] Set `ANTHROPIC_API_KEY` in production (without it the chat uses offline answers; use a workspace key, or also set `ANTHROPIC_WORKSPACE_ID`), and set a spend limit in the Anthropic Console.
 - [ ] Set SMTP credentials (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, optional `ENQUIRY_TO`/`ENQUIRY_FROM`) so chat enquiries are emailed.
 - [x] Hosting: Vercel project `dotseek` in the `dotseek` team (https://dotseek-mu.vercel.app). Static-only hosting such as GitHub Pages no longer works.
 - [ ] Verify `www.dotseek.co.uk` and `dotseek.co.uk` in Vercel (TXT records at `_vercel` in GoDaddy DNS), then remove them from the old Vercel account.

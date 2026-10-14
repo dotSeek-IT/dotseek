@@ -33,7 +33,7 @@ This file covers *how to build it*.
 - **Fonts:** `next/font/google` for Ubuntu and Ubuntu Mono, exposed as `--font-ubuntu` / `--font-ubuntu-mono`.
 - **No UI or animation libraries.** Icons are inline SVG in `common/Icon.tsx`. Motion is CSS plus IntersectionObserver.
 - Scripts: `npm run dev` (port from `.claude/launch.json`: 3100), `npm run build`, `npm run lint`, `npm run typecheck`, `npm start` (`next start`). Copy `.env.example` to `.env.local` for the settings below.
-- **Environment:** `ANTHROPIC_API_KEY` (AI chat, recommendation, brief); `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `ENQUIRY_TO`, `ENQUIRY_FROM` (email); `KV_REST_API_URL` + `KV_REST_API_TOKEN` or `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` (enquiry storage); `ADMIN_PASSWORD` and optional `ADMIN_SECRET` (team inbox); optional `SITE_URL` (origin used in emailed links, e.g. `http://localhost:3100` locally); `ENQUIRY_DRY_RUN=1` (log emails instead of sending). Never commit real values.
+- **Environment:** `ANTHROPIC_API_KEY` (AI chat, recommendation, brief) and optional `ANTHROPIC_WORKSPACE_ID` (only for keys not created inside a workspace); `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `ENQUIRY_TO`, `ENQUIRY_FROM` (email); `KV_REST_API_URL` + `KV_REST_API_TOKEN` or `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` (enquiry storage); `ADMIN_PASSWORD` and optional `ADMIN_SECRET` (team inbox); optional `SITE_URL` (origin used in emailed links, e.g. `http://localhost:3100` locally); `ENQUIRY_DRY_RUN=1` (log emails instead of sending). Never commit real values.
 
 ## Folder architecture
 
