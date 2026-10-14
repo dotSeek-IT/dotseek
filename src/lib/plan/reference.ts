@@ -1,4 +1,4 @@
-import type { Answers } from "@/content/enquiryFlows";
+import { APP_HYBRID, APP_MANAGED, APP_NATIVE, type Answers } from "@/content/enquiryFlows";
 import { buildPlan, chooseTier, fitToBudget, isCoreItem, leanPhaseOneChoices, toggleChoice, type Plan, type PlanChoices } from "./build";
 import { REFERENCE_FEATURES, REFERENCE_FEATURE_IDS, type ReferenceAnalysis, type ReferenceFeature } from "./referenceFeatures";
 
@@ -180,7 +180,10 @@ function leanerApp(answers: Answers, mvp: boolean): Answers {
   return {
     ...answers,
     app_features: (kept.length ? kept : features.slice(0, 1)).join(", "),
-    ...(mvp && answers.app_os === "iPhone and Android" ? { app_os: "iPhone (iOS) only" } : {}),
+    // One platform first; a hybrid (or undecided) app stays hybrid so the other platform follows from the same code.
+    ...(mvp && answers.app_os === "iPhone and Android"
+      ? { app_os: "iPhone (iOS) only", ...(answers.app_build === APP_NATIVE ? {} : { app_build: APP_HYBRID }) }
+      : {}),
   };
 }
 
@@ -203,6 +206,31 @@ function basicAnswers(answers: Answers): Answers {
     web_design: "We need a new design",
     web_backend: "Nothing beyond the website",
     web_integrations: "None",
+  };
+}
+
+/** The smallest real app: one platform first, sign-up plus the single most important feature, on a managed backend. */
+function basicAppAnswers(answers: Answers): Answers {
+  const lean = leanerApp(answers, true);
+  const features = (lean.app_features ?? "").split(", ").filter(Boolean);
+  return {
+    ...lean,
+    app_features: (features.includes("User accounts and login") ? ["User accounts and login"] : features.slice(0, 1)).join(", "),
+    app_backend: APP_MANAGED,
+    // Customers only: no staff portal, integrations, automation or real-time features in the first version.
+    sw_user_types: "Customers",
+    sw_features: "Login and user accounts, Mobile app",
+    sw_integrations: "None",
+    sw_automation: "No",
+    ops_users: "Under 500",
+    ops_staff: "1 to 5",
+    ops_files: "No files",
+    ops_realtime: "No, that's not needed",
+    ops_security: "Standard security is fine",
+    ops_growth: "About the same",
+    ...(lean.app_os === "iPhone and Android" || lean.app_os === "Not sure, please advise"
+      ? { app_os: "iPhone (iOS) only", ...(lean.app_build === APP_NATIVE ? {} : { app_build: APP_HYBRID }) }
+      : {}),
   };
 }
 
@@ -232,8 +260,13 @@ export function costOptions(answers: Answers, full: PlanChoices): CostOption[] {
 
   const simple = ["website", "software"].includes(fullPlan.solution);
   const appFirst = isCoreItem(answers, "mobile_app");
-  const basicA = simple ? basicAnswers(answers) : undefined;
-  const basic = simple ? { provider: full.provider } : fitToBudget(answers, mvp, 0).choices;
+  // An app reference stays an app: Basic is the smallest real mobile app, never a website instead.
+  const basicA = appFirst ? basicAppAnswers(answers) : simple ? basicAnswers(answers) : undefined;
+  const basic = appFirst
+    ? fitToBudget(basicA!, leanPhaseOneChoices(basicA!, { scopes: {}, provider: full.provider }), 0).choices
+    : simple
+      ? { provider: full.provider }
+      : fitToBudget(answers, mvp, 0).choices;
   const basicPlan = buildPlan(basicA ?? answers, basic);
 
   const appNotes = (to: Answers, later: boolean) =>
@@ -280,16 +313,24 @@ export function costOptions(answers: Answers, full: PlanChoices): CostOption[] {
       id: "basic",
       name: "Basic",
       scope: appFirst
-        ? "A simple website to present your app idea and collect sign-ups before building the app."
+        ? "The smallest real version of the app: one platform first, sign-up and the core feature, ready to grow."
         : simple
           ? "A small responsive website with a similar design direction, static content and a contact form."
           : "The smallest useful pilot.",
       keep: appFirst
-        ? ["Website presenting your app idea", "Similar design direction", "Sign-up interest form", "Contact form"]
+        ? [basicPlan.services.find((x) => x.id === "mobile_app")?.label ?? "Mobile app", "Similar design direction", "Sign-up and sign-in", "Core app feature"]
         : simple
           ? ["Small responsive website", "Similar design direction", "Static content", "Contact form"]
           : productLabels(basicPlan),
-      simplify: appFirst ? ["The app itself follows in a later phase"] : simple ? ["No advanced backend, portal or integrations"] : removed(fullPlan, basicPlan),
+      simplify: appFirst
+        ? [
+            "Custom backend replaced by Firebase or Supabase",
+            ...appNotes(basicA!, true),
+            ...removed(fullPlan, basicPlan)
+              .filter((l) => !/^Backend|^Authentication/.test(l))
+              .map((l) => `${l} (later)`),
+          ]
+        : simple ? ["No advanced backend, portal or integrations"] : removed(fullPlan, basicPlan),
       plan: basicPlan,
       apply: { choices: basic, answers: basicA },
     },

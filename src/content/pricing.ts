@@ -95,7 +95,8 @@ export const planItems: PlanItem[] = [
   { id: "payments", label: "Payment gateway", group: "product", days: 3, price: [80, 250], summary: "Stripe or PayPal payments, refunds and receipts (transaction fees extra).", diagram: { layer: "external", node: "Payments" } },
   { id: "multilang", label: "Multi-language", group: "product", days: 3, price: [100, 400], summary: "Translated content and language switching." },
   { id: "analytics", label: "Advanced analytics & dashboards", group: "product", days: 8, price: [300, 1000], monthly: [0, 30], summary: "Dashboards and reports on the data that matters." },
-  { id: "mobile_app", label: "Mobile app (iOS & Android)", group: "product", days: 24, price: [1200, 3500], monthly: [8, 10], summary: "Cross-platform app, store accounts included in running costs.", monthlyLabel: "App store developer accounts", diagram: { layer: "client", node: "Mobile app" } },
+  { id: "mobile_app", label: "Mobile app (iOS & Android)", group: "product", days: 24, price: [1200, 3500], monthly: [8, 10], summary: "Native-quality iOS and Android app built cross-platform with Flutter or React Native; store accounts in running costs.", monthlyLabel: "App store developer accounts", diagram: { layer: "client", node: "Mobile app" } },
+  { id: "managed_backend", label: "Managed backend (Firebase or Supabase)", group: "product", days: 4, price: [200, 600], monthly: [0, 25], summary: "Hosted sign-in, database, storage and push notifications on Firebase or Supabase: no custom server to build or run.", diagram: { layer: "service", node: "Firebase / Supabase" } },
   { id: "data_pipeline", label: "Data pipeline & warehouse", group: "product", days: 10, price: [500, 2000], monthly: T([10, 40], [40, 150], [150, 500], [500, 1500]), summary: "Collects and models data from your systems for reporting.", onlyFor: ["data", "software"], diagram: { layer: "data", node: "Data warehouse" } },
 
   // ---------- AI ----------

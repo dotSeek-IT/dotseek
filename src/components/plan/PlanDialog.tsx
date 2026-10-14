@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { groupLabels, INFRA_GROUPS, marketMeta, pricingMeta, stageById, stages, type ItemGroup } from "@/content/pricing";
 import type { OfferQuote } from "@/lib/plan/offer";
 import { chooseTier, setScope, toggleChoice, type Plan, type PlanChoices, type ServiceView } from "@/lib/plan/build";
+import { solutionHeadline } from "@/lib/plan/headline";
 import type { ScopeId } from "@/content/pricing";
 import { gbp, gbpRange, moneyRange, perMonth, ratingLabel, weeks } from "@/lib/plan/format";
 import { Icon } from "@/components/common/Icon";
@@ -617,7 +618,7 @@ export function PlanDialog(props: PlanDialogProps) {
         {quoteOpen && (
           <QuotationView
             plan={plan}
-            title={brief?.title || `${props.solutionTitle} plan`}
+            title={brief?.title || `${solutionHeadline(plan, props.solutionTitle).name} plan`}
             solutionTitle={props.solutionTitle}
             overview={brief?.overview}
             contact={props.contact}

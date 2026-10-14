@@ -101,6 +101,12 @@ const wantsMobile = (a: Answers) =>
 const webAndMobile = (a: Answers) =>
   a.sw_type === BUILD_BOTH || a.sw_platform === PLATFORM_BOTH || includes(a.web_need, WEBSITE_WITH_APP);
 
+export const APP_HYBRID = "Hybrid: one app for both (Flutter or React Native)";
+export const APP_NATIVE = "Native: Swift for iPhone and Kotlin for Android";
+/** Set by the Basic app version: hosted sign-in, database and push instead of a custom backend. */
+export const APP_MANAGED = "Managed backend (Firebase or Supabase)";
+const bothPlatforms = (a: Answers) => ["iPhone and Android", "Not sure, please advise"].includes(a.app_os ?? "");
+
 /** Mobile app questions, shared by the software and website flows. */
 const mobileSteps: EnquiryStep[] = [
   {
@@ -110,6 +116,14 @@ const mobileSteps: EnquiryStep[] = [
     kind: "choice",
     options: ["iPhone and Android", "iPhone (iOS) only", "Android only", "Not sure, please advise"],
     when: wantsMobile,
+  },
+  {
+    id: "app_build",
+    label: "App technology",
+    question: "How should the app be built? Hybrid is one shared codebase; native means a separate app for each platform.",
+    kind: "choice",
+    options: [APP_HYBRID, APP_NATIVE, "Not sure, please advise"],
+    when: (a) => wantsMobile(a) && bothPlatforms(a),
   },
   {
     id: "app_features",
@@ -752,6 +766,11 @@ export function validateAnswers(input: unknown): Answers | null {
     if (!value && !step.optional) return null;
     answers[step.id] = value.slice(0, step.maxLength ?? (step.kind === "longtext" ? 1500 : 400));
   }
+  // Choices made in the estimate (not chat questions): the app's technology and the Basic app's managed backend.
+  if (answers.app_os) {
+    if (typeof raw.app_build === "string" && [APP_HYBRID, APP_NATIVE].includes(raw.app_build)) answers.app_build = raw.app_build;
+    if (raw.app_backend === APP_MANAGED) answers.app_backend = APP_MANAGED;
+  }
   if (!answers.email || !EMAIL.test(answers.email)) return null;
   if (!solutionOf(answers)) return null;
   return answers;
@@ -759,7 +778,16 @@ export function validateAnswers(input: unknown): Answers | null {
 
 /** Label/value rows for summaries, emails and the admin view. */
 export function answerRows(answers: Answers): { id: string; label: string; value: string }[] {
-  return stepsFor(answers)
+  const asked = stepsFor(answers);
+  const extra = [
+    ...(answers.app_build && !asked.some((s) => s.id === "app_build") ? [{ id: "app_build", label: "App technology", value: answers.app_build }] : []),
+    ...(answers.app_backend ? [{ id: "app_backend", label: "App backend", value: answers.app_backend }] : []),
+  ];
+  return [...rowsFor(asked, answers), ...extra];
+}
+
+function rowsFor(steps: EnquiryStep[], answers: Answers): { id: string; label: string; value: string }[] {
+  return steps
     .filter((s) => answers[s.id])
     .map((s) => {
       if (s.id !== "solution") return { id: s.id, label: s.label, value: answers[s.id] };

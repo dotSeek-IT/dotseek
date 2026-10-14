@@ -10,7 +10,9 @@ import { sanitizeReference } from "@/lib/plan/referenceFeatures";
 import { emailHtml, escapeHtml, mailConfigured, sendMail, siteOrigin, teamInbox } from "@/lib/mail";
 import { buildPlan, sanitizeChoices } from "@/lib/plan/build";
 import { gbp } from "@/lib/plan/format";
-import { planReportBody, planReportText } from "@/lib/plan/report";
+import { planReportText } from "@/lib/plan/report";
+import { quotationEmailHtml } from "@/lib/plan/quotationEmail";
+import { solutionHeadline } from "@/lib/plan/headline";
 
 /**
  * POST /api/enquiry
@@ -58,6 +60,9 @@ function summaryHtml(summary?: EnquirySummary): string {
 <p style="margin:4px 0"><b>Recommended:</b> ${escapeHtml(summary.recommendedSolution)}</p>
 <p>${escapeHtml(summary.overview)}</p>${list("Suggested features", summary.suggestedFeatures)}${list("Suggested technology", summary.suggestedTechnology)}${list("Questions to clarify", summary.openQuestions)}</div>`;
 }
+
+/** "Hybrid mobile app (iPhone first)" -> "hybrid mobile app (iPhone first)" (keeps brand casing). */
+const lowerFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
 
 export async function POST(request: Request) {
   if (!sameOrigin(request)) return Response.json({ error: "Forbidden." }, { status: 403 });
@@ -123,6 +128,26 @@ export async function POST(request: Request) {
   const adminLink = enquiry ? `${origin}/admin/enquiries/${enquiry.id}` : null;
   const ref = enquiry?.ref ?? "";
 
+  // The quotation document (same layout as the on-screen quotation) for both emails.
+  const quotation = (extra: {
+    intro?: string;
+    after?: string;
+    cta?: { label: string; href: string };
+    requote?: { enquiryHref: string; freshHref: string };
+    offer?: typeof offer;
+  }) =>
+    quotationEmailHtml({
+      plan,
+      title: summary?.title || `${solutionHeadline(plan, solution?.title ?? "Project").name} plan`,
+      solutionTitle: solution?.title ?? "Project",
+      overview: summary?.overview,
+      contact: { name: answers.name, email: answers.email, company: answers.company },
+      ref: ref || undefined,
+      negotiation,
+      reference,
+      ...extra,
+    });
+
   // ---------- Team notification ----------
   const rowsText = rows.map((r) => `${r.label}: ${r.value}`).join("\n");
   const rowsHtml = `<table style="border-collapse:collapse">${rows
@@ -141,16 +166,19 @@ export async function POST(request: Request) {
     replyTo: { name: answers.name, address: answers.email },
     subject,
     text: `New enquiry from the DotSeek website${ref ? ` (${ref})` : ""}${consultation ? "\nThe customer requested a consultation call." : ""}${reference ? `\nReference: ${reference.url}` : ""}${negotiation ? `\nPreferred budget: ${negotiation.preferredBudget ? gbp(negotiation.preferredBudget) : "not given"}${negotiation.note ? ` (${negotiation.note})` : ""}` : ""}${offer ? `\nOffer: ${offer.label} from ${gbp(offer.price)} (${offer.eligible ? "first enquiry from this email" : "not eligible: email has enquired before"})` : ""}\n${adminLink ? `Open in admin: ${adminLink}\n` : ""}${summaryText(summary)}\n${planReportText(report)}\n\nAnswers\n${rowsText}\n${transcriptText}`,
-    html: emailHtml(
-      `New ${solution?.title ?? "project"} enquiry${ref ? ` (${ref})` : ""}`,
-      `${consultation ? `<p style="background:#ecf15e;color:#0b0c10;padding:8px 12px;border-radius:8px;display:inline-block"><b>Consultation call requested</b></p>` : ""}${adminLink ? `<p><a href="${adminLink}">Open this enquiry in the admin inbox</a></p>` : ""}${summaryHtml(summary)}${planReportBody({ ...report, ref })}<h3 style="font-weight:normal">Answers</h3>${rowsHtml}${
+    html: quotation({
+      offer,
+      intro: `<p style="margin:0 0 8px;font-size:18px;color:#ffffff">New ${escapeHtml(solution?.title ?? "project")} enquiry${ref ? ` (${escapeHtml(ref)})` : ""}</p>${
+        consultation ? `<p style="margin:0 0 8px"><span style="background:#ecf15e;color:#0b0c10;padding:4px 10px;border-radius:999px;font-size:13px"><b>Consultation call requested</b></span></p>` : ""
+      }${adminLink ? `<p style="margin:0"><a href="${adminLink}" style="color:#ecf15e">Open this enquiry in the admin inbox</a></p>` : ""}`,
+      after: `${summaryHtml(summary)}<h3 style="font-weight:normal;margin:0 0 8px">Answers</h3>${rowsHtml}${
         transcript.length
           ? `<h3 style="font-weight:normal">Chat before the enquiry</h3>${transcript
               .map((t) => `<p><b>${t.role === "user" ? "Visitor" : "Assistant"}:</b> ${escapeHtml(t.content)}</p>`)
               .join("")}`
           : ""
       }`,
-    ),
+    }),
   });
 
   // Not stored and not emailed: let the visitor send it themselves.
@@ -165,12 +193,16 @@ export async function POST(request: Request) {
       replyTo: { name: site.name, address: teamInbox() },
       subject: `We've received your enquiry (${ref})`,
       text: `Hi ${answers.name},\n\nThank you for your enquiry about ${solution?.title.toLowerCase() ?? "your project"}. Your reference is ${ref}.${consultation ? " We'll be in touch to arrange your consultation call." : ""}\n\nYou can view your enquiry and continue the conversation with our team here:\n${customerLink}\n\nKeep this link private: anyone with it can view your enquiry.\n\n${emailCopy ? `${planReportText(report)}\n\n` : ""}${site.name}`,
-      html: emailHtml(
-        "We've received your enquiry",
-        `<p>Hi ${escapeHtml(answers.name)},</p><p>Thank you for your enquiry about ${escapeHtml(solution?.title.toLowerCase() ?? "your project")}. Your reference is <b>${escapeHtml(ref)}</b>.${consultation ? " We'll be in touch to arrange your consultation call." : ""}</p><p><a href="${customerLink}" style="display:inline-block;background:#ecf15e;color:#0b0c10;padding:10px 16px;border-radius:8px;text-decoration:none">View your enquiry and reply</a></p><p style="font-size:13px;color:#555">Keep this link private: anyone with it can view your enquiry.</p>${
-          emailCopy ? `<hr style="border:0;border-top:1px solid #e3e4e6;margin:28px 0">${planReportBody({ ...report, ref, offer: offer?.eligible ? offer : undefined })}` : ""
-        }`,
-      ),
+      html: emailCopy
+        ? quotation({
+            offer: offer?.eligible ? offer : undefined,
+            requote: { enquiryHref: customerLink, freshHref: `${origin}/?quote=new` },
+            intro: `<p style="margin:0 0 8px">Hi ${escapeHtml(answers.name)},</p><p style="margin:0 0 8px">Thank you for your enquiry about your ${escapeHtml(lowerFirst(solutionHeadline(plan, solution?.title ?? "project").name))}. Your reference is <b style="color:#ecf15e">${escapeHtml(ref)}</b>.${consultation ? " We'll be in touch to arrange your consultation call." : ""} Your quotation is below.</p><p style="margin:0;font-size:13px;color:#a3a3a3">Keep your enquiry link private: anyone with it can view your enquiry.</p>`,
+          })
+        : emailHtml(
+            "We've received your enquiry",
+            `<p>Hi ${escapeHtml(answers.name)},</p><p>Thank you for your enquiry about ${escapeHtml(solution?.title.toLowerCase() ?? "your project")}. Your reference is <b>${escapeHtml(ref)}</b>.${consultation ? " We'll be in touch to arrange your consultation call." : ""}</p><p><a href="${customerLink}" style="display:inline-block;background:#ecf15e;color:#0b0c10;padding:10px 16px;border-radius:8px;text-decoration:none">View your enquiry and reply</a></p><p style="font-size:13px;color:#555">Keep this link private: anyone with it can view your enquiry.</p>`,
+          ),
     });
   }
 

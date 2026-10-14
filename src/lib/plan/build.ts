@@ -147,7 +147,7 @@ const LOCKED = new Set(["discovery", "hosting", "encryption"]);
 function coreFor(s: Signals): Set<string> {
   const anchor: Record<Signals["solution"], string[]> = {
     website: ["frontend"],
-    software: ["backend"],
+    software: s.managedBackend ? [] : ["backend"],
     ai_agent: ["ai_agent"],
     ai_chatbot: ["ai_chatbot"],
     automation: ["automation"],
@@ -248,9 +248,11 @@ function tierInfra(tier: TierId, s: Signals, req: Requirements): string[] {
 }
 
 function withDependencies(set: Set<string>, s: Signals) {
-  const needsBackend = ["auth", "admin", "ecommerce", "bookings", "mobile_app"].some((id) => set.has(id));
+  // A managed backend (Firebase / Supabase) covers sign-in, data and push for a simple app.
+  const managed = s.managedBackend && set.has("managed_backend");
+  const needsBackend = (managed ? ["admin", "ecommerce", "bookings"] : ["auth", "admin", "ecommerce", "bookings", "mobile_app"]).some((id) => set.has(id));
   if (needsBackend && (s.solution === "website" || s.solution === "software")) set.add("backend");
-  if (["backend", "auth", "admin", "ecommerce", "bookings", "ai_agent", "automation", "data_pipeline"].some((id) => set.has(id))) {
+  if ((managed ? ["backend", "admin", "ecommerce", "bookings", "ai_agent", "automation", "data_pipeline"] : ["backend", "auth", "admin", "ecommerce", "bookings", "ai_agent", "automation", "data_pipeline"]).some((id) => set.has(id))) {
     set.add("sql_db");
     set.add("backup");
   }
@@ -259,7 +261,7 @@ function withDependencies(set: Set<string>, s: Signals) {
   if (set.has("autoscaling")) set.add("load_balancer");
   if (set.has("kubernetes")) set.add("docker");
   if (set.has("ecommerce")) set.add("payments");
-  if (set.has("mobile_app") && set.has("inapp") === false && set.has("push") === false) set.add("push");
+  if (set.has("mobile_app") && !managed && set.has("inapp") === false && set.has("push") === false) set.add("push");
   // Push notifications belong to the mobile app; they go (and come back) with it.
   if (!set.has("mobile_app")) set.delete("push");
 }
@@ -592,9 +594,9 @@ export function buildPlan(answers: Answers, choices: PlanChoices = {}): Plan {
     const setup = (id: ScopeId) => roundMoney(itemPrice(item, id, s, req)[1]);
     return {
       id: item.id,
-      label: item.label,
+      label: req.labels[item.id] ?? item.label,
       group: item.group,
-      summary: item.summary,
+      summary: req.summaries[item.id] ?? item.summary,
       selected,
       locked: LOCKED.has(item.id),
       status,

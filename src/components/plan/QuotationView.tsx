@@ -6,6 +6,7 @@ import { quotationNotice } from "@/content/pricing";
 import { site } from "@/content/site";
 import type { Plan } from "@/lib/plan/build";
 import { gbp, perMonth, weeks } from "@/lib/plan/format";
+import { solutionHeadline } from "@/lib/plan/headline";
 import type { OfferQuote } from "@/lib/plan/offer";
 import type { ReferenceAnalysis } from "@/lib/plan/referenceFeatures";
 import { Icon } from "@/components/common/Icon";
@@ -157,7 +158,7 @@ function Quotation({
   const work = plan.lines.filter((l) => !["testing", "deployment", "management"].includes(l.id));
   const overhead = plan.lines.filter((l) => ["testing", "deployment", "management"].includes(l.id));
   const description = (id: string) => plan.services.find((s) => s.id === id)?.summary ?? "";
-  const architecture = plan.tiers.find((t) => t.current)?.name;
+  const headline = solutionHeadline(plan, solutionTitle);
 
   return (
     <div className={styles.scroll}>
@@ -221,10 +222,8 @@ function Quotation({
           </div>
           <div>
             <p className={styles.label}>Solution</p>
-            <p className={styles.strong}>{solutionTitle}</p>
-            <p>
-              {plan.stageInfo.name} stage · {architecture} architecture
-            </p>
+            <p className={styles.strong}>{headline.name}</p>
+            <p>{headline.detail}</p>
           </div>
         </section>
 

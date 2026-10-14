@@ -1,4 +1,4 @@
-import { includes, solutionOf, type Answers } from "@/content/enquiryFlows";
+import { APP_MANAGED, includes, solutionOf, type Answers } from "@/content/enquiryFlows";
 import type { SolutionId } from "@/content/solutions";
 import type { PackageFamily } from "@/content/pricing";
 
@@ -33,6 +33,8 @@ export type Signals = {
   bizSize: number;
   /** The product is a mobile app only (no web app): the app is the core. */
   mobileOnly: boolean;
+  /** A mobile-only app on Firebase / Supabase instead of a custom backend (Basic app version). */
+  managedBackend: boolean;
 };
 
 const BUDGETS: Record<string, [number, number]> = {
@@ -88,6 +90,7 @@ export function readSignals(answers: Answers): Signals {
     bizStage: pick(answers.biz_stage, { "New business or idea": 0, "Established business": 1, "Growing and scaling": 2 }, 1),
     bizSize,
     mobileOnly: solution === "software" && (answers.sw_type === "A mobile app (iOS / Android)" || answers.sw_platform === "Mobile (iOS / Android)"),
+    managedBackend: answers.app_backend === APP_MANAGED,
     usersTier: pick(answers.ops_users, { "Under 500": 0, "500 to 5,000": 1, "5,000 to 50,000": 2, "Over 50,000": 3 }, answers.ops_users ? 1 : 0),
     staffTier: pick(answers.ops_staff, { "1 to 5": 0, "6 to 25": 1, "26 to 100": 2, "Over 100": 3 }, Math.max(0, bizSize - 1)),
     regions: pick(

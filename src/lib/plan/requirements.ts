@@ -1,4 +1,4 @@
-import { includes, isSimpleSite, type Answers } from "@/content/enquiryFlows";
+import { APP_HYBRID, APP_NATIVE, includes, isSimpleSite, type Answers } from "@/content/enquiryFlows";
 import type { ScopeId } from "@/content/pricing";
 import type { Signals } from "./signals";
 
@@ -20,6 +20,8 @@ export type Requirements = {
   defaultScopes: Record<string, ScopeId>;
   /** Line labels that depend on the answers (e.g. a single-platform app). */
   labels: Record<string, string>;
+  /** Item descriptions that depend on the answers (e.g. the app's technology). */
+  summaries: Record<string, string>;
 };
 
 const SYSTEM_ITEMS: Record<string, string | null> = {
@@ -200,17 +202,22 @@ export function readRequirements(answers: Answers, s: Signals): Requirements {
 
   // Mobile app details (software flow, or website + companion app).
   if (items.has("mobile_app")) {
+    // Basic app version: Firebase / Supabase provide sign-in, data and push, so no custom server.
+    const managed = s.managedBackend;
     if (["iPhone (iOS) only", "Android only"].includes(answers.app_os ?? "")) dayAdjust.mobile_app = -6;
+    // Native on both platforms means two separate apps (Swift and Kotlin): about two thirds more work.
+    else if (answers.app_build === APP_NATIVE) dayAdjust.mobile_app = 16;
     const f = answers.app_features;
-    if (includes(f, "User accounts and login")) add("auth", "backend");
-    if (includes(f, "Push notifications")) add("push");
+    if (includes(f, "User accounts and login")) add(...(managed ? ["managed_backend"] : ["auth", "backend"]));
+    if (includes(f, "Push notifications") && !managed) add("push");
     if (includes(f, "In-app payments or subscriptions")) add("payments");
     if (includes(f, "Bookings or orders")) add("bookings");
     if (includes(f, "Camera, photos or scanning")) add("image_storage", "file_storage");
     if (includes(f, "Chat or messaging")) add("realtime", "inapp");
     const extra = (includes(f, "Maps and location") ? 3 : 0) + (includes(f, "Works offline") ? 5 : 0) + (includes(f, "Chat or messaging") ? 4 : 0);
     dayAdjust.mobile_app = (dayAdjust.mobile_app ?? 0) + extra;
-    if (!items.has("frontend") && !items.has("admin")) add("backend");
+    if (!items.has("frontend") && !items.has("admin")) add(managed ? "managed_backend" : "backend");
+    if (managed && !items.has("frontend") && !items.has("admin")) ["backend", "auth"].forEach((id) => items.delete(id));
   }
 
   // Scale & operations answers.
@@ -224,9 +231,11 @@ export function readRequirements(answers: Answers, s: Signals): Requirements {
   if (s.staffTier >= 1 && items.has("admin")) add("rbac");
 
   // Anything with a backend keeps data in a database, with backups and email.
-  const needsData = ["backend", "auth", "admin", "ecommerce", "bookings", "ai_agent", "automation", "data_pipeline", "mobile_app"].some((id) =>
-    items.has(id),
-  );
+  const needsData = (
+    items.has("managed_backend")
+      ? ["backend", "admin", "ecommerce", "bookings", "ai_agent", "automation", "data_pipeline"]
+      : ["backend", "auth", "admin", "ecommerce", "bookings", "ai_agent", "automation", "data_pipeline", "mobile_app"]
+  ).some((id) => items.has(id));
   if (needsData) add("sql_db", "backup", "email_service");
   if (items.has("ecommerce") || items.has("bookings") || items.has("auth")) add("email_service");
 
@@ -250,8 +259,26 @@ export function readRequirements(answers: Answers, s: Signals): Requirements {
   if (parts(answers.web_features).length >= 5) advanced("frontend");
 
   const labels: Record<string, string> = {};
-  if (answers.app_os === "iPhone (iOS) only") labels.mobile_app = "Mobile app (iPhone first)";
-  if (answers.app_os === "Android only") labels.mobile_app = "Mobile app (Android first)";
+  const summaries: Record<string, string> = {};
+  const store = "Store developer accounts are in the running costs.";
+  if (answers.app_build === APP_HYBRID && ["iPhone (iOS) only", "Android only"].includes(answers.app_os ?? "")) {
+    // A hybrid app launched on one platform first: the other follows from the same code.
+    const first = answers.app_os === "Android only" ? "Android" : "iPhone";
+    labels.mobile_app = `Hybrid mobile app (${first} first)`;
+    summaries.mobile_app = `One Flutter or React Native codebase, released on ${first} first; ${first === "iPhone" ? "Android" : "iPhone"} can follow from the same code. ${store}`;
+  } else if (answers.app_os === "iPhone (iOS) only") {
+    labels.mobile_app = "Native iPhone app (Swift)";
+    summaries.mobile_app = `Native iOS app built in Swift and SwiftUI. ${store}`;
+  } else if (answers.app_os === "Android only") {
+    labels.mobile_app = "Native Android app (Kotlin)";
+    summaries.mobile_app = `Native Android app built in Kotlin and Jetpack Compose. ${store}`;
+  } else if (answers.app_build === APP_NATIVE) {
+    labels.mobile_app = "Native iOS and Android apps (Swift + Kotlin)";
+    summaries.mobile_app = `Two native apps: Swift and SwiftUI for iPhone, Kotlin and Jetpack Compose for Android. ${store}`;
+  } else {
+    labels.mobile_app = "Hybrid mobile app (iOS & Android)";
+    summaries.mobile_app = `One cross-platform app for iPhone and Android, built with Flutter or React Native. ${store}`;
+  }
 
-  return { items, dayAdjust, usageFactor, backgroundTasks: [...new Set(background)], defaultScopes, labels };
+  return { items, dayAdjust, usageFactor, backgroundTasks: [...new Set(background)], defaultScopes, labels, summaries };
 }

@@ -376,6 +376,15 @@ export function DotSeekAssistant() {
     return () => window.removeEventListener(START_ENQUIRY_EVENT, onStart);
   });
 
+  // "Start a fresh quote" links in emails (/?quote=new): open the assistant on a new enquiry, once.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("quote") !== "new") return;
+    url.searchParams.delete("quote");
+    window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+    window.dispatchEvent(new CustomEvent<StartEnquiryDetail>(START_ENQUIRY_EVENT, { detail: {} }));
+  }, []);
+
   // After an enquiry finishes or is cancelled, bring back the starter chips.
   const hadEnquiry = useRef(false);
   useEffect(() => {
