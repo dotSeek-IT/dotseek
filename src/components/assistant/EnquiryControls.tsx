@@ -204,7 +204,7 @@ function AskStep({ step, editing, onAnswer, onCancel, onCancelEdit }: EnquiryCon
               value={text}
               rows={3}
               maxLength={step.maxLength ?? 1500}
-              placeholder={otherOpen ? "Tell us in your own words" : step.placeholder}
+              placeholder={otherOpen ? "Tell us in your own words" : step.placeholder || (step.optional ? "Optional" : undefined)}
               aria-invalid={Boolean(invalid)}
               onChange={(event) => {
                 setText(event.target.value);
@@ -225,7 +225,7 @@ function AskStep({ step, editing, onAnswer, onCancel, onCancelEdit }: EnquiryCon
               }
               value={text}
               maxLength={otherOpen ? 200 : step.maxLength}
-              placeholder={otherOpen ? "Tell us in your own words" : step.placeholder}
+              placeholder={otherOpen ? "Tell us in your own words" : step.placeholder || (step.optional ? "Optional" : undefined)}
               aria-invalid={Boolean(invalid)}
               aria-describedby={invalid ? `${fieldId}-error` : undefined}
               onChange={(event) => {
@@ -258,7 +258,7 @@ function AskStep({ step, editing, onAnswer, onCancel, onCancelEdit }: EnquiryCon
         )}
         {step.optional && !isChoice && (
           <button type="button" className={styles.textAction} onClick={() => onAnswer("")}>
-            Skip
+            Skip this question
           </button>
         )}
         {editing ? (

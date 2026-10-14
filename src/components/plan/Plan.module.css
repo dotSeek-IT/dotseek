@@ -1300,25 +1300,68 @@
 
 .stages li {
   display: grid;
-  gap: 2px;
-  padding: var(--ds-space-2) var(--ds-space-3);
-  border-top: 3px solid var(--ds-color-border-strong);
-  background: var(--ds-color-surface);
-  font-size: var(--ds-text-caption);
-  color: var(--ds-color-text-subtle);
 }
 
-.stages li strong {
+/* Each stage is a choice: picking one fits the quote to that stage. */
+.stages button {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: var(--ds-space-2) var(--ds-space-3);
+  border: 0;
+  border-top: 3px solid var(--ds-color-border-strong);
+  background: var(--ds-color-surface);
+  color: var(--ds-color-text-subtle);
+  font: inherit;
+  font-size: var(--ds-text-caption);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--ds-duration-fast) ease,
+    border-color var(--ds-duration-fast) ease;
+}
+
+.stages button strong {
   color: var(--ds-color-text-muted);
   font-weight: var(--ds-weight-medium);
 }
 
-.stages li[aria-current="step"] {
+.stages button:hover:not(:disabled) {
+  border-top-color: var(--ds-color-brand-soft);
+  background: var(--ds-color-surface-elevated);
+}
+
+.stages button[aria-pressed="true"] {
   border-top-color: var(--ds-color-brand);
   background: rgba(236, 241, 94, 0.07);
 }
 
-.stages li[aria-current="step"] strong {
+.stages button[aria-pressed="true"] strong {
+  color: var(--ds-color-brand);
+}
+
+.stages button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.stages button:focus-visible {
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: 2px;
+}
+
+.inlineLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ds-color-text);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.inlineLink:hover {
   color: var(--ds-color-brand);
 }
 

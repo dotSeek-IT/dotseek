@@ -521,6 +521,16 @@ const integrationScopes: Record<ScopeId, string> = {
 
 /** What each scope includes, for every API, integration and AI service that offers a choice. */
 export const itemScopes: Record<string, Record<ScopeId, string>> = {
+  mobile_app: {
+    basic: "Core screens and sign-up, standard components, one release on the stores.",
+    advanced: "More screens and flows, offline support, deep links, analytics and polished animation.",
+    custom: "Fully bespoke design and native device features (widgets, wearables, background tasks), scoped in discovery.",
+  },
+  managed_backend: {
+    basic: "Sign-in, one database and file storage on Firebase or Supabase.",
+    advanced: "Security rules, cloud functions, push campaigns and scheduled tasks.",
+    custom: "Several environments, data migration paths and a plan to move to a custom backend later.",
+  },
   backend: {
     basic: "Standard REST API for your records and forms.",
     advanced: "Complex business rules, roles and a documented API for partners.",

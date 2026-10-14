@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { groupLabels, INFRA_GROUPS, marketMeta, pricingMeta, stageById, stages, type ItemGroup } from "@/content/pricing";
 import type { OfferQuote } from "@/lib/plan/offer";
 import { chooseTier, setScope, toggleChoice, type Plan, type PlanChoices, type ServiceView } from "@/lib/plan/build";
@@ -120,7 +120,7 @@ export function PlanDialog(props: PlanDialogProps) {
           <div className={styles.headText}>
             <p className={styles.estimateBadge}>{pricingMeta.label}</p>
             <h2 id="plan-title" className={styles.title}>
-              {brief?.title || `${props.solutionTitle} plan`}
+              {brief?.title || `${solutionHeadline(plan, props.solutionTitle).name} plan`}
             </h2>
           </div>
           <button type="button" className={styles.iconButton} onClick={onClose} aria-label="Close estimate">
@@ -170,17 +170,15 @@ export function PlanDialog(props: PlanDialogProps) {
                     Business stage: {stage.name}
                   </h3>
                   <p className={styles.muted}>{stage.summary} Start where you are and scale the same solution as the business grows.</p>
-                  <ol className={styles.stages}>
-                    {stages.map((st) => (
-                      <li key={st.id} aria-current={st.id === plan.stage ? "step" : undefined}>
-                        <strong>{st.name}</strong>
-                        <span>{st.priceLabel}</span>
-                      </li>
-                    ))}
-                  </ol>
+                  <StagePicker plan={plan} getOptions={props.getOptions} onFit={props.onFitBudget} onCompare={() => setTab("cheaper")} />
                 </section>
 
-                <PriceSlider plan={plan} onFit={props.onFitBudget} onReset={() => onChoices({ provider: choices.provider })} />
+                <PriceSlider
+                  plan={plan}
+                  getOptions={props.getOptions}
+                  onFit={props.onFitBudget}
+                  onReset={() => onChoices({ provider: choices.provider })}
+                />
 
                 {advice.length > 0 && (
                   <section className={styles.block}>
@@ -753,12 +751,86 @@ function ScopePicker({ service, onScope }: { service: ServiceView; onScope: (id:
 }
 
 /**
+ * Business stages as choices: picking one fits the quote to that stage's price ceiling (switching to a
+ * leaner version when needed, like the slider). Stages this requirement can't reach are disabled.
+ */
+function StagePicker({
+  plan,
+  getOptions,
+  onFit,
+  onCompare,
+}: {
+  plan: Plan;
+  getOptions: () => CostOption[];
+  onFit: (target: number) => string[];
+  onCompare: () => void;
+}) {
+  const { min, max } = usePriceRange(plan, getOptions);
+  const [note, setNote] = useState<string | null>(null);
+  return (
+    <>
+      <ul className={styles.stages} aria-label="Choose a business stage">
+        {stages.map((st, i) => {
+          const floor = i === 0 ? 0 : stages[i - 1]!.upTo;
+          const target = Number.isFinite(st.upTo) ? Math.min(st.upTo, max) : max;
+          const available = target >= min && floor < max;
+          return (
+            <li key={st.id}>
+              <button
+                type="button"
+                aria-pressed={st.id === plan.stage}
+                disabled={!available}
+                title={available ? `Fit this quote to the ${st.name} stage` : `Not available for this project`}
+                onClick={() => {
+                  const changes = onFit(target);
+                  setNote(changes.length ? `${st.name}: ${changes.slice(0, 2).join(" · ")}` : `${st.name}: no changes needed.`);
+                }}
+              >
+                <strong>{st.name}</strong>
+                <span>{st.priceLabel}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      <p className={styles.muted} role="status">
+        {note ?? "Choose a stage to fit the quote to it."}{" "}
+        <button type="button" className={styles.inlineLink} onClick={onCompare}>
+          Compare versions in Reference &amp; cheaper options
+        </button>
+      </p>
+    </>
+  );
+}
+
+/** Price range across every version of the requirement (Full down to Basic), shared by the stages and the slider. */
+function usePriceRange(plan: Plan, getOptions: () => CostOption[]) {
+  const versions = useMemo(getOptions, [plan.solution, plan.selected.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  const min = Math.min(plan.priceRange[0], ...versions.map((o) => o.plan.priceRange[0]));
+  const max = Math.max(plan.priceRange[1], ...versions.map((o) => o.plan.priceRange[1]));
+  const recommendedPrice = versions.find((o) => o.id === "full")?.plan.recommendedPrice ?? plan.recommendedPrice;
+  return { min, max, recommendedPrice };
+}
+
+/**
  * "Choose your price": the customer picks a target between the lowest viable
  * version and the premium version; the options adjust to fit and the changes
  * are listed. Everything can still be fine-tuned item by item afterwards.
  */
-function PriceSlider({ plan, onFit, onReset }: { plan: Plan; onFit: (target: number) => string[]; onReset: () => void }) {
-  const [min, max] = plan.priceRange;
+function PriceSlider({
+  plan,
+  getOptions,
+  onFit,
+  onReset,
+}: {
+  plan: Plan;
+  getOptions: () => CostOption[];
+  onFit: (target: number) => string[];
+  onReset: () => void;
+}) {
+  // The range covers every version of the requirement (Full down to Basic), not only the current one,
+  // so a lower budget can switch to a leaner version and a higher one can come back to the full build.
+  const { min, max, recommendedPrice } = usePriceRange(plan, getOptions);
   const step = 250;
   const [value, setValue] = useState(() => Math.min(max, Math.max(min, plan.target ?? plan.build)));
   const [changes, setChanges] = useState<string[] | null>(null);
@@ -808,7 +880,7 @@ function PriceSlider({ plan, onFit, onReset }: { plan: Plan; onFit: (target: num
             }}
             style={{ "--fill": `${pct(value)}%` } as React.CSSProperties}
           />
-          <span className={styles.recMarker} style={{ left: `${pct(plan.recommendedPrice)}%` }} aria-hidden="true" />
+          <span className={styles.recMarker} style={{ left: `${pct(recommendedPrice)}%` }} aria-hidden="true" />
         </div>
         <div className={styles.priceScale}>
           <span>
@@ -819,7 +891,7 @@ function PriceSlider({ plan, onFit, onReset }: { plan: Plan; onFit: (target: num
           <span>
             Recommended
             <br />
-            {gbp(plan.recommendedPrice)}
+            {gbp(recommendedPrice)}
           </span>
           <span>
             Premium

@@ -126,6 +126,9 @@ const fresh = (): EnquiryState => ({
   includeTranscript: true,
 });
 
+/** The question as said in the chat; optional ones say so, so the Skip button makes sense. */
+const ask = (step: EnquiryStep) => (step.optional ? `${step.question} (Optional: answer below, or skip this question.)` : step.question);
+
 export function useEnquiry({
   botSay,
   userSay,
@@ -231,7 +234,7 @@ export function useEnquiry({
       if (next.id === OPS_INTRO_STEP) {
         botSay("Now a few quick questions about scale and reliability, so I can recommend the right architecture. The closest answer is fine.");
       }
-      botSay(next.question);
+      botSay(ask(next));
       commit({ ...base, phase: "asking" });
       return;
     }
@@ -386,7 +389,7 @@ export function useEnquiry({
     if (!state) return;
     const step = stepsFor(state.answers).find((s) => s.id === stepId);
     if (!step) return;
-    botSay(`Sure. ${step.question}`);
+    botSay(`Sure. ${ask(step)}`);
     setState({ ...state, phase: "asking", editing: stepId, returnTo: state.phase === "plan" ? "plan" : "review" });
   };
 
@@ -403,9 +406,22 @@ export function useEnquiry({
   /** Price slider: adjusts options to fit the customer's target price and returns what changed. */
   const fitBudget = (target: number): string[] => {
     if (!state || !engine) return [];
-    const result = engine.fitToBudget(state.answers, state.choices, target);
-    setChoices(result.choices);
-    return result.changes;
+    const contact = contactOf(state.answers);
+    const base = state.baseAnswers ?? state.answers;
+    // 1. The full requirement, with options and levels adjusted to the target.
+    const full = engine.fitToBudget({ ...base, ...contact }, state.baseAnswers ? state.baseChoices : state.choices, target);
+    // 2. Below what trimming can reach: the richest cheaper version that fits (e.g. MVP, or a Basic
+    //    app on one platform with a managed backend), then any budget left over is used.
+    const versions = full.cost > target ? getOptions().filter((o) => o.id !== "full") : [];
+    const pick = versions.find((o) => o.plan.build <= target) ?? versions[versions.length - 1];
+    if (!pick || pick.plan.build >= full.cost) {
+      setState({ ...state, answers: { ...base, ...contact }, choices: full.choices });
+      return full.changes;
+    }
+    const working = { ...(pick.apply.answers ?? base), ...contact };
+    const fitted = engine.fitToBudget(working, pick.apply.choices, target);
+    setState({ ...state, baseAnswers: base, answers: working, choices: fitted.choices });
+    return [`${pick.name} version: ${pick.scope}`, ...fitted.changes];
   };
 
   /** From the plan: go on to contact details and the final review. */

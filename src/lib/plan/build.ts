@@ -958,6 +958,8 @@ function richerMoves(ctx: Ctx, c: PlanChoices): Move[] {
     // A shared web + mobile entry point only matters while the mobile app is in the plan.
     if (item.id === "api_gateway" && !calc.selected.has("mobile_app") && tierLevel(tier) < 3) continue;
     if (item.onlyFor && !item.onlyFor.includes(s.solution)) continue;
+    // Firebase / Supabase already provide the database, backups, sign-in and push.
+    if (calc.selected.has("managed_backend") && ["sql_db", "backup", "auth", "push", "backend"].includes(item.id)) continue;
     moves.push({ rank: 1, label: `Added ${item.label} (recommended)`, choices: toggleChoice(c, item.id, true) });
   }
   for (const id of calc.selected) {
