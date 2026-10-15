@@ -78,5 +78,6 @@ export const footerColumns: { title: string; links: NavItem[] }[] = [
 // LinkedIn URL is assumed: confirm before launch.
 export const socialLinks = [
   { label: "LinkedIn", href: "https://www.linkedin.com/company/dotseek", icon: "linkedin" },
-  { label: "GitHub", href: "https://github.com/dotSeek", icon: "github" },
+  // Temporarily without a destination: the icon stays, the link goes nowhere ("#").
+  { label: "GitHub", href: "#", icon: "github" },
 ] as const;

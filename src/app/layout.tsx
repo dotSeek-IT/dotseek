@@ -73,7 +73,7 @@ const structuredData = {
       description: site.description,
       email: site.email,
       address: { "@type": "PostalAddress", addressLocality: "Swansea", addressCountry: "GB" },
-      sameAs: socialLinks.map((link) => link.href),
+      sameAs: socialLinks.map((link) => link.href).filter((href) => href.startsWith("http")),
     },
     {
       "@type": "WebSite",

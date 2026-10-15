@@ -67,7 +67,11 @@ export function Footer() {
           <ul role="list" className={styles.social}>
             {socialLinks.map((link) => (
               <li key={link.label}>
-                <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${site.name} on ${link.label}`}>
+                <a
+                  href={link.href}
+                  {...(link.href === "#" ? {} : { target: "_blank", rel: "noopener noreferrer" })}
+                  aria-label={`${site.name} on ${link.label}`}
+                >
                   <Icon name={link.icon} />
                 </a>
               </li>
