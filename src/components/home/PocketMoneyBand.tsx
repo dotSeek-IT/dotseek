@@ -15,7 +15,7 @@ export function PocketMoneyBand() {
             <div className={styles.copy}>
               <p className={styles.kicker}>{pocketBand.kicker}</p>
               <h2 id="start-title" className={styles.heading}>
-                Big plans. <GradientText>Pocket money start.</GradientText>
+                Big plans. <GradientText>Start with pocket money.</GradientText>
               </h2>
               <p className={styles.body}>{pocketBand.body}</p>
               <ol className={styles.path} aria-label="Grow step by step">

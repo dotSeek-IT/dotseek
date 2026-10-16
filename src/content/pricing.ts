@@ -657,7 +657,7 @@ export const scopesFor = (item: PlanItem): Record<ScopeId, string> | null =>
 /** Homepage "pocket money" band: a short, eye-catching starting point (stages stay in the estimate). */
 export const pocketBand = {
   kicker: "Start small",
-  heading: "Big plans. Pocket money start.",
+  heading: "Big plans. Start with pocket money.",
   body: "Get your business online with a basic website, then grow the same solution into a booking portal, an app or AI automation when you're ready.",
   path: ["Basic website", "Business portal", "Mobile app", "AI automation"],
   primary: "Get my estimate",
