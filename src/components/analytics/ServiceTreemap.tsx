@@ -13,6 +13,8 @@ export function ServiceTreemap() {
   const { data, setFilter, hover, setHover } = useAnalytics();
   const chart = useRef<ECharts | null>(null);
   const lit = useRef<string | null>(null);
+  // The tile the pointer is on already highlights itself; only highlight for hovers that start elsewhere.
+  const own = useRef<string | null>(null);
   const cur = data.currency;
   const byValue = data.services.some((s) => s.value > 0);
   const rows = useMemo(() => (byValue ? data.services.filter((s) => s.value > 0) : data.services.filter((s) => s.enquiries > 0)), [data.services, byValue]);
@@ -72,7 +74,7 @@ export function ServiceTreemap() {
   useEffect(() => {
     const c = chart.current;
     if (!c) return;
-    const next = hover?.dim === "service" ? (rows.find((x) => x.id === hover.value)?.name ?? null) : null;
+    const next = hover?.dim === "service" && own.current !== hover.value ? (rows.find((x) => x.id === hover.value)?.name ?? null) : null;
     if (lit.current && lit.current !== next) c.dispatchAction({ type: "downplay", seriesIndex: 0, name: lit.current });
     if (next && next !== lit.current) c.dispatchAction({ type: "highlight", seriesIndex: 0, name: next });
     lit.current = next;
@@ -88,17 +90,49 @@ export function ServiceTreemap() {
         onReady={(c) => (chart.current = c)}
         events={{
           click: (e) => {
+            // Touch screens have no hover: the first tap shows the tile's tooltip, the list below applies the filter.
+            if (window.matchMedia("(pointer: coarse)").matches) return;
             const s = e.name ? byName.get(e.name) : undefined;
             if (s) setFilter("service", s.id);
           },
           mouseover: (e) => {
             const s = e.name ? byName.get(e.name) : undefined;
-            if (s) setHover({ dim: "service", value: s.id });
+            if (s) {
+              own.current = s.id;
+              setHover({ dim: "service", value: s.id });
+            }
           },
-          mouseout: () => setHover(null),
-          globalout: () => setHover(null),
+          mouseout: () => {
+            own.current = null;
+            setHover(null);
+          },
+          globalout: () => {
+            own.current = null;
+            setHover(null);
+          },
         }}
       />
+      <ul className={styles.valueList} aria-label="Quoted value by service">
+        {rows.map((s) => (
+          <li key={s.id} data-active={hover?.dim === "service" && hover.value === s.id ? "" : undefined}>
+            <button
+              type="button"
+              onClick={() => setFilter("service", s.id)}
+              onMouseEnter={() => setHover({ dim: "service", value: s.id })}
+              onMouseLeave={() => setHover(null)}
+              onFocus={() => setHover({ dim: "service", value: s.id })}
+              onBlur={() => setHover(null)}
+              title="Filter the dashboard by this service"
+            >
+              <span className={styles.valueName}>{s.name}</span>
+              <span className={styles.valueMeta}>
+                {fmtNumber(s.quotes)} {s.quotes === 1 ? "quote" : "quotes"} · {s.winRate === null ? "no decisions" : `${fmtPct(s.winRate, 0)} won`}
+              </span>
+              <strong className={styles.valueAmount}>{byValue ? fmtMoney(s.value, cur) : `${fmtNumber(s.enquiries)} enquiries`}</strong>
+            </button>
+          </li>
+        ))}
+      </ul>
       <p className={styles.chartHint}>
         {byValue ? "Tile size is total quoted value; brighter tiles win more of their decided quotes." : "No quotes sent yet, so tiles show enquiries started per service."}
       </p>
@@ -144,7 +178,7 @@ export function PagesDevices() {
                 {d.label}
               </button>
               <span className={styles.barValue}>
-                {fmtNumber(d.visitors)} <small>visitors · {fmtPct(d.conversion)} convert</small>
+                {fmtNumber(d.visitors)} <small>{d.visitors === 1 ? "visitor" : "visitors"} · {fmtPct(d.conversion)} convert</small>
               </span>
             </li>
           ))}

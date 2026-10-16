@@ -703,6 +703,73 @@
   font-size: var(--ds-text-micro);
 }
 
+/* ---------- Service value list (always shows each value, even for tiles too small for a label) ---------- */
+.valueList {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.valueList button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--ds-space-3);
+  width: 100%;
+  min-height: 38px;
+  padding: 0 var(--ds-space-3);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-button);
+  background: var(--ds-color-surface-sunken);
+  color: var(--ds-color-text);
+  font: inherit;
+  font-size: var(--ds-text-body-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--ds-duration-fast) ease;
+}
+
+.valueList button:hover,
+.valueList li[data-active] button {
+  border-color: rgba(236, 241, 94, 0.5);
+}
+
+.valueList button:focus-visible {
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: 2px;
+}
+
+.valueName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.valueMeta {
+  color: var(--ds-color-text-subtle);
+  font-size: var(--ds-text-caption);
+  white-space: nowrap;
+}
+
+.valueAmount {
+  color: var(--ds-color-brand);
+  font-weight: var(--ds-weight-medium);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (max-width: 639px) {
+  .valueList button {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .valueMeta {
+    display: none;
+  }
+}
+
 /* ---------- Pivot ---------- */
 .searchBox {
   flex: 1 1 180px;

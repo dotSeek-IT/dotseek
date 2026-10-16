@@ -155,7 +155,7 @@ export function WorldMap() {
               </span>
               <span className={styles.rankName}>{c.name}</span>
               <span className={styles.rankValue}>
-                {fmtNumber(c.visitors)} <small>visitors</small>
+                {fmtNumber(c.visitors)} <small>{c.visitors === 1 ? "visitor" : "visitors"}</small>
               </span>
               <span className={styles.rankValue}>
                 {fmtNumber(c.sent)} <small>sent</small>
