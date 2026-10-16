@@ -52,7 +52,7 @@ export function normaliseUrl(input: string): URL {
     throw new ReferenceFetchError("That doesn't look like a web address.");
   }
   if (!["http:", "https:"].includes(url.protocol)) throw new ReferenceFetchError("Only http and https links can be analysed.");
-  if (url.username || url.password) throw new ReferenceFetchError("Links with sign-in details can't be analysed.");
+  if (url.username || url.password) throw new ReferenceFetchError("Links with sign in details can't be analysed.");
   if (url.port && !["80", "443"].includes(url.port)) throw new ReferenceFetchError("Only standard web ports can be analysed.");
   if (!url.hostname.includes(".") || url.hostname.endsWith(".local") || url.hostname.endsWith(".internal")) {
     throw new ReferenceFetchError("Please use a public website address.");

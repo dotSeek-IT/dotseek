@@ -34,12 +34,12 @@ const SIGNALS: Record<SolutionId, { words: string[]; reason: string; suggestions
   integration: {
     words: ["integrate", "integration", "connect", "sync", "api", "between systems", "xero", "quickbooks", "hubspot", "salesforce", "shopify", "two systems"],
     reason: "The main gap is between your existing systems, so connecting them through their APIs keeps data in step without retyping.",
-    suggestions: ["Two-way sync between the key systems", "Alerts when something fails", "A single source of truth for records"],
+    suggestions: ["Sync in both directions between the key systems", "Alerts when something fails", "A single source of truth for records"],
   },
   data: {
     words: ["report", "reporting", "dashboard", "analytics", "insight", "kpi", "forecast", "metrics", "business intelligence", "numbers"],
-    reason: "You need clear, up-to-date numbers, so data reporting and dashboards (with AI insights if useful) fit best.",
-    suggestions: ["One dashboard across your data sources", "Scheduled reports by email", "AI-highlighted trends and forecasts"],
+    reason: "You need clear, current numbers, so data reporting and dashboards (with AI insights if useful) fit best.",
+    suggestions: ["One dashboard across your data sources", "Scheduled reports by email", "Trends and forecasts highlighted by AI"],
   },
 };
 
@@ -53,5 +53,5 @@ export function keywordRecommendation(problem: string): { solution: SolutionId; 
   }
   if (!best) return null;
   const { reason, suggestions } = SIGNALS[best.id];
-  return { solution: best.id, reason: `${reason} (Suggested from your description; the team will confirm.)`, suggestions };
+  return { solution: best.id, reason: `${reason} (Suggested from your description. The team will confirm.)`, suggestions };
 }

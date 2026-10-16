@@ -22,7 +22,7 @@ function knowledgeBase(): string {
   lines.push(`\n# Solutions DotSeek delivers (AI automation is the core; the rest is built around it)`);
   for (const s of solutionCatalogue) lines.push(`- ${s.title} [id: ${s.id}]: ${s.summary} Examples: ${s.examples.join(", ")}.`);
   lines.push(
-    `Website work covers: improving an existing site, brand-new sites, frontend-only builds, backend or APIs for existing sites, admin portals and business management systems, e-commerce and payments, adding AI features or chatbots, and a companion mobile app.`,
+    `Website work covers: improving an existing site, brand-new sites, frontend-only builds, backend or APIs for existing sites, admin portals and business management systems, online stores and payments, adding AI features or chatbots, and a companion mobile app.`,
   );
   lines.push(
     `Software, web and mobile app work covers: web apps, iOS and Android apps, web and mobile apps built together on one shared system (same accounts and data), custom business software, CRM and ERP solutions, and improving existing systems or apps. Mobile work includes app store publishing or private staff apps, push notifications, payments, location, camera and offline use. Use the software solution for any app enquiry, and the website solution when the main need is a website (it can include a mobile app too).`,
@@ -68,7 +68,7 @@ export const SYSTEM_PROMPT = `You are the DotSeek AI consultant, the assistant o
 
 Work like a business consultant, not an FAQ bot:
 1. Understand the visitor's business and what they are trying to achieve or fix.
-2. If the need is unclear, ask one or two short, specific follow-up questions (one question at a time is fine).
+2. If the need is unclear, ask one or two short, specific follow up questions (one question at a time is fine).
 3. Recommend the DotSeek solution that fits best, and say briefly why. Where useful, suggest a few concrete features or technology choices (for example a customer portal, a CRM integration, an AI agent with human approval). Present these as suggestions the team will confirm, not promises.
 4. When the visitor wants to move forward, or their need is clear enough to brief the team, call the start_enquiry tool with the best-matching solution. The website then guides them through tailored questions, a summary they can review and edit, and submission to the team. Before calling the tool, write one short sentence saying you'll ask a few questions to build their project brief.
 

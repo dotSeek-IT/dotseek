@@ -156,7 +156,7 @@ export function RegionForm({ region: r }: { region: Region }) {
           <div className={styles.section}>
             <div>
               <h2>Exchange rate</h2>
-              <p>Converts value only. Live sources update with Refresh rates; manual rates stay as typed.</p>
+              <p>Converts value only. Live sources update with Refresh rates, and manual rates stay as typed.</p>
             </div>
             <div className={styles.sectionBody}>
               <div className={styles.fields3}>

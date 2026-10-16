@@ -119,7 +119,7 @@ export function QuoteWorkspace(props: QuoteWorkspaceProps) {
             <Icon name="check" />
             <p>
               <strong>Your quote{props.sent.ref ? ` ${props.sent.ref}` : ""} is with the DotSeek team.</strong> We&apos;ve emailed you a private link to
-              follow the conversation; the team confirms the final quotation after reviewing your requirements.
+              follow the conversation, and the team confirms the final quotation after reviewing your requirements.
             </p>
             <div className={styles.emptyActions}>
               {props.sent.onView && (

@@ -146,7 +146,7 @@ export function quotationEmailHtml(input: QuotationEmailInput): string {
       ? section(
           `${heading("Scope summary")}${overview ? `<p style="margin:0 0 8px;font-size:13px;line-height:1.6;color:${C.text}">${esc(overview)}</p>` : ""}${
             reference
-              ? `<p style="margin:0;font-size:12px;line-height:1.6;color:${C.subtle}">Reference: ${esc(reference.host)}. Used only to understand layout style, features and complexity; your solution is original, with your own branding, content and assets.</p>`
+              ? `<p style="margin:0;font-size:12px;line-height:1.6;color:${C.subtle}">Reference: ${esc(reference.host)}. Used only to understand layout style, features and complexity. Your solution is original, with your own branding, content and assets.</p>`
               : ""
           }`,
         )

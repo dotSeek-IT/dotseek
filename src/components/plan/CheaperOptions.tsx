@@ -60,8 +60,8 @@ export function CheaperOptions({
           <p>{reference.summary}</p>
           {reference.evidence.length > 0 && <p className={styles.phaseItems}>{reference.evidence.join(" · ")}</p>}
           <p className={styles.note}>
-            We use references only to understand layout style, features, interaction patterns and approximate complexity. DotSeek never copies a
-            third-party site: your solution uses original implementation, branding, content and assets unless you own them or have permission to
+            We use references only to understand layout style, features, interaction patterns and approximate complexity. DotSeek never copies another
+            company&apos;s site: your solution uses original implementation, branding, content and assets unless you own them or have permission to
             reuse them.
           </p>
         </section>
@@ -108,7 +108,7 @@ export function CheaperOptions({
             </article>
           ))}
         </div>
-        <p className={styles.note}>Indicative ranges only; actual pricing depends on the confirmed requirements.</p>
+        <p className={styles.note}>Indicative ranges only. Actual pricing depends on the confirmed requirements.</p>
       </section>
 
       {budget !== undefined && Number.isFinite(budget) && full && full.plan.estimate.recommended > budget && (
@@ -151,7 +151,7 @@ export function CheaperOptions({
       {drivers.length > 0 && (
         <section className={styles.block}>
           <h3 className={styles.blockTitle}>What drives the cost</h3>
-          <p className={styles.muted}>Keep, remove or add each feature later; the quotation updates straight away.</p>
+          <p className={styles.muted}>Keep, remove or add each feature later, and the quotation updates straight away.</p>
           <table className={styles.table}>
             <thead>
               <tr>

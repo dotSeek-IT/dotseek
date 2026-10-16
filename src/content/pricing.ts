@@ -126,7 +126,7 @@ export const planItems: PlanItem[] = [
   { id: "sms", label: "SMS notifications", group: "communication", days: 1, price: [50, 150], monthly: [10, 60], usage: true, summary: "Text message reminders and alerts." },
   { id: "whatsapp", label: "WhatsApp integration", group: "communication", days: 3, price: [50, 250], monthly: [10, 80], usage: true, summary: "Conversations and notifications on WhatsApp.", diagram: { layer: "external", node: "WhatsApp" } },
   { id: "push", label: "Push notifications", group: "communication", days: 1.5, price: [100, 300], monthly: [0, 20], summary: "Mobile push messages." },
-  { id: "inapp", label: "Notifications inside the app", group: "communication", days: 2, price: [100, 300], summary: "Notification centre inside the app." },
+  { id: "inapp", label: "Notifications inside the app", group: "communication", days: 2, price: [100, 300], summary: "A notification centre for messages, alerts and updates." },
 
   // ---------- Performance ----------
   { id: "cdn", label: "CDN (e.g. Cloudflare)", group: "performance", days: 0.5, price: [0, 30], monthly: T([0, 20], [0, 20], [20, 150], [150, 600]), impact: [3, 2, 2, 1], summary: "Serves pages and files from locations close to your users.", diagram: { layer: "edge", node: "CDN" } },

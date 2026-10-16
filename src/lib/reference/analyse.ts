@@ -35,7 +35,7 @@ const SERVICES: [RegExp, string][] = [
   [/algolia/i, "Algolia search"],
   [/firebase/i, "Firebase"],
   [/supabase/i, "Supabase"],
-  [/auth0|clerk\.|cognito/i, "Hosted sign-in"],
+  [/auth0|clerk\.|cognito/i, "Hosted sign in"],
 ];
 
 const PLATFORMS: [RegExp, string][] = [
@@ -98,7 +98,7 @@ function readStoreListing(url: URL, html: string): ReferenceSignals {
     evidence.push(why);
   };
   mark("auth", has(/\b(account|profile|sign ?in|log ?in|sign ?up|community|clubs?|members?)\b/), "User accounts and profiles");
-  mark("realtime", has(/real[- ]time|live (stats|activities|tracking|updates)|instant/), "Real-time updates");
+  mark("realtime", has(/real[- ]time|live (stats|activities|tracking|updates)|instant/), "Live updates");
   mark("payments", has(/subscription|premium|in-app purchase|\bpay(ment)?s?\b|checkout|wallet/) || /In-App Purchases/i.test(html), "Payments or subscriptions");
   mark("booking", has(/\bbook(ing)?s?\b|appointment|reserv/), "Bookings");
   mark("chatbot", has(/chatbot|virtual assistant/), "Chat assistant");
@@ -192,7 +192,7 @@ export async function readReference(input: string): Promise<ReferenceSignals> {
   const signIn = hasPassword || act(/\/(login|log-in|signin|sign-in|account|my-account|register|signup|sign-up)\b|\b(log ?in|sign ?in|sign ?up|my account|create account)\b/);
 
   mark("forms", /<form[\s>]/i.test(html) || act(/contact|enquir|get in touch|quote/), "Contact or enquiry forms");
-  mark("auth", signIn, "Sign-in or account links");
+  mark("auth", signIn, "Sign in or account links");
   mark("search", /type=["']search["']|role=["']search["']|name=["'](q|s|search|query)["']/i.test(html), "Search box");
   mark("ecommerce", act(/\/(cart|basket|checkout|shop|products?)\b|add to (cart|basket|bag)|view (cart|basket)/) || platform === "Shopify", "Shop, basket or checkout");
   mark("payments", services.some((sname) => /Stripe|PayPal/.test(sname)) || (Boolean(features.ecommerce) && hit(/apple pay|google pay|secure (payment|checkout)/)), "Online payments");
@@ -203,13 +203,13 @@ export async function readReference(input: string): Promise<ReferenceSignals> {
   mark("customerPortal", signIn && act(/customer (portal|area)|client (portal|area)|my orders|track (your )?order|my bookings/), "Customer area");
   mark("roles", signIn && hit(/\b(teams?|roles?|permissions|admin(istrator)?s?)\b.{0,40}\b(invite|manage|access)/), "Teams, roles or permissions");
   mark("reporting", Boolean(features.dashboard) && hit(/\breports?\b|\breporting\b|insights|analytics/), "Reporting or analytics");
-  mark("realtime", /socket\.io|wss:\/\/|pusher|ably|firebaseio|supabase.*realtime/i.test(html), "Real-time connections");
+  mark("realtime", /socket\.io|wss:\/\/|pusher|ably|firebaseio|supabase.*realtime/i.test(html), "Live connections");
   mark("multilang", /hreflang=/i.test(html), "Multiple languages");
   mark("blog", act(/\/(blog|news|insights|articles|journal)\b/), "Blog or news section");
   mark("mobileApp", /apps\.apple\.com|play\.google\.com\/store/i.test(html), "App Store or Google Play links");
   if (services.filter((sname) => !/Analytics|Bot protection|Video embeds/.test(sname)).length) {
     features.integrations = true;
-    evidence.push(`Third-party services: ${services.join(", ")}`);
+    evidence.push(`Services from other providers: ${services.join(", ")}`);
   }
 
   const appLike = Boolean(features.dashboard || (features.auth && hit(/pricing|free trial|start for free|per (user|seat|month)/)));

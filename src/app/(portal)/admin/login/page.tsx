@@ -24,7 +24,7 @@ const FEATURES: { icon: IconName; title: string; body: string }[] = [
   {
     icon: "sparkle",
     title: "New customer offers",
-    body: "Turn the first-enquiry offer on or off and set its terms.",
+    body: "Turn the first enquiry offer on or off and set its terms.",
   },
 ];
 

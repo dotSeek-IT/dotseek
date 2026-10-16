@@ -129,7 +129,7 @@ function Document({ plan, title, solutionTitle, overview, contact, offer, negoti
           {overview && <p>{overview}</p>}
           {reference && (
             <p className={styles.muted}>
-              Reference: {reference.host}. Used only to understand layout style, features and complexity; your solution is original, with your own
+              Reference: {reference.host}. Used only to understand layout style, features and complexity. Your solution is original, with your own
               branding, content and assets.
             </p>
           )}

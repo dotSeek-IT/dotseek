@@ -27,7 +27,7 @@ export function OfferForm({ offer, solutions }: { offer: Offer; solutions: { id:
       <div className={styles.section}>
         <div>
           <h2>Offer</h2>
-          <p>A fixed price wins when set; otherwise the discount applies to the recommended estimate. Offers never raise a price.</p>
+          <p>A fixed price wins when set. Otherwise the discount applies to the recommended estimate. Offers never raise a price.</p>
         </div>
         <div className={styles.sectionBody}>
           <div className={styles.field}>
