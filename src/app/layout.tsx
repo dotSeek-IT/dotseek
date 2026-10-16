@@ -78,7 +78,11 @@ const structuredData = {
       name: site.name,
       url: site.url,
       logo: { "@type": "ImageObject", url: `${site.url}/logo.png`, width: 512, height: 512 },
-      image: `${site.url}/og-image.png`,
+      image: [
+        { "@type": "ImageObject", url: `${site.url}/dotseek-logo.png`, caption: "DotSeek logo", width: 512, height: 512 },
+        { "@type": "ImageObject", url: `${site.url}/dotseek-logo-wordmark.png`, caption: "DotSeek logo with name", width: 1200, height: 400 },
+        `${site.url}/og-image.png`,
+      ],
       description: site.description,
       email: site.email,
       address: { "@type": "PostalAddress", addressLocality: "Swansea", addressCountry: "GB" },

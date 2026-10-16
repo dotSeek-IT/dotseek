@@ -8,7 +8,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Bump when page content or search metadata changes, so search engines recrawl.
   const lastModified = new Date("2026-10-16");
   return [
-    { url: `${site.url}/`, lastModified, changeFrequency: "monthly", priority: 1 },
+    {
+      url: `${site.url}/`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 1,
+      // Image sitemap: the DotSeek logo files, so Google Images can find them.
+      images: [`${site.url}/dotseek-logo.png`, `${site.url}/dotseek-logo-wordmark.png`],
+    },
     { url: `${site.url}/contact`, lastModified, changeFrequency: "yearly", priority: 0.8 },
     ...pages
       .filter((page) => page.status === "published")
