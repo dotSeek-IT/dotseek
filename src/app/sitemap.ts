@@ -5,7 +5,8 @@ import { site } from "@/content/site";
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date("2026-10-13");
+  // Bump when page content or search metadata changes, so search engines recrawl.
+  const lastModified = new Date("2026-10-16");
   return [
     { url: `${site.url}/`, lastModified, changeFrequency: "monthly", priority: 1 },
     { url: `${site.url}/contact`, lastModified, changeFrequency: "yearly", priority: 0.8 },

@@ -27,9 +27,9 @@ export const pages: SimplePage[] = [
     slug: "about",
     eyebrow: "About DotSeek",
     title: "We build the automation layer for modern businesses",
-    seoTitle: "About DotSeek, UK AI Business Automation Company",
+    seoTitle: "About Us, AI Automation Company in Swansea",
     description:
-      "DotSeek is a UK AI business automation company combining consultancy, AI engineering, system integration and custom software to remove repetitive work.",
+      "DotSeek is an AI business automation company in Swansea building AI agents, websites, web and mobile apps and system integrations for UK businesses.",
     intro:
       "DotSeek is an AI Business Automation Solutions company based in the UK. We combine consultancy, AI engineering, system integration and custom software development to remove repetitive work and connect the systems organisations already rely on.",
     sections: [
@@ -68,9 +68,9 @@ export const pages: SimplePage[] = [
     slug: "careers",
     eyebrow: "Careers",
     title: "Build the future of business automation",
-    seoTitle: "Careers at DotSeek, AI Automation Jobs in the UK",
+    seoTitle: "Careers in AI Automation and Software, UK",
     description:
-      "Join DotSeek and help businesses automate real work with AI agents, integrations and custom software. We welcome engineers, consultants and designers.",
+      "Join DotSeek and help UK businesses work smarter with AI agents, automation, websites and apps. We welcome engineers, consultants and designers.",
     intro:
       "We're always keen to hear from engineers, consultants and designers who care about solving real operational problems. Send your CV and a note about what you'd like to work on.",
     status: "published",

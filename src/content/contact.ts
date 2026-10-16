@@ -20,9 +20,9 @@ const enquiryBody = [
 export const contact = {
   eyebrow: "Contact",
   title: "Let's Talk About What You Want to Automate",
-  seoTitle: "Contact DotSeek, AI Business Automation Experts",
+  seoTitle: "Contact Us, Start Your Project or Get a Quote",
   description:
-    "Contact DotSeek about AI agents, workflow automation and system integration. Email seekingsupport@dotseek.co.uk or start an enquiry with the DotSeek Assistant. Based in Swansea, UK.",
+    "Contact DotSeek about AI automation, websites, apps or integrations. Email seekingsupport@dotseek.co.uk or get an instant estimate from our assistant.",
   intro:
     "Tell us about the repetitive work slowing your team down. We'll reply with how DotSeek would approach it and the best next step, with no obligation.",
   methods: [
