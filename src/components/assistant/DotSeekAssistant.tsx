@@ -68,6 +68,8 @@ type Message = {
 
 /** Saved in sessionStorage so the chat survives a refresh in the same tab. */
 const CHAT_KEY = "dotseek-chat";
+/** Only the most recent messages are kept for a refresh (the enquiry itself is saved in full). */
+const MAX_SAVED_MESSAGES = 60;
 type SavedChat = {
   v: 1;
   messages: Message[];
@@ -439,7 +441,15 @@ export function DotSeekAssistant() {
     if (!restored.current) return;
     const id = window.setTimeout(() => {
       try {
-        const saved: SavedChat = { v: 1, messages, enquiry: enquiryState ?? null, suggestions, offline, open, expanded };
+        const saved: SavedChat = {
+          v: 1,
+          messages: messages.slice(-MAX_SAVED_MESSAGES),
+          enquiry: enquiryState ?? null,
+          suggestions,
+          offline,
+          open,
+          expanded,
+        };
         window.sessionStorage.setItem(CHAT_KEY, JSON.stringify(saved));
       } catch {
         // Quota or privacy mode: the chat still works, it just isn't kept.
