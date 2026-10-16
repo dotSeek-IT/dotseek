@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { CurrencyPicker, LocalAmount } from "@/components/currency/LocalAmount";
 import { groupLabels, INFRA_GROUPS, marketMeta, pricingMeta, stageById, stages, type ItemGroup } from "@/content/pricing";
 import type { OfferQuote } from "@/lib/plan/offer";
 import { chooseTier, setScope, toggleChoice, type Plan, type PlanChoices, type ServiceView } from "@/lib/plan/build";
@@ -509,18 +510,28 @@ export function PlanDialog(props: PlanDialogProps) {
             <p className={styles.stagePill}>
               {stage.name} stage · {stage.priceLabel}
             </p>
+            <CurrencyPicker />
             <dl className={styles.figures}>
               <div className={styles.figureMain}>
                 <dt>Recommended estimate</dt>
-                <dd>{gbp(plan.estimate.recommended)}</dd>
+                <dd>
+                  {gbp(plan.estimate.recommended)}
+                  <LocalAmount gbp={plan.estimate.recommended} />
+                </dd>
               </div>
               <div>
                 <dt>Minimum</dt>
-                <dd>{gbp(plan.estimate.min)}</dd>
+                <dd>
+                  {gbp(plan.estimate.min)}
+                  <LocalAmount gbp={plan.estimate.min} />
+                </dd>
               </div>
               <div>
                 <dt>Maximum</dt>
-                <dd>{gbp(plan.estimate.max)}</dd>
+                <dd>
+                  {gbp(plan.estimate.max)}
+                  <LocalAmount gbp={plan.estimate.max} />
+                </dd>
               </div>
               <div>
                 <dt>Timeline</dt>
@@ -862,7 +873,10 @@ function PriceSlider({
       <div className={styles.price}>
         <div className={styles.priceHead}>
           <span>Your target</span>
-          <strong>{gbp(value)}</strong>
+          <strong>
+            {gbp(value)}
+            <LocalAmount gbp={value} />
+          </strong>
           <span className={styles.priceNow}>Current estimate {gbp(plan.build)}</span>
         </div>
         <div className={styles.priceTrack}>

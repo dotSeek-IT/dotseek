@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { currentDisplayCurrencyId } from "@/components/currency/useDisplayCurrency";
 import {
   CONTACT_STEP_IDS,
   NOT_SURE,
@@ -481,6 +482,7 @@ export function useEnquiry({
           reference: state.reference,
           transcript: transcript(),
           includeTranscript: state.includeTranscript && hasTranscript,
+          displayCurrency: currentDisplayCurrencyId(),
         }),
       });
       const result = (await response.json().catch(() => ({}))) as { ref?: string; link?: string; error?: string };

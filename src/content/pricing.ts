@@ -11,6 +11,8 @@
  *   whenever provider pricing changes.
  */
 
+import { currencyById, ratesReviewed, type DisplayCurrencyId } from "./currencies";
+
 export type TierId = "starter" | "standard" | "advanced" | "enterprise";
 export type Range = [number, number];
 /** 0 none, 1 low, 2 medium, 3 high. */
@@ -366,6 +368,7 @@ export const providerById = (id: string) => providers.find((p) => p.id === id);
 
 // ---------- Market comparison ----------
 
+
 export type Market = {
   id: string;
   name: string;
@@ -379,16 +382,19 @@ export type Market = {
 };
 
 /** Configurable market data: review the multipliers and exchange rates regularly. */
-export const marketMeta = { reviewed: "October 2026", ratesReviewed: "October 2026" };
+export const marketMeta = { reviewed: "October 2026", ratesReviewed };
+
+/** Exchange rate from the shared display-currency list (one place to update rates). */
+const rate = (id: DisplayCurrencyId) => currencyById(id)!.perGbp;
 
 export const markets: Market[] = [
   { id: "uk", name: "United Kingdom", currency: "GBP", locale: "en-GB", perGbp: 1, freelancer: [1.3, 2.2], agency: [2, 4] },
-  { id: "us", name: "United States", currency: "USD", locale: "en-US", perGbp: 1.27, freelancer: [1.5, 2.6], agency: [2.4, 5] },
-  { id: "eu", name: "Europe", currency: "EUR", locale: "en-IE", perGbp: 1.17, freelancer: [1.2, 2.1], agency: [1.9, 3.8] },
-  { id: "ae", name: "UAE", currency: "AED", locale: "en-GB", perGbp: 4.65, freelancer: [1.1, 2], agency: [1.8, 3.6] },
-  { id: "sa", name: "Saudi Arabia", currency: "SAR", locale: "en-GB", perGbp: 4.75, freelancer: [1.1, 2], agency: [1.8, 3.6] },
-  { id: "kw", name: "Kuwait", currency: "KWD", locale: "en-GB", perGbp: 0.39, freelancer: [1.1, 2], agency: [1.8, 3.4] },
-  { id: "in", name: "India", currency: "INR", locale: "en-IN", perGbp: 106, freelancer: [0.5, 0.9], agency: [0.8, 1.6] },
+  { id: "us", name: "United States", currency: "USD", locale: "en-US", perGbp: rate("us"), freelancer: [1.5, 2.6], agency: [2.4, 5] },
+  { id: "eu", name: "Europe", currency: "EUR", locale: "en-IE", perGbp: rate("eu"), freelancer: [1.2, 2.1], agency: [1.9, 3.8] },
+  { id: "ae", name: "UAE", currency: "AED", locale: "en-GB", perGbp: rate("ae"), freelancer: [1.1, 2], agency: [1.8, 3.6] },
+  { id: "sa", name: "Saudi Arabia", currency: "SAR", locale: "en-GB", perGbp: rate("sa"), freelancer: [1.1, 2], agency: [1.8, 3.6] },
+  { id: "kw", name: "Kuwait", currency: "KWD", locale: "en-GB", perGbp: rate("kw"), freelancer: [1.1, 2], agency: [1.8, 3.4] },
+  { id: "in", name: "India", currency: "INR", locale: "en-IN", perGbp: rate("in"), freelancer: [0.5, 0.9], agency: [0.8, 1.6] },
 ];
 
 // ---------- Business stages ----------

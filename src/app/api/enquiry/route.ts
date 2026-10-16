@@ -12,6 +12,7 @@ import { buildPlan, sanitizeChoices } from "@/lib/plan/build";
 import { gbp } from "@/lib/plan/format";
 import { planReportText } from "@/lib/plan/report";
 import { quotationEmailHtml } from "@/lib/plan/quotationEmail";
+import { currencyById, localNote } from "@/content/currencies";
 import { solutionHeadline } from "@/lib/plan/headline";
 
 /**
@@ -77,6 +78,7 @@ export async function POST(request: Request) {
     emailCopy?: unknown;
     negotiation?: unknown;
     reference?: unknown;
+    displayCurrency?: unknown;
   } | null;
   const answers = validateAnswers(body?.answers);
   if (!answers) return Response.json({ error: "Please check your answers." }, { status: 400 });
@@ -128,6 +130,9 @@ export async function POST(request: Request) {
   const adminLink = enquiry ? `${origin}/admin/enquiries/${enquiry.id}` : null;
   const ref = enquiry?.ref ?? "";
 
+  // The customer's display currency (a guide only: the quotation stays in GBP).
+  const localCurrency = typeof body?.displayCurrency === "string" ? currencyById(body.displayCurrency) : null;
+
   // The quotation document (same layout as the on-screen quotation) for both emails.
   const quotation = (extra: {
     intro?: string;
@@ -145,6 +150,7 @@ export async function POST(request: Request) {
       ref: ref || undefined,
       negotiation,
       reference,
+      localNote: localCurrency ? localNote(plan.estimate.recommended, localCurrency) : undefined,
       ...extra,
     });
 

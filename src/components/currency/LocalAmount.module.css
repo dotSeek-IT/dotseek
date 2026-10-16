@@ -1,0 +1,35 @@
+.local {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--ds-text-caption);
+  font-weight: var(--ds-weight-regular);
+  color: var(--ds-color-text-subtle);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.picker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  font-size: var(--ds-text-caption);
+  color: var(--ds-color-text-subtle);
+}
+
+.picker select {
+  padding: 0.3rem 1.8rem 0.3rem 0.6rem;
+  border: 1px solid var(--ds-color-border-strong);
+  border-radius: var(--ds-radius-button);
+  background: var(--ds-color-surface-sunken)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a3a3a3' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 0.5rem center / 12px;
+  color: var(--ds-color-text);
+  font: inherit;
+  font-size: var(--ds-text-caption);
+  appearance: none;
+}
+
+.picker select:focus-visible {
+  outline: 2px solid var(--ds-color-focus);
+  outline-offset: 0;
+}

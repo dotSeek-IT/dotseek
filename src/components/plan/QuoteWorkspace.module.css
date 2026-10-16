@@ -63,6 +63,12 @@
   animation: pulse 600ms ease;
 }
 
+/* Currency picker under the total, outside the live (announced) region. */
+.picker {
+  flex-basis: 100%;
+  justify-content: flex-end;
+}
+
 .body {
   min-height: 0;
   overflow-y: auto;

@@ -27,6 +27,8 @@ export type QuotationEmailInput = {
   cta?: { label: string; href: string };
   /** Customer copy: how to change the scope (private enquiry page) or start again (fresh quote link). */
   requote?: { enquiryHref: string; freshHref: string };
+  /** "Approx. $9,210 at 1.27 USD per GBP … The quotation is in GBP." for a customer abroad. */
+  localNote?: string;
   /** HTML shown above the sheet (greeting) and below it (team-only details). */
   intro?: string;
   after?: string;
@@ -176,7 +178,9 @@ export function quotationEmailHtml(input: QuotationEmailInput): string {
     </table>
     ${totals}
     <div style="clear:both"></div>
-    <p style="margin:12px 0 0;font-size:12px;color:${C.subtle}">Prices in GBP, excluding VAT. Estimated timeline ${esc(weeks(plan.weeks))}.</p>`,
+    <p style="margin:12px 0 0;font-size:12px;color:${C.subtle}">Prices in GBP, excluding VAT. Estimated timeline ${esc(weeks(plan.weeks))}.</p>${
+      input.localNote ? `<p style="margin:4px 0 0;font-size:12px;color:${C.subtle}">${esc(input.localNote)}</p>` : ""
+    }`,
   );
 
   const budgetRows = [

@@ -7,6 +7,7 @@ import type { OfferQuote } from "@/lib/plan/offer";
 import type { ReferenceAnalysis } from "@/lib/plan/referenceFeatures";
 import { Icon } from "@/components/common/Icon";
 import { LogoMark } from "@/components/common/LogoMark";
+import { CurrencyPicker, LocalAmount } from "@/components/currency/LocalAmount";
 import { QuotationDocument, type QuotationContact } from "./QuotationDocument";
 import styles from "./QuoteWorkspace.module.css";
 
@@ -104,8 +105,10 @@ export function QuoteWorkspace(props: QuoteWorkspaceProps) {
             <small>
               {gbp(plan.estimate.min)}–{gbp(plan.estimate.max)} · {weeks(plan.weeks)}
             </small>
+            <LocalAmount gbp={plan.estimate.recommended} />
           </div>
         )}
+        {status === "ready" && plan && !generating && <CurrencyPicker className={styles.picker} />}
       </header>
 
       <div className={styles.body}>

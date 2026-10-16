@@ -6,6 +6,7 @@ import { solutionHeadline } from "@/lib/plan/headline";
 import type { OfferQuote } from "@/lib/plan/offer";
 import type { ReferenceAnalysis } from "@/lib/plan/referenceFeatures";
 import { LogoMark } from "@/components/common/LogoMark";
+import { LocalNote } from "@/components/currency/LocalAmount";
 import styles from "./Quotation.module.css";
 
 export type QuotationContact = { name?: string; email?: string; company?: string };
@@ -172,6 +173,7 @@ export function QuotationDocument({ plan, title, solutionTitle, overview, contac
           </div>
         </dl>
         <p className={styles.muted}>Prices in GBP, excluding VAT. Estimated timeline {weeks(plan.weeks)}.</p>
+        <LocalNote gbp={plan.estimate.recommended} className={styles.muted} />
       </section>
 
       <section className={styles.twoCol}>

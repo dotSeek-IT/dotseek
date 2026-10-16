@@ -1,4 +1,5 @@
 import type { Plan } from "@/lib/plan/build";
+import { LocalAmount, LocalRange } from "@/components/currency/LocalAmount";
 import { gbp, gbpRange, perMonth, weeks } from "@/lib/plan/format";
 import type { OfferQuote } from "@/lib/plan/offer";
 import { Icon } from "@/components/common/Icon";
@@ -15,11 +16,15 @@ export function PlanCard({ plan, title, offer, onOpen }: { plan: Plan; title: st
           <dt>Estimate range</dt>
           <dd>
             {gbp(plan.estimate.min)}–{gbp(plan.estimate.max)}
+            <LocalRange min={plan.estimate.min} max={plan.estimate.max} />
           </dd>
         </div>
         <div>
           <dt>Recommended</dt>
-          <dd>{gbp(plan.estimate.recommended)}</dd>
+          <dd>
+            {gbp(plan.estimate.recommended)}
+            <LocalAmount gbp={plan.estimate.recommended} />
+          </dd>
         </div>
         {offer && (
           <div className={styles.cardOffer}>
