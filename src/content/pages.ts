@@ -1,8 +1,9 @@
 /**
  * Secondary pages. Each page carries its own search metadata (`seoTitle`,
  * `description`). `status: "draft"` pages render a "being prepared" notice.
- * Legal pages describe how this site actually behaves (no forms, no analytics,
- * no tracking cookies). Update them whenever that changes.
+ * Legal pages describe how this site actually behaves (no tracking cookies, no
+ * third party analytics, anonymous visit statistics counted on our own server).
+ * Update them whenever that changes.
  */
 export type PageBlock = { heading: string; body?: string[]; list?: string[] };
 
@@ -20,7 +21,7 @@ export type SimplePage = {
   status: "published" | "draft";
 };
 
-const LAST_UPDATED = "14 October 2026";
+const LAST_UPDATED = "16 October 2026";
 
 export const pages: SimplePage[] = [
   {
@@ -101,12 +102,13 @@ export const pages: SimplePage[] = [
           "The content of your enquiry and any documents you share with us.",
           "Business contact and project information if you become a client.",
           "Technical data recorded automatically by our hosting provider, such as IP address, browser type and the date and time of requests, kept in server logs for security and reliability.",
+          "Anonymous visit records: pages viewed, time of visit, country, device and browser type, the referring website and how far the visit went in the DotSeek Assistant (including estimate amounts). They contain no names, contact details or IP addresses (see our Cookie policy for how this works).",
         ],
       },
       {
         heading: "What we don't collect",
         body: [
-          "This website does not use analytics or advertising tools and does not set tracking cookies. Our fonts are served from our own website, so your visit is not shared with font providers. See our Cookie policy for details.",
+          "This website does not use third party analytics or advertising tools and does not set tracking cookies. Visits are counted anonymously on our own server. Our fonts are served from our own website, so your visit is not shared with font providers. See our Cookie policy for details.",
           "We do not keep a record of conversations with the DotSeek Assistant (see below).",
         ],
       },
@@ -118,6 +120,7 @@ export const pages: SimplePage[] = [
           "To keep business, accounting and tax records (legal obligation).",
           "To protect the security and integrity of our website and systems (legitimate interests).",
           "To answer questions you ask the DotSeek Assistant (legitimate interests).",
+          "To understand how the website is used and how many visitors request quotes, from anonymous totals only (legitimate interests).",
         ],
       },
       {
@@ -197,7 +200,7 @@ export const pages: SimplePage[] = [
       {
         heading: "Cookies we use",
         body: [
-          "This website does not set any cookies for visitors, and we do not use analytics, advertising or social media tracking.",
+          "This website does not set any cookies for visitors, and we do not use third party analytics, advertising or social media tracking.",
           "Our private team area (for DotSeek staff only) sets one strictly necessary cookie, ds_admin, when a team member signs in. It keeps them signed in for up to 12 hours and is never set for visitors.",
         ],
       },
@@ -212,6 +215,12 @@ export const pages: SimplePage[] = [
         ],
       },
       {
+        heading: "Anonymous visit statistics",
+        body: [
+          "To see how people find us and how many request quotes, our own server keeps an anonymous record of each visit: when it happened, the pages viewed, the country (worked out from your connection, never your exact location), the type of device and browser, the website or campaign that linked to us, and how far the visit went in the DotSeek Assistant (for example opening the chat, choosing a service, seeing an estimate or sending a quote, with the estimate amount and currency). No cookies are used and nothing is stored on your device for this. Your IP address is never stored: it is combined with the date and your browser type into a one way code, used only to link the steps of one visit for 30 minutes and to count unique visitors for the day, and deleted within two days. Visit records contain no names, email addresses or IP addresses and are kept for up to 400 days. If your browser sends a Global Privacy Control or Do Not Track signal, your visit is not counted.",
+        ],
+      },
+      {
         heading: "Third party services",
         body: [
           "The DotSeek Assistant chat does not use cookies. Messages you send are passed to our AI provider to generate replies, and the conversation is only saved by DotSeek if you choose to include it with an enquiry. See our Privacy policy for details.",
@@ -221,7 +230,7 @@ export const pages: SimplePage[] = [
       {
         heading: "If this changes",
         body: [
-          "If we introduce analytics or any other optional cookies in future, we will ask for your consent before setting them and update this policy.",
+          "If we introduce third party analytics or any other optional cookies in future, we will ask for your consent before setting them and update this policy.",
         ],
       },
       {

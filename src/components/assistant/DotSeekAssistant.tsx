@@ -22,6 +22,7 @@ import { offerFor } from "@/lib/plan/offer";
 import { EnquiryControls } from "./EnquiryControls";
 import { EnquiryReview } from "./EnquiryReview";
 import { AI_OFFLINE_EVENT, enquiryMailto, solutionNoun, solutionTitle, useEnquiry, type EnquiryState } from "./useEnquiry";
+import { track } from "@/components/analytics/Tracker";
 import { answerRows } from "@/content/enquiryFlows";
 import { keywordRecommendation } from "@/lib/assistant/keywordRecommend";
 import styles from "./DotSeekAssistant.module.css";
@@ -249,6 +250,12 @@ export function DotSeekAssistant() {
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
+  // Visit statistics (each step is counted once per visit on the server).
+  useEffect(() => {
+    if (open) track("chat_opened");
+  }, [open]);
+
+
   // An enquiry step (recommendation, reference analysis, brief) fell back without AI: say so in the header.
   useEffect(() => {
     const onOffline = () => setOffline(true);
@@ -287,6 +294,7 @@ export function DotSeekAssistant() {
   const ask = async (text: string, intent?: Intent) => {
     const question = text.trim();
     if (!question || busy) return;
+    track("chat_started");
 
     // A pasted website or app link starts the reference analysis, as if "Have a reference website or app?" was chosen.
     const link = !intent && !enquiryState ? linkIn(question) : null;
@@ -422,6 +430,9 @@ export function DotSeekAssistant() {
   const plan = enquiry.plan;
   const offerQuote = plan ? offerFor(enquiry.offer, plan.solution, plan.build) : null;
   const [planOpen, setPlanOpen] = useState(false);
+  useEffect(() => {
+    if (planOpen) track("quote_viewed");
+  }, [planOpen]);
   const [answersOpen, setAnswersOpen] = useState(false);
   /** The customer's private enquiry page, shown in a modal after sending. */
   const [enquiryView, setEnquiryView] = useState<{ url: string; title: string } | null>(null);
@@ -562,6 +573,7 @@ export function DotSeekAssistant() {
   };
 
   const startEnquiry = (solution?: SolutionId | "consult" | "reference") => {
+    track("chat_started");
     if (busy) return;
     setOpen(true);
     setSuggestions([]);

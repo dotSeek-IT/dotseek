@@ -17,6 +17,8 @@ import type { ReferenceAnalysis } from "@/lib/plan/referenceFeatures";
  */
 
 export type EnquiryStatus = "new" | "in_progress" | "awaiting_customer" | "closed";
+/** The customer's decision on the quotation, set by the team (absent = awaiting decision). */
+export type QuoteOutcome = "accepted" | "declined";
 
 export type ThreadMessage = {
   id: string;
@@ -61,6 +63,9 @@ export type Enquiry = {
   reference?: ReferenceAnalysis;
   /** Currency the customer saw (and the rate used), so the quotation always shows exactly the same. */
   currency?: CurrencySnapshot;
+  /** Quote outcome recorded by the team, and when (absent = awaiting decision). */
+  outcome?: QuoteOutcome;
+  outcomeAt?: string;
   /** AI chat before the enquiry, included with the visitor's consent. */
   transcript?: { role: "user" | "assistant"; content: string }[];
   thread: ThreadMessage[];
@@ -223,6 +228,22 @@ export async function setStatus(id: string, status: EnquiryStatus): Promise<Enqu
   const enquiry = db ? await db.get(id) : null;
   if (!db || !enquiry) return null;
   enquiry.status = status;
+  enquiry.updatedAt = new Date().toISOString();
+  await db.put(enquiry);
+  return enquiry;
+}
+
+export async function setOutcome(id: string, outcome: QuoteOutcome | null): Promise<Enquiry | null> {
+  const db = backend();
+  const enquiry = db ? await db.get(id) : null;
+  if (!db || !enquiry) return null;
+  if (outcome) {
+    enquiry.outcome = outcome;
+    enquiry.outcomeAt = new Date().toISOString();
+  } else {
+    delete enquiry.outcome;
+    delete enquiry.outcomeAt;
+  }
   enquiry.updatedAt = new Date().toISOString();
   await db.put(enquiry);
   return enquiry;

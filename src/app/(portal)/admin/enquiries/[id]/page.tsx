@@ -11,7 +11,7 @@ import { EnquiryDetails, StatusPill, Thread, formatDate, initials, needsReply, s
 import { SubmitButton } from "@/components/portal/SubmitButton";
 import styles from "@/components/portal/Admin.module.css";
 import portal from "@/components/portal/Portal.module.css";
-import { statusAction, teamReplyAction } from "../../../actions";
+import { outcomeAction, statusAction, teamReplyAction } from "../../../actions";
 
 export const metadata: Metadata = { title: "Enquiry" };
 export const dynamic = "force-dynamic";
@@ -49,6 +49,8 @@ export default async function AdminEnquiryPage({ params }: { params: Promise<{ i
               <span className={styles.chip}>{solution?.label ?? enquiry.solution}</span>
               {needsReply(enquiry) && <span className={`${styles.chip} ${styles.chipBrand}`}>Needs reply</span>}
               {enquiry.consultation && <span className={`${styles.chip} ${styles.chipWarn}`}>Consultation requested</span>}
+              {enquiry.outcome === "accepted" && <span className={`${styles.chip} ${styles.chipSuccess}`}>Quote accepted</span>}
+              {enquiry.outcome === "declined" && <span className={styles.chip}>Quote declined</span>}
             </div>
             <h1 id="enquiry-title">{enquiry.summary?.title ?? `${solution?.title ?? "Project"} enquiry`}</h1>
             <div className={styles.contact}>
@@ -88,6 +90,20 @@ export default async function AdminEnquiryPage({ params }: { params: Promise<{ i
               </select>
               <SubmitButton pendingText="Saving…" variant="secondary" size="sm">
                 Update status
+              </SubmitButton>
+            </form>
+            <form action={outcomeAction} className={styles.statusForm}>
+              <input type="hidden" name="id" value={enquiry.id} />
+              <label htmlFor="outcome" className="sr-only">
+                Quote outcome
+              </label>
+              <select key={enquiry.outcome ?? "awaiting"} id="outcome" name="outcome" defaultValue={enquiry.outcome ?? ""} className={styles.select}>
+                <option value="">Awaiting decision</option>
+                <option value="accepted">Quote accepted</option>
+                <option value="declined">Quote declined</option>
+              </select>
+              <SubmitButton pendingText="Saving…" variant="secondary" size="sm">
+                Save outcome
               </SubmitButton>
             </form>
             <div className={styles.actionRow}>

@@ -15,6 +15,7 @@ import { quotationEmailHtml } from "@/lib/plan/quotationEmail";
 import { getRegions } from "@/lib/currency/regions.server";
 import { makeMoney, regionForCountry, snapshotFor } from "@/lib/currency/money";
 import { solutionHeadline } from "@/lib/plan/headline";
+import { isBot, recordStep } from "@/lib/analytics/store";
 
 /**
  * POST /api/enquiry
@@ -136,6 +137,15 @@ export async function POST(request: Request) {
     currency,
     transcript: transcript.length ? transcript : undefined,
   });
+  // Visit statistics: this visit's journey reached "quote sent" (linked to the enquiry for its value and outcome).
+  const ua = request.headers.get("user-agent") ?? "";
+  if (enquiry && !isBot(ua)) {
+    await recordStep(
+      { ip: clientIp(request), ua, country: request.headers.get("x-vercel-ip-country") ?? country, ownHost: request.headers.get("host") ?? "" },
+      "quote_sent",
+      { service: enquiry.solution, currency: currency.customerCurrency, estimateGbp: plan.estimate.recommended, enquiry: enquiry.id },
+    ).catch(() => undefined);
+  }
   const origin = siteOrigin();
   const customerLink = enquiry ? `${origin}/enquiry/${enquiry.token}` : null;
   const adminLink = enquiry ? `${origin}/admin/enquiries/${enquiry.id}` : null;

@@ -7,7 +7,8 @@ import { site } from "@/content/site";
 import { solutionById } from "@/content/solutions";
 import { checkPassword, clearSession, createSession, isAdmin } from "@/lib/admin/auth";
 import { createRateLimiter } from "@/lib/assistant/http";
-import { addMessage, getEnquiryByToken, setStatus, type EnquiryStatus } from "@/lib/enquiries/store";
+import { invalidateAnalytics } from "@/lib/analytics/engine";
+import { addMessage, getEnquiryByToken, setOutcome, setStatus, type EnquiryStatus, type QuoteOutcome } from "@/lib/enquiries/store";
 import { emailHtml, escapeHtml, sendMail, siteOrigin, teamInbox } from "@/lib/mail";
 import { saveOffer } from "@/lib/offers/store";
 import { getRegions, refreshRates, saveRegion } from "@/lib/currency/regions.server";
@@ -74,6 +75,20 @@ export async function statusAction(formData: FormData) {
   await setStatus(id, status);
   revalidatePath(`/admin/enquiries/${id}`);
   revalidatePath("/admin");
+}
+
+/** Records the customer's decision on the quotation (accepted, declined, or back to awaiting). */
+export async function outcomeAction(formData: FormData) {
+  if (!(await isAdmin())) redirect("/admin/login");
+  const id = String(formData.get("id") ?? "");
+  const raw = String(formData.get("outcome") ?? "");
+  const outcome = (["accepted", "declined"] as QuoteOutcome[]).find((o) => o === raw) ?? null;
+  if (!id) return;
+  await setOutcome(id, outcome);
+  invalidateAnalytics();
+  revalidatePath(`/admin/enquiries/${id}`);
+  revalidatePath("/admin");
+  revalidatePath("/admin/analytics");
 }
 
 // ---------- Customer side ----------

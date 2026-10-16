@@ -653,6 +653,11 @@ a.stat:hover {
   color: var(--ds-color-brand);
 }
 
+.chipSuccess {
+  border-color: rgba(52, 211, 153, 0.45);
+  color: var(--ds-color-success);
+}
+
 .chipWarn {
   border-color: rgba(245, 165, 36, 0.45);
   color: var(--ds-color-warning);
@@ -1296,6 +1301,28 @@ a.stat:hover {
 
   .navLong {
     display: none;
+  }
+
+  /* Four tabs plus Sign out don't fit a phone: the tab row scrolls sideways like an app tab bar. */
+  .adminNav {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+    mask-image: linear-gradient(90deg, #000 85%, transparent);
+  }
+
+  .adminNav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .adminNav a {
+    flex: none;
+  }
+
+  .topbarAside {
+    flex: none;
   }
 
   /* Mark only, so Inbox / Offers / Regions and Sign out fit on a phone. */

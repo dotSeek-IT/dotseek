@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { currentRegion } from "@/components/currency/useRegion";
 import {
   CONTACT_STEP_IDS,
@@ -23,6 +23,7 @@ import type { CostOption, ReferenceAnalysis } from "@/lib/plan/reference";
 type ReferenceModule = typeof import("@/lib/plan/reference");
 import { gbp } from "@/lib/plan/format";
 import type { Offer } from "@/lib/plan/offer";
+import { track } from "@/components/analytics/Tracker";
 
 /**
  * Client state machine for the AI consultation inside the DotSeek Assistant:
@@ -213,6 +214,16 @@ export function useEnquiry({
   );
 
   /** Full / Optimised / MVP / Basic versions of the customer's full requirement (computed on demand). */
+  // Visit statistics: the first estimate of each enquiry, with its service, currency and GBP value.
+  const generated = useRef(false);
+  useEffect(() => {
+    if (!state) generated.current = false;
+    else if (plan && state.planSeen && !generated.current) {
+      generated.current = true;
+      track("quote_generated", { service: state.answers.solution_id, currency: currentRegion().region.currency, estimateGbp: plan.estimate.recommended });
+    }
+  }, [state, plan]);
+
   const getOptions = (): CostOption[] =>
     engine && state ? engine.ref.costOptions({ ...(state.baseAnswers ?? state.answers), ...contactOf(state.answers) }, state.baseChoices, { fromReference: Boolean(state.reference) }) : [];
 
@@ -247,6 +258,7 @@ export function useEnquiry({
   /** Moves on from `s` with these answers: next question, recommendation, plan or review. */
   const go = (s: EnquiryState, nextAnswers: Answers) => {
     const pruned = pruneAnswers(nextAnswers);
+    if (pruned.solution_id && pruned.solution_id !== s.answers.solution_id) track("service_selected", { service: pruned.solution_id });
     const next = nextStep(pruned);
     const wantPlan = !s.planSeen || s.returnTo === "plan";
     const base: EnquiryState = { ...s, answers: pruned, editing: undefined };
@@ -400,6 +412,7 @@ export function useEnquiry({
 
     // Budget: answered in the visitor's currency (their market's brackets or a typed amount), mapped to GBP for the engine.
     if (step.id === "budget") {
+      track("budget_selected");
       const mapped = budgetToGbp(value);
       if (mapped) nextAnswers.budget_gbp = mapped;
       else delete nextAnswers.budget_gbp;
@@ -469,6 +482,7 @@ export function useEnquiry({
   const continueToSend = () => {
     if (!state) return;
     userSay("Continue to send my enquiry");
+    track("quote_requested");
     go({ ...state, returnTo: undefined }, state.answers);
   };
 
@@ -476,6 +490,7 @@ export function useEnquiry({
   const requestConsultation = () => {
     if (!state) return;
     userSay("I'd like a consultation");
+    track("quote_requested");
     botSay("Great. The team will arrange a free consultation call to go through the estimate and architecture with you.");
     go({ ...state, consultation: true, returnTo: undefined }, state.answers);
   };

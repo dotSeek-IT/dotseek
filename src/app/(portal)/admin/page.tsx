@@ -153,6 +153,8 @@ export default async function AdminInboxPage({ searchParams }: { searchParams: P
                         {e.negotiation && <span className={styles.chip}>Price request</span>}
                         {e.reference && <span className={styles.chip}>Reference: {e.reference.host}</span>}
                         {e.offer?.eligible && <span className={styles.chip}>{e.offer.label}</span>}
+                        {e.outcome === "accepted" && <span className={`${styles.chip} ${styles.chipSuccess}`}>Accepted</span>}
+                        {e.outcome === "declined" && <span className={styles.chip}>Declined</span>}
                       </span>
                     </span>
                     <span className={styles.amount}>

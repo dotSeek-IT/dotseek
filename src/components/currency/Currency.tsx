@@ -1,6 +1,7 @@
 "use client";
 
 import type { Region } from "@/content/regions";
+import { countryName, flagEmoji } from "@/lib/countries";
 import { setRegionChoice, useRegion } from "./useRegion";
 import styles from "./Currency.module.css";
 
@@ -12,8 +13,7 @@ export function RefAmount({ gbp, className }: { gbp: number; className?: string 
   return <span className={[styles.ref, className].filter(Boolean).join(" ")}>{ref}</span>;
 }
 
-/** Emoji flag for a two-letter country code ("IN" gives the Indian flag). */
-const flag = (code: string) => String.fromCodePoint(...[...code.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65));
+const flag = flagEmoji;
 
 /** A region's flag: its country, the EU flag for the euro area, a globe for "every other country". */
 function regionFlag(region: Region, country?: string | null) {
@@ -23,14 +23,6 @@ function regionFlag(region: Region, country?: string | null) {
   return region.countries[0] ? flag(region.countries[0]) : "🌐";
 }
 
-const countryName = (code: string | null) => {
-  if (!code) return null;
-  try {
-    return new Intl.DisplayNames(["en-GB"], { type: "region" }).of(code.toUpperCase()) ?? code;
-  } catch {
-    return code;
-  }
-};
 
 /** "Currency: 🇮🇳 INR ₹ (India) ▼": automatic by location (with the visitor's flag), or any configured currency. Changing it refreshes every price. */
 export function CurrencySelector({ className }: { className?: string }) {
