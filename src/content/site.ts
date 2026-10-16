@@ -75,9 +75,9 @@ export const footerColumns: { title: string; links: NavItem[] }[] = [
   },
 ];
 
-// LinkedIn URL is assumed: confirm before launch.
+// LinkedIn points at the DotSeek profile until the Company Page exists. Then switch to /company/dotseek.
 export const socialLinks = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/company/dotseek", icon: "linkedin" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/dotseek-business-solution-735713444/", icon: "linkedin" },
   // Temporarily without a destination: the icon stays, the link goes nowhere ("#").
   { label: "GitHub", href: "#", icon: "github" },
 ] as const;

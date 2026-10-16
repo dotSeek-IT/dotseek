@@ -256,7 +256,7 @@ a clone of the reference. See `DESIGN.md` for the full system.
 
 ## 10. Before launch (open items)
 
-- [ ] Confirm the LinkedIn URL (`src/content/site.ts`; it is currently an assumed URL).
+- [x] LinkedIn URL set to the DotSeek profile (`src/content/site.ts`). When the LinkedIn Company Page exists (blocked by LinkedIn's new account wait), switch it to `https://www.linkedin.com/company/dotseek`.
 - [ ] Have a solicitor review the Privacy policy, Cookie policy and Terms of use (`src/content/pages.ts`).
 - [ ] Confirm the production domain (`site.url` in `src/content/site.ts`, now https://www.dotseek.co.uk).
 - [ ] Verify the site in Google Search Console: build with `GOOGLE_SITE_VERIFICATION=<token>` and submit `/sitemap.xml`.
