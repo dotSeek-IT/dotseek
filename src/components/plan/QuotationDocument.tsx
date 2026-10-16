@@ -254,7 +254,7 @@ function Document({ plan, title, solutionTitle, overview, contact, offer, negoti
       <section className={styles.section}>
         <h2>Notes and terms</h2>
         <ul className={styles.terms}>
-          <li>This is an AI-generated indicative estimate based on your answers and DotSeek&apos;s price catalogue. It is not a binding quotation or offer.</li>
+          <li>This is an AI generated indicative estimate based on your answers and DotSeek&apos;s price catalogue. It is not a binding quotation or offer.</li>
           <li>The final commercial quotation is confirmed by the DotSeek team after reviewing your complete requirements.</li>
           <li>Running costs depend on the cloud provider and real usage. Content, licences and domains are excluded unless stated. {region.taxNote}</li>
           <li>Valid for {VALID_DAYS} days from the date above.</li>

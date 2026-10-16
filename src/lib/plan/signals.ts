@@ -122,7 +122,7 @@ export function readSignals(answers: Answers): Signals {
       payments: includes(sec, "Payments or financial data"),
       sensitive: includes(sec, "Health or other sensitive data"),
       sso: includes(sec, "Staff sign in with Microsoft or Google (SSO)"),
-      mfa: includes(sec, "Two-step login (MFA)"),
+      mfa: includes(sec, "Two step login (MFA)"),
       audit: includes(sec, "Full audit trail of changes"),
     },
     growth: pick(answers.ops_growth, { "About the same": 0, "Steady growth": 1, "Fast growth, we're scaling up": 2 }, answers.biz_stage === "Growing and scaling" ? 2 : 1),

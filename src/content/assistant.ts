@@ -56,7 +56,7 @@ export const intents: Intent[] = [
     id: "website",
     keywords: ["website", "web site", "site", "redesign", "ecommerce", "e-commerce", "online shop", "landing page", "frontend", "front end", "portal", "admin portal", "wordpress"],
     answer: [
-      "Yes, DotSeek builds websites and web platforms: new sites, redesigns of existing ones, frontend-only builds, backends and APIs for existing sites, admin portals, e-commerce and payments, and AI features such as chatbots.",
+      "Yes, DotSeek builds websites and web platforms: new sites, redesigns of existing ones, frontend only builds, backends and APIs for existing sites, admin portals, online stores and payments, and AI features such as chatbots.",
       "Start an enquiry and I'll ask a few questions tailored to your website project.",
     ],
     next: ["enquiry", "software", "pricing"],
@@ -85,7 +85,7 @@ export const intents: Intent[] = [
     keywords: ["workflow", "process", "automate", "automation", "repetitive", "manual", "approval", "approvals", "orchestration"],
     answer: [
       "We automate repetitive processes across departments: capturing requests, understanding them with AI, applying your business rules, updating systems and measuring the results.",
-      "A typical example is lead to quote to invoice, with approvals and follow-ups handled automatically.",
+      "A typical example is lead to quote to invoice, with approvals and reminders handled automatically.",
     ],
     links: [{ label: "How automation flows", href: "/#workflow" }],
     next: ["process", "integrations", "pricing"],
@@ -125,7 +125,7 @@ export const intents: Intent[] = [
     id: "replace",
     keywords: ["replace", "new system", "rip", "existing", "keep our", "migrate", "switch"],
     answer: [
-      "No. DotSeek integrates with the CRM, ERP, finance, collaboration and database systems you already use. We only build custom software where an off-the-shelf tool can't do the job.",
+      "No. DotSeek integrates with the CRM, ERP, finance, collaboration and database systems you already use. We only build custom software where a ready made tool can't do the job.",
     ],
     next: ["integrations", "process"],
   },
@@ -134,7 +134,7 @@ export const intents: Intent[] = [
     keywords: ["price", "pricing", "cost", "costs", "how much", "budget", "quote", "quotation", "estimate", "fee", "fees", "expensive", "cheap", "architecture", "hosting", "infrastructure"],
     answer: [
       "Pricing follows your business stage: very basic websites start from £100, Starter sites about £300 to £1,000+, Growth web apps about £1,000 to £3,000+, Advanced software, apps and AI about £3,000 to £10,000+, and enterprise systems are custom quoted.",
-      "Start an enquiry and I'll prepare an AI-generated indicative estimate for your exact requirement, with minimum, recommended and maximum prices, a phased plan for your budget and a market comparison. You can also tell us your preferred budget.",
+      "Start an enquiry and I'll prepare an AI generated indicative estimate for your exact requirement, with minimum, recommended and maximum prices, a phased plan for your budget and a market comparison. You can also tell us your preferred budget.",
       "Every final quotation is confirmed by the DotSeek team after reviewing your requirements.",
     ],
     next: ["enquiry", "timeline", "process"],
@@ -160,7 +160,7 @@ export const intents: Intent[] = [
     id: "security",
     keywords: ["secure", "security", "safe", "data", "gdpr", "privacy", "audit", "permissions", "compliance", "hosting", "where is", "uk region", "trust"],
     answer: [
-      "Agents run inside controlled workflows with role-based permissions, approval steps for sensitive actions and a full audit log.",
+      "Agents run inside controlled workflows with permissions by role, approval steps for sensitive actions and a full audit log.",
       "We design around your data residency and security needs, including UK and EU hosting, private cloud deployments and model providers that don't train on your data.",
     ],
     links: [{ label: "Privacy policy", href: "/privacy" }],
@@ -170,7 +170,7 @@ export const intents: Intent[] = [
     id: "industries",
     keywords: ["industry", "industries", "sector", "retail", "healthcare", "education", "property", "finance sector", "professional services", "ecommerce"],
     answer: [
-      "We work with organisations in professional services, retail and eCommerce, healthcare, education, property and finance. The automation foundations are the same; the workflows are tailored to each sector.",
+      "We work with organisations in professional services, retail and online stores, healthcare, education, property and finance. The automation foundations are the same, and the workflows are tailored to each sector.",
     ],
     links: [{ label: "Industries", href: "/#industries" }],
     next: ["services", "contact"],

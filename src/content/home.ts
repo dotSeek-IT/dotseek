@@ -8,7 +8,7 @@ export const hero = {
   eyebrow: "AI business automation and digital solutions",
   titleLead: "Build a Smarter Business With",
   titleHighlight: "AI Automation",
-  body: "DotSeek designs AI automation, AI agents, websites, web and mobile apps and connected business systems that remove repetitive work and help your teams operate faster. Bring us the problem; we'll shape the solution.",
+  body: "DotSeek designs AI automation, AI agents, websites, web and mobile apps and connected business systems that remove repetitive work and help your teams operate faster. Bring us the problem and we'll shape the solution.",
   primary: { label: "Explore AI Automation", href: "#capabilities" },
   secondary: { label: "Talk to Our Team", href: "/contact" },
 };
@@ -37,7 +37,7 @@ export const heroFlow: FlowStep[] = [
   { label: "Quotation generated", system: "Quote engine", status: "done" },
   { label: "Manager approval", system: "Teams", status: "active" },
   { label: "Invoice issued", system: "Xero", status: "queued" },
-  { label: "Customer follow-up", system: "Email + WhatsApp", status: "queued" },
+  { label: "Customer reminder", system: "Email + WhatsApp", status: "queued" },
 ];
 
 export const integrations = {
@@ -65,7 +65,7 @@ export const integrations = {
 export const capabilities = {
   eyebrow: "Capabilities",
   heading: "Everything you need to automate real business work",
-  body: "From a single repetitive task to organisation-wide orchestration, DotSeek combines AI, integration and software engineering in one delivery team.",
+  body: "From a single repetitive task to orchestration across the whole organisation, DotSeek combines AI, integration and software engineering in one delivery team.",
   items: {
     agents: {
       title: "AI Agents",
@@ -73,7 +73,7 @@ export const capabilities = {
     },
     workflow: {
       title: "Workflow Automation",
-      body: "Automate repetitive processes across departments, from hand-offs and approvals to notifications and data entry.",
+      body: "Automate repetitive processes across departments, from handovers and approvals to notifications and data entry.",
     },
     documents: {
       title: "Intelligent Documents",
@@ -162,12 +162,12 @@ export const agents = {
   eyebrow: "AI Agents",
   heading: "AI agents that work across your business",
   body: "Each DotSeek agent operates inside a controlled workflow, connected to the systems it needs and nothing more. Every action is permissioned, logged and reviewable.",
-  guardrails: ["Role-based permissions", "Human approval steps", "Full audit trail", "Your data stays yours"],
+  guardrails: ["Permissions by role", "Human approval steps", "Full audit trail", "Your data stays yours"],
   items: [
     {
       name: "Sales Agent",
       role: "Qualifies leads and prepares quotes",
-      tasks: ["Score inbound leads", "Draft tailored quotes", "Book follow-ups"],
+      tasks: ["Score inbound leads", "Draft tailored quotes", "Book next meetings"],
       systems: ["CRM", "Email", "Calendar"],
       icon: "sales",
     },
@@ -219,7 +219,7 @@ export const solutions = {
     {
       title: "Sales Automation",
       summary: "Move leads to revenue without manual admin.",
-      items: ["Lead capture", "Lead qualification", "CRM updates", "Follow-ups", "Quotation generation"],
+      items: ["Lead capture", "Lead qualification", "CRM updates", "Customer reminders", "Quotation generation"],
     },
     {
       title: "Customer Service",
@@ -233,7 +233,7 @@ export const solutions = {
     },
     {
       title: "Finance",
-      summary: "Accurate, auditable back-office flow.",
+      summary: "Accurate, auditable back office flow.",
       items: ["Invoice generation", "Document processing", "Payment workflows", "Reconciliation assistance", "Reporting"],
     },
     {
@@ -250,8 +250,8 @@ export const systems = {
   heading: "AI that works with your business, not against it",
   body: "You don't need to replace the systems your teams rely on. DotSeek connects your existing applications, databases, APIs and processes into intelligent, automated workflows. We build custom software only where it adds real value.",
   points: [
-    { title: "Keep your stack", body: "We integrate with what you already run, on-premise or in the cloud." },
-    { title: "Secure by design", body: "Least-privilege access, encrypted connections and full logging." },
+    { title: "Keep your stack", body: "We integrate with what you already run, on your own servers or in the cloud." },
+    { title: "Secure by design", body: "Minimal access rights, encrypted connections and full logging." },
     { title: "Built to extend", body: "Each new workflow reuses the same connectors and data layer." },
   ],
   nodes: ["CRM", "ERP", "Email", "Database", "Website", "Accounting", "Helpdesk", "Documents"],
@@ -260,7 +260,7 @@ export const systems = {
 export const process = {
   eyebrow: "How DotSeek works",
   heading: "From first conversation to automation in production",
-  body: "A consultancy-led delivery model: we understand the process before we automate it.",
+  body: "A delivery model led by consultancy: we understand the process before we automate it.",
   steps: [
     { number: "01", title: "Discover", body: "Workshops with your team to map processes, systems and the repetitive work that slows you down." },
     { number: "02", title: "Analyse", body: "We quantify effort, data quality and risk to prioritise the automations with the clearest return." },
@@ -275,10 +275,10 @@ export const results = {
   heading: "What automation changes for your business",
   body: "Every engagement is measured against a baseline we agree with you up front, so results are your numbers, not marketing claims.",
   items: [
-    { title: "Hours of manual work reduced", body: "Data entry, copy-paste and chasing replaced by automated flow.", metric: "Hours back", icon: "clock" },
+    { title: "Hours of manual work reduced", body: "Manual data entry, copying and chasing replaced by automated flow.", metric: "Hours back", icon: "clock" },
     { title: "Faster response times", body: "Enquiries acknowledged and actioned in moments, not days.", metric: "Response time", icon: "bolt" },
     { title: "Fewer repetitive tasks", body: "Teams focus on judgement, relationships and growth.", metric: "Tasks automated", icon: "stack" },
-    { title: "Operational visibility", body: "Live dashboards across every automated process.", metric: "Real-time view", icon: "chart" },
+    { title: "Operational visibility", body: "Live dashboards across every automated process.", metric: "Live view", icon: "chart" },
     { title: "Connected systems", body: "One source of truth instead of disconnected tools.", metric: "Single data flow", icon: "link" },
     { title: "Scalable automation", body: "Handle growth in volume without growing headcount at the same rate.", metric: "Capacity", icon: "scale" },
   ],
@@ -293,11 +293,11 @@ export const caseStudy = {
   eyebrow: "Example engagement",
   heading: "What a DotSeek automation project looks like",
   label: "Illustrative example",
-  context: "Professional services firm · Quote-to-invoice workflow",
+  context: "Professional services firm · Quote to invoice workflow",
   problem:
-    "Enquiries arrived by email and web form. Staff re-typed details into the CRM, built quotes in spreadsheets and chased approvals manually, which slowed responses and created errors.",
+    "Enquiries arrived by email and web form. Staff retyped details into the CRM, built quotes in spreadsheets and chased approvals manually, which slowed responses and created errors.",
   automation:
-    "A sales agent qualifies each enquiry, creates the CRM record and drafts a quote from approved pricing. Managers approve in Teams, then invoices and follow-ups are generated automatically.",
+    "A sales agent qualifies each enquiry, creates the CRM record and drafts a quote from approved pricing. Managers approve in Teams, then invoices and reminders are generated automatically.",
   outcome:
     "One connected flow from enquiry to invoice, with every step logged. The team spends its time on client conversations instead of admin.",
 };
@@ -305,7 +305,7 @@ export const caseStudy = {
 export const cta = {
   heading: "Your business already has the data.",
   highlight: "Now make it work intelligently.",
-  body: "Build AI-powered workflows, connected systems and intelligent business operations with DotSeek.",
+  body: "Build AI workflows, connected systems and intelligent business operations with DotSeek.",
   primary: { label: "Start Your Automation Journey", href: "mailto:seekingsupport@dotseek.co.uk?subject=Automation%20enquiry" },
   secondary: { label: "Talk to DotSeek", href: "/contact" },
 };
@@ -316,15 +316,15 @@ export const faqs = {
   items: [
     {
       q: "Do we need to replace our existing systems?",
-      a: "No. DotSeek integrates with the CRM, ERP, finance, collaboration and database systems you already use. We only build custom software where an off-the-shelf tool can't do the job.",
+      a: "No. DotSeek integrates with the CRM, ERP, finance, collaboration and database systems you already use. We only build custom software where a ready made tool can't do the job.",
     },
     {
-      q: "Is AI automation safe for business-critical work?",
-      a: "Agents run inside controlled workflows with role-based permissions, approval steps for sensitive actions and a full audit log. You decide what is automated end-to-end and where a person signs off.",
+      q: "Is AI automation safe for critical business work?",
+      a: "Agents run inside controlled workflows with permissions by role, approval steps for sensitive actions and a full audit log. You decide what is automated from start to finish and where a person signs off.",
     },
     {
       q: "Where is our data processed?",
-      a: "We design around your data-residency and security requirements, including UK/EU hosting, private cloud deployments and model providers that do not train on your data.",
+      a: "We design around your data residency and security requirements, including UK/EU hosting, private cloud deployments and model providers that do not train on your data.",
     },
     {
       q: "How long does a first automation take?",
@@ -332,7 +332,7 @@ export const faqs = {
     },
     {
       q: "How is a project priced?",
-      a: "Pricing follows your business stage, from a basic website through business web applications and custom software to AI and enterprise systems. Ask the AI consultant for an indicative estimate with a minimum, recommended and maximum price for your exact requirement, within your budget; the final quotation is confirmed by our team.",
+      a: "Pricing follows your business stage, from a basic website through business web applications and custom software to AI and enterprise systems. Ask the AI consultant for an indicative estimate with a minimum, recommended and maximum price for your exact requirement, within your budget. The final quotation is confirmed by our team.",
     },
   ],
 };

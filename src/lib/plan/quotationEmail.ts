@@ -226,7 +226,7 @@ export function quotationEmailHtml(input: QuotationEmailInput): string {
 
   const terms = section(
     `${heading("Notes and terms")}<ul style="margin:0;padding-left:18px;font-size:12px;line-height:1.7;color:${C.muted}">
-      <li>This is an AI-generated indicative estimate based on your answers and DotSeek's price catalogue. It is not a binding quotation or offer.</li>
+      <li>This is an AI generated indicative estimate based on your answers and DotSeek's price catalogue. It is not a binding quotation or offer.</li>
       <li>The final commercial quotation is confirmed by the DotSeek team after reviewing your complete requirements.</li>
       <li>Running costs depend on the cloud provider and real usage. Content, licences and domains are excluded unless stated. ${esc(region.taxNote)}</li>
       <li>Valid for ${VALID_DAYS} days from the date above.</li>

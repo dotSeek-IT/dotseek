@@ -54,7 +54,7 @@ export function EnquiryDetails({ enquiry, showTranscript }: { enquiry: Enquiry; 
             <BriefList title="Suggested technology" items={summary.suggestedTechnology} />
             <BriefList title="Questions to clarify" items={summary.openQuestions} />
           </div>
-          <p className={styles.note}>AI-generated suggestions, to be confirmed with the DotSeek team.</p>
+          <p className={styles.note}>AI generated suggestions, to be confirmed with the DotSeek team.</p>
         </section>
       )}
 

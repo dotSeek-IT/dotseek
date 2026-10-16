@@ -22,7 +22,7 @@ const statusTone = { done: "success", active: "warning", queued: "neutral" } as 
 export function DashboardMockup() {
   return (
     <MockWindow
-      title="app.dotseek.ai / automations / lead-to-invoice"
+      title="app.dotseek.ai / automations / lead to invoice"
       toolbar={
         <Badge variant="status" tone="success" dot>
           Live

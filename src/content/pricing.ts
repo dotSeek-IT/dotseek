@@ -1,6 +1,6 @@
 /**
  * DotSeek internal pricing engine data: the single source for every figure in
- * the AI-generated indicative estimate (development effort, infrastructure,
+ * the AI generated indicative estimate (development effort, infrastructure,
  * running costs, market comparison and provider comparison).
  *
  * - The AI never invents prices. It only explains and recommends; all numbers
@@ -57,7 +57,7 @@ export type PlanItem = {
 
 export const pricingMeta = {
   reviewed: "October 2026",
-  label: "AI-Generated Indicative Estimate",
+  label: "AI Generated Indicative Estimate",
   /** Where the recommended estimate sits between each item's minimum and maximum (0 to 1). */
   recommendedPoint: 0.4,
   /** Testing and project management are added once the build is above this size; small sites include them. */
@@ -72,11 +72,11 @@ export const pricingMeta = {
   ],
   maintenance: { minMonthly: 15, shareOfBuildPerMonth: 0.02 },
   disclaimer:
-    "This is an AI-generated indicative estimate based on your answers and DotSeek's price catalogue. It is not a quotation or an offer. The final commercial quotation is confirmed by the DotSeek team after reviewing your complete requirements.",
+    "This is an AI generated indicative estimate based on your answers and DotSeek's price catalogue. It is not a quotation or an offer. The final commercial quotation is confirmed by the DotSeek team after reviewing your complete requirements.",
   marketDisclaimer:
     "Indicative Market Estimate: typical freelancer and agency price ranges for similar scope, region and complexity, from DotSeek's configurable market data. They are not quotes from other providers, and actual prices vary.",
   infraDisclaimer:
-    "Infrastructure figures come from DotSeek's internal pricing table (reviewed October 2026), not live provider quotes. They exclude VAT, domains and third-party licences, and are confirmed against current provider pricing before quoting.",
+    "Infrastructure figures come from DotSeek's internal pricing table (reviewed October 2026), not live provider quotes. They exclude VAT, domains and licences from other providers, and are confirmed against current provider pricing before quoting.",
 };
 
 const T = (starter: Range, standard: Range, advanced: Range, enterprise: Range) => ({ starter, standard, advanced, enterprise });
@@ -92,13 +92,13 @@ export const planItems: PlanItem[] = [
   { id: "backend", label: "Backend / API", group: "product", days: 10, price: [200, 600], summary: "Business logic and secure API (Node.js or ASP.NET Core).", diagram: { layer: "service", node: "Backend API" } },
   { id: "auth", label: "Authentication & user accounts", group: "product", days: 3, price: [80, 250], summary: "Sign up, sign in, password reset and profiles." },
   { id: "admin", label: "Admin portal", group: "product", days: 10, price: [250, 800], summary: "Manage customers, content, orders and settings.", diagram: { layer: "client", node: "Admin portal" } },
-  { id: "ecommerce", label: "E-commerce (catalogue, cart, checkout)", group: "product", days: 12, price: [500, 1500], summary: "Products, basket, checkout and order management." },
+  { id: "ecommerce", label: "Online store (catalogue, cart, checkout)", group: "product", days: 12, price: [500, 1500], summary: "Products, basket, checkout and order management." },
   { id: "bookings", label: "Bookings & scheduling", group: "product", days: 6, price: [150, 450], summary: "Availability, appointments, reminders and changes." },
   { id: "payments", label: "Payment gateway", group: "product", days: 3, price: [80, 250], summary: "Stripe or PayPal payments, refunds and receipts (transaction fees extra).", diagram: { layer: "external", node: "Payments" } },
-  { id: "multilang", label: "Multi-language", group: "product", days: 3, price: [100, 400], summary: "Translated content and language switching." },
+  { id: "multilang", label: "Multiple languages", group: "product", days: 3, price: [100, 400], summary: "Translated content and language switching." },
   { id: "analytics", label: "Advanced analytics & dashboards", group: "product", days: 8, price: [300, 1000], monthly: [0, 30], summary: "Dashboards and reports on the data that matters." },
-  { id: "mobile_app", label: "Mobile app (iOS & Android)", group: "product", days: 24, price: [1200, 3500], monthly: [8, 10], summary: "Native-quality iOS and Android app built cross-platform with Flutter or React Native; store accounts in running costs.", monthlyLabel: "App store developer accounts", diagram: { layer: "client", node: "Mobile app" } },
-  { id: "managed_backend", label: "Managed backend (Firebase or Supabase)", group: "product", days: 4, price: [200, 600], monthly: [0, 25], summary: "Hosted sign-in, database, storage and push notifications on Firebase or Supabase: no custom server to build or run.", diagram: { layer: "service", node: "Firebase / Supabase" } },
+  { id: "mobile_app", label: "Mobile app (iOS & Android)", group: "product", days: 24, price: [1200, 3500], monthly: [8, 10], summary: "iOS and Android app with native quality, built once with Flutter or React Native. Store accounts are in running costs.", monthlyLabel: "App store developer accounts", diagram: { layer: "client", node: "Mobile app" } },
+  { id: "managed_backend", label: "Managed backend (Firebase or Supabase)", group: "product", days: 4, price: [200, 600], monthly: [0, 25], summary: "Hosted sign in, database, storage and push notifications on Firebase or Supabase, with no custom server to build or run.", diagram: { layer: "service", node: "Firebase / Supabase" } },
   { id: "data_pipeline", label: "Data pipeline & warehouse", group: "product", days: 10, price: [500, 2000], monthly: T([10, 40], [40, 150], [150, 500], [500, 1500]), summary: "Collects and models data from your systems for reporting.", onlyFor: ["data", "software"], diagram: { layer: "data", node: "Data warehouse" } },
 
   // ---------- AI ----------
@@ -108,16 +108,16 @@ export const planItems: PlanItem[] = [
   { id: "document_ai", label: "Document AI", group: "ai", days: 6, price: [300, 1200], monthly: [20, 150], usage: true, summary: "Reads and extracts data from PDFs, invoices and forms." },
   { id: "voice_ai", label: "Speech / voice AI", group: "ai", days: 8, price: [500, 2000], monthly: [30, 200], usage: true, summary: "Voice input, transcription or spoken responses." },
   { id: "ai_insights", label: "AI insights & forecasting", group: "ai", days: 6, price: [300, 1200], monthly: [20, 120], usage: true, summary: "Trends, forecasts and recommendations from your data.", onlyFor: ["data", "software", "ai_agent", "automation"] },
-  { id: "automation", label: "Workflow automation", group: "ai", days: 8, price: [300, 1200], monthly: [20, 80], summary: "Rule-driven workflows with approvals and notifications.", diagram: { layer: "service", node: "Automation engine" } },
+  { id: "automation", label: "Workflow automation", group: "ai", days: 8, price: [300, 1200], monthly: [20, 80], summary: "Workflows driven by your rules, with approvals and notifications.", diagram: { layer: "service", node: "Automation engine" } },
 
   // ---------- Integrations ----------
   { id: "int_crm", label: "CRM integration", group: "integrations", days: 4, price: [150, 500], summary: "Salesforce, HubSpot or your CRM.", diagram: { layer: "external", node: "CRM" } },
   { id: "int_erp", label: "ERP integration", group: "integrations", days: 7, price: [400, 1500], summary: "Orders, stock and finance in your ERP.", diagram: { layer: "external", node: "ERP" } },
   { id: "int_accounting", label: "Accounting integration", group: "integrations", days: 3, price: [150, 450], summary: "Xero or your accounting system.", diagram: { layer: "external", node: "Accounting" } },
   { id: "int_workspace", label: "Microsoft 365 / Google Workspace", group: "integrations", days: 2, price: [100, 300], summary: "Email, calendar, files and Teams.", diagram: { layer: "external", node: "Microsoft 365 / Google" } },
-  { id: "int_ecom", label: "E-commerce platform integration", group: "integrations", days: 3, price: [150, 450], summary: "Shopify or your online store.", diagram: { layer: "external", node: "Shop platform" } },
+  { id: "int_ecom", label: "Online store platform integration", group: "integrations", days: 3, price: [150, 450], summary: "Shopify or your online store.", diagram: { layer: "external", node: "Shop platform" } },
   { id: "int_spreadsheet", label: "Spreadsheet import & sync", group: "integrations", days: 1.5, price: [50, 200], summary: "Move spreadsheet data into the new system." },
-  { id: "int_calendar", label: "Calendar & booking sync", group: "integrations", days: 2, price: [100, 300], summary: "Two-way calendar and booking sync." },
+  { id: "int_calendar", label: "Calendar & booking sync", group: "integrations", days: 2, price: [100, 300], summary: "Calendar and booking sync in both directions." },
   { id: "int_marketing", label: "Email marketing integration", group: "integrations", days: 1.5, price: [50, 200], summary: "Mailchimp or your marketing tool." },
   { id: "int_other", label: "Other system integration", group: "integrations", days: 3, price: [150, 600], summary: "A further system you named.", diagram: { layer: "external", node: "Other systems" } },
 
@@ -126,7 +126,7 @@ export const planItems: PlanItem[] = [
   { id: "sms", label: "SMS notifications", group: "communication", days: 1, price: [50, 150], monthly: [10, 60], usage: true, summary: "Text message reminders and alerts." },
   { id: "whatsapp", label: "WhatsApp integration", group: "communication", days: 3, price: [50, 250], monthly: [10, 80], usage: true, summary: "Conversations and notifications on WhatsApp.", diagram: { layer: "external", node: "WhatsApp" } },
   { id: "push", label: "Push notifications", group: "communication", days: 1.5, price: [100, 300], monthly: [0, 20], summary: "Mobile push messages." },
-  { id: "inapp", label: "In-app notifications", group: "communication", days: 2, price: [100, 300], summary: "Notification centre inside the app." },
+  { id: "inapp", label: "Notifications inside the app", group: "communication", days: 2, price: [100, 300], summary: "Notification centre inside the app." },
 
   // ---------- Performance ----------
   { id: "cdn", label: "CDN (e.g. Cloudflare)", group: "performance", days: 0.5, price: [0, 30], monthly: T([0, 20], [0, 20], [20, 150], [150, 600]), impact: [3, 2, 2, 1], summary: "Serves pages and files from locations close to your users.", diagram: { layer: "edge", node: "CDN" } },
@@ -139,7 +139,7 @@ export const planItems: PlanItem[] = [
   { id: "sql_db", label: "SQL database (PostgreSQL / SQL Server)", group: "data", days: 3, price: [60, 200], monthly: T([0, 25], [25, 80], [100, 400], [400, 1500]), impact: [1, 2, 1, 1], summary: "Managed relational database for your core records.", diagram: { layer: "data", node: "Database" } },
   { id: "nosql", label: "NoSQL database", group: "data", days: 2, price: [150, 500], monthly: [20, 150], impact: [2, 1, 3, 2], summary: "Flexible store for events, logs or very large volumes.", diagram: { layer: "data", node: "NoSQL" } },
   { id: "vector_db", label: "Vector database", group: "data", days: 1, price: [50, 200], monthly: T([0, 30], [0, 70], [70, 250], [250, 800]), impact: [2, 1, 2, 1], summary: "Stores embeddings so AI can search your knowledge.", diagram: { layer: "data", node: "Vector DB" } },
-  { id: "search", label: "Search engine", group: "data", days: 3, price: [150, 500], monthly: [20, 150], impact: [3, 1, 2, 2], summary: "Fast, typo-tolerant search across products or records.", diagram: { layer: "data", node: "Search" } },
+  { id: "search", label: "Search engine", group: "data", days: 3, price: [150, 500], monthly: [20, 150], impact: [3, 1, 2, 2], summary: "Fast search across products or records that copes with typos.", diagram: { layer: "data", node: "Search" } },
 
   // ---------- Storage ----------
   { id: "file_storage", label: "File & document storage", group: "storage", days: 0.5, price: [0, 30], monthly: T([1, 15], [1, 15], [10, 60], [60, 250]), impact: [1, 2, 2, 1], summary: "Secure object storage (Azure Blob, S3 or R2).", diagram: { layer: "data", node: "Object storage" } },
@@ -149,15 +149,15 @@ export const planItems: PlanItem[] = [
   // ---------- Background processing ----------
   { id: "queue", label: "Message queue", group: "background", days: 1.5, price: [50, 200], monthly: T([0, 30], [0, 30], [30, 150], [150, 500]), impact: [2, 3, 3, 2], summary: "Holds work to be done so nothing is lost under load.", diagram: { layer: "data", node: "Queue" } },
   { id: "worker", label: "Background worker", group: "background", days: 2, price: [50, 200], monthly: T([10, 40], [10, 40], [40, 200], [200, 600]), impact: [2, 2, 2, 1], summary: "Runs emails, documents and AI tasks without making users wait.", diagram: { layer: "service", node: "Worker" } },
-  { id: "scheduled", label: "Scheduled jobs", group: "background", days: 1, price: [50, 150], monthly: [0, 10], impact: [0, 1, 0, 1], summary: "Nightly imports, reminders and clean-up tasks." },
+  { id: "scheduled", label: "Scheduled jobs", group: "background", days: 1, price: [50, 150], monthly: [0, 10], impact: [0, 1, 0, 1], summary: "Nightly imports, reminders and cleanup tasks." },
   { id: "events", label: "Event processing", group: "background", days: 3, price: [200, 600], monthly: [20, 100], impact: [2, 2, 3, 2], summary: "Reacts to events from your systems as they happen." },
-  { id: "realtime", label: "Real-time updates (WebSockets)", group: "background", days: 3, price: [200, 800], monthly: [10, 60], impact: [2, 1, 2, 2], summary: "Live chat, tracking and dashboards without refreshing." },
+  { id: "realtime", label: "Live updates (WebSockets)", group: "background", days: 3, price: [200, 800], monthly: [10, 60], impact: [2, 1, 2, 2], summary: "Live chat, tracking and dashboards without refreshing." },
 
   // ---------- Security ----------
   { id: "waf", label: "Web application firewall (WAF)", group: "security", days: 1, price: [50, 200], monthly: [20, 200], impact: [0, 3, 1, 1], summary: "Blocks common attacks and abusive traffic.", diagram: { layer: "edge", node: "WAF" } },
-  { id: "mfa", label: "Two-step login (MFA)", group: "security", days: 1.5, price: [100, 300], monthly: [0, 30], impact: [0, 2, 0, 1], summary: "A second check when people sign in." },
-  { id: "sso", label: "Single sign-on (SSO)", group: "security", days: 3, price: [200, 800], monthly: [0, 100], impact: [0, 1, 0, 2], summary: "Staff sign in with Microsoft or Google accounts." },
-  { id: "rbac", label: "Role-based permissions", group: "security", days: 2, price: [100, 400], impact: [0, 2, 0, 1], summary: "Each role sees and does only what it should." },
+  { id: "mfa", label: "Two step login (MFA)", group: "security", days: 1.5, price: [100, 300], monthly: [0, 30], impact: [0, 2, 0, 1], summary: "A second check when people sign in." },
+  { id: "sso", label: "Single sign on (SSO)", group: "security", days: 3, price: [200, 800], monthly: [0, 100], impact: [0, 1, 0, 2], summary: "Staff sign in with Microsoft or Google accounts." },
+  { id: "rbac", label: "Permissions by role", group: "security", days: 2, price: [100, 400], impact: [0, 2, 0, 1], summary: "Each role sees and does only what it should." },
   { id: "encryption", label: "Encryption at rest & in transit", group: "security", days: 0, price: [0, 0], impact: [0, 2, 0, 0], summary: "HTTPS everywhere and encrypted storage." },
   { id: "audit", label: "Audit logs", group: "security", days: 2, price: [100, 400], monthly: [5, 40], impact: [0, 2, 0, 1], summary: "A record of who changed what, and when." },
   { id: "backup", label: "Automated backups", group: "security", days: 0.5, price: [0, 30], monthly: T([5, 15], [10, 30], [30, 120], [120, 400]), impact: [0, 3, 0, 0], summary: "Daily backups with tested restore." },
@@ -168,11 +168,11 @@ export const planItems: PlanItem[] = [
   { id: "hosting", label: "Application hosting", group: "devops", days: 0.5, price: [0, 40], monthly: T([5, 20], [30, 120], [150, 600], [600, 2500]), impact: [1, 1, 1, 1], summary: "Managed hosting for the frontend and API." },
   { id: "cicd", label: "CI/CD pipeline", group: "devops", days: 1.5, price: [30, 120], monthly: [0, 20], impact: [0, 2, 1, 1], summary: "Automatic testing and safe, repeatable releases." },
   { id: "docker", label: "Docker containers", group: "devops", days: 1, price: [30, 120], impact: [0, 2, 2, 1], summary: "The same packaged app in every environment." },
-  { id: "kubernetes", label: "Kubernetes (AKS / EKS)", group: "devops", days: 8, price: [1000, 3000], monthly: T([150, 500], [150, 500], [150, 500], [400, 1500]), impact: [2, 3, 3, 3], summary: "Container orchestration for large, multi-service systems." },
+  { id: "kubernetes", label: "Kubernetes (AKS / EKS)", group: "devops", days: 8, price: [1000, 3000], monthly: T([150, 500], [150, 500], [150, 500], [400, 1500]), impact: [2, 3, 3, 3], summary: "Container orchestration for large systems with many services." },
   { id: "monitoring", label: "Monitoring & alerts", group: "devops", days: 0.5, price: [0, 60], monthly: T([0, 30], [0, 30], [30, 150], [150, 500]), impact: [0, 3, 1, 1], summary: "Uptime, errors and performance with alerts to the team." },
   { id: "logging", label: "Centralised logging", group: "devops", days: 1, price: [100, 300], monthly: T([10, 60], [10, 60], [60, 300], [300, 1000]), impact: [0, 2, 1, 1], summary: "Searchable logs from every service in one place." },
   { id: "staging", label: "Staging environment", group: "devops", days: 1, price: [30, 120], monthly: T([10, 60], [10, 60], [60, 250], [250, 1000]), impact: [0, 2, 0, 1], summary: "A safe copy of production for testing changes." },
-  { id: "multi_region", label: "Multi-region deployment", group: "devops", days: 8, price: [1500, 5000], monthly: [500, 3000], impact: [2, 3, 3, 3], summary: "Runs in more than one region for resilience and global speed." },
+  { id: "multi_region", label: "Deployment across regions", group: "devops", days: 8, price: [1500, 5000], monthly: [500, 3000], impact: [2, 3, 3, 3], summary: "Runs in more than one region for resilience and global speed." },
 ];
 
 export const itemById = (id: string) => planItems.find((i) => i.id === id);
@@ -216,7 +216,7 @@ export const tiers: Tier[] = [
     id: "starter",
     level: 1,
     name: "Essential hosting",
-    tagline: "Best for early-stage or low-traffic use.",
+    tagline: "Best for early stage or low traffic use.",
     bestFor: ["Business websites", "Small portals", "Simple booking systems", "Small internal apps", "MVPs"],
     infra: starterInfra,
   },
@@ -225,7 +225,7 @@ export const tiers: Tier[] = [
     level: 2,
     name: "Standard",
     tagline: "Best balance of performance, reliability and cost.",
-    bestFor: ["Customer portals", "Booking platforms", "CRM systems", "Business management software", "E-commerce", "Multi-user systems"],
+    bestFor: ["Customer portals", "Booking platforms", "CRM systems", "Business management software", "Online store", "Systems with many users"],
     infra: standardInfra,
   },
   {
@@ -233,15 +233,15 @@ export const tiers: Tier[] = [
     level: 3,
     name: "High Scale",
     tagline: "Designed for growth and higher availability.",
-    bestFor: ["High-traffic apps", "Complex business software", "AI-enabled systems", "Marketplaces", "Multi-tenant SaaS", "Real-time apps"],
+    bestFor: ["High traffic apps", "Complex business software", "AI enabled systems", "Marketplaces", "SaaS for many client organisations", "Live apps"],
     infra: advancedInfra,
   },
   {
     id: "enterprise",
     level: 4,
     name: "Enterprise",
-    tagline: "For high availability, multi-region or complex enterprise systems.",
-    bestFor: ["Enterprise software", "Large SaaS platforms", "Multi-region systems", "Large AI platforms", "Complex automation"],
+    tagline: "For high availability, multiple regions or complex enterprise systems.",
+    bestFor: ["Enterprise software", "Large SaaS platforms", "Systems across regions", "Large AI platforms", "Complex automation"],
     infra: enterpriseInfra,
   },
 ];
@@ -274,7 +274,7 @@ export const providers: Provider[] = [
     scalability: 3,
     reliability: 3,
     management: "Medium",
-    suits: "Microsoft-centric businesses, from small apps to enterprise",
+    suits: "Businesses built around Microsoft, from small apps to enterprise",
     pros: ["Strong Microsoft 365 and Entra ID (SSO) integration", "UK regions", "Managed SQL, App Service and AKS"],
     limits: ["Pricing can be complex", "Costs rise without cost governance"],
   },
@@ -298,9 +298,9 @@ export const providers: Provider[] = [
     scalability: 3,
     reliability: 3,
     management: "Medium",
-    suits: "Data, analytics and AI-heavy projects",
+    suits: "Data, analytics and AI heavy projects",
     pros: ["Strong data and AI services", "Simple managed containers (Cloud Run)", "UK region"],
-    limits: ["Smaller UK partner ecosystem", "Fewer business-app integrations"],
+    limits: ["Smaller UK partner ecosystem", "Fewer business app integrations"],
   },
   {
     id: "digitalocean",
@@ -310,9 +310,9 @@ export const providers: Provider[] = [
     scalability: 2,
     reliability: 2,
     management: "Low",
-    suits: "Small to mid-size apps that want simple, predictable costs",
+    suits: "Small and medium apps that want simple, predictable costs",
     pros: ["Simple, predictable pricing", "Managed databases and Kubernetes", "London data centre"],
-    limits: ["Fewer advanced managed services", "Limited multi-region and compliance options"],
+    limits: ["Fewer advanced managed services", "Limited options for multiple regions and compliance"],
   },
   {
     id: "hetzner",
@@ -322,9 +322,9 @@ export const providers: Provider[] = [
     scalability: 1,
     reliability: 2,
     management: "High",
-    suits: "Cost-optimised servers for technical teams",
+    suits: "Low cost servers for technical teams",
     pros: ["Very low cost servers", "EU data centres (GDPR)"],
-    limits: ["No UK region", "Few managed services, more hands-on DevOps"],
+    limits: ["No UK region", "Few managed services, more manual DevOps"],
   },
   {
     id: "hostinger",
@@ -347,8 +347,8 @@ export const providers: Provider[] = [
     reliability: 2,
     management: "Low",
     suits: "Next.js websites, portals and MVPs",
-    pros: ["Fast Next.js hosting with a built-in CDN", "Managed Postgres, auth and storage", "Very little DevOps"],
-    limits: ["Usage-based costs grow with traffic", "Less control for heavy background work"],
+    pros: ["Fast Next.js hosting with a CDN included", "Managed Postgres, auth and storage", "Very little DevOps"],
+    limits: ["Costs grow with traffic and usage", "Less control for heavy background work"],
   },
   {
     id: "cloudflare",
@@ -359,7 +359,7 @@ export const providers: Provider[] = [
     reliability: 2,
     management: "Low",
     suits: "Global sites and lightweight APIs at the edge",
-    pros: ["Global network with CDN and WAF included", "Low-cost storage (R2) and serverless workers"],
+    pros: ["Global network with CDN and WAF included", "Low cost storage (R2) and serverless workers"],
     limits: ["Edge runtime limits for heavy backend work", "Smaller managed database options"],
   },
 ];
@@ -419,7 +419,7 @@ export const stages: Stage[] = [
     priceLabel: "£300–£1,000+",
     upTo: 1000,
     summary: "Small business websites with better design and simple content management.",
-    includes: ["Multi-page website", "Better UI/UX", "Contact and enquiry forms", "Basic SEO", "CMS or simple content management", "Basic backend where required"],
+    includes: ["Website with several pages", "Better UI/UX", "Contact and enquiry forms", "Basic SEO", "CMS or simple content management", "Basic backend where required"],
   },
   {
     id: "growth",
@@ -427,7 +427,7 @@ export const stages: Stage[] = [
     priceLabel: "£1,000–£3,000+",
     upTo: 3000,
     summary: "Business web applications that run part of your operations.",
-    includes: ["Backend, API and database", "Authentication", "Admin and customer portals", "Bookings and payments", "Business automation", "Third-party integrations"],
+    includes: ["Backend, API and database", "Authentication", "Admin and customer portals", "Bookings and payments", "Business automation", "Integrations with other systems"],
   },
   {
     id: "advanced",
@@ -442,8 +442,8 @@ export const stages: Stage[] = [
     name: "Scale / Enterprise",
     priceLabel: "Custom quote",
     upTo: Infinity,
-    summary: "High-traffic, high-availability and enterprise systems, quoted after discovery.",
-    includes: ["High-traffic systems", "Multi-tenant SaaS", "Microservices, containers and Kubernetes", "High availability and multi-region", "Multiple AI services", "Advanced security"],
+    summary: "High traffic, high availability and enterprise systems, quoted after discovery.",
+    includes: ["High traffic systems", "SaaS for many client organisations", "Microservices, containers and Kubernetes", "High availability across regions", "Multiple AI services", "Advanced security"],
   },
 ];
 
@@ -478,12 +478,12 @@ export const packages: Record<PackageFamily, PackageDef[]> = {
     { id: "a1", name: "AI agent pilot", summary: "One task, one system, with human approval.", include: ["ai_agent"], exclude: ["rag", "automation", "admin", "analytics", "mobile_app"], maxIntegrations: 1, tier: "starter" },
     { id: "a2", name: "AI agent + integrations", summary: "The agent working across all the systems you named.", include: ["ai_agent"], exclude: ["automation", "admin", "analytics", "mobile_app"], tier: "standard" },
     { id: "a3", name: "AI agent + knowledge + automation", summary: "Adds knowledge search over your documents and automated workflows.", include: ["ai_agent", "rag", "vector_db", "automation"], exclude: ["mobile_app"], tier: "standard" },
-    { id: "a4", name: "Complete digital solution + AI automation", summary: "Adds an admin portal, dashboards and a customer-facing chatbot.", include: ["ai_agent", "rag", "vector_db", "automation", "admin", "analytics", "ai_chatbot"], exclude: [], tier: "standard" },
+    { id: "a4", name: "Complete digital solution + AI automation", summary: "Adds an admin portal, dashboards and a chatbot for customers.", include: ["ai_agent", "rag", "vector_db", "automation", "admin", "analytics", "ai_chatbot"], exclude: [], tier: "standard" },
   ],
   assistant: [
     { id: "c1", name: "Website chatbot", summary: "An AI assistant on your website.", include: ["ai_chatbot"], exclude: ["whatsapp", "rag", "ai_agent", "automation"], maxIntegrations: 0, tier: "starter" },
     { id: "c2", name: "Chatbot + knowledge base", summary: "Answers grounded in your own documents (RAG).", include: ["ai_chatbot", "rag", "vector_db"], exclude: ["whatsapp", "ai_agent", "automation"], tier: "standard" },
-    { id: "c3", name: "Multi-channel assistant", summary: "Website and WhatsApp, connected to your systems.", include: ["ai_chatbot", "rag", "vector_db", "whatsapp"], exclude: ["ai_agent", "automation"], tier: "standard" },
+    { id: "c3", name: "Assistant across channels", summary: "Website and WhatsApp, connected to your systems.", include: ["ai_chatbot", "rag", "vector_db", "whatsapp"], exclude: ["ai_agent", "automation"], tier: "standard" },
     { id: "c4", name: "Complete digital solution + AI automation", summary: "Adds an AI agent and workflow automation behind the assistant.", include: ["ai_chatbot", "rag", "vector_db", "whatsapp", "ai_agent", "automation", "analytics"], exclude: [], tier: "standard" },
   ],
   automation: [
@@ -520,20 +520,20 @@ export const scopeLevels: Record<ScopeId, { label: string; days: number; monthly
 export const SCOPE_IDS = Object.keys(scopeLevels) as ScopeId[];
 
 const integrationScopes: Record<ScopeId, string> = {
-  basic: "Standard connector: one-way sync of the core records.",
-  advanced: "Two-way sync, custom fields, webhooks, retries and monitoring.",
+  basic: "Standard connector: sync of the core records in one direction.",
+  advanced: "Sync in both directions, custom fields, webhooks, retries and monitoring.",
   custom: "Bespoke API work, complex mappings and data migration, confirmed in discovery.",
 };
 
 /** What each scope includes, for every API, integration and AI service that offers a choice. */
 export const itemScopes: Record<string, Record<ScopeId, string>> = {
   mobile_app: {
-    basic: "Core screens and sign-up, standard components, one release on the stores.",
+    basic: "Core screens and sign up, standard components, one release on the stores.",
     advanced: "More screens and flows, offline support, deep links, analytics and polished animation.",
     custom: "Fully bespoke design and native device features (widgets, wearables, background tasks), scoped in discovery.",
   },
   managed_backend: {
-    basic: "Sign-in, one database and file storage on Firebase or Supabase.",
+    basic: "Sign in, one database and file storage on Firebase or Supabase.",
     advanced: "Security rules, cloud functions, push campaigns and scheduled tasks.",
     custom: "Several environments, data migration paths and a plan to move to a custom backend later.",
   },
@@ -544,7 +544,7 @@ export const itemScopes: Record<string, Record<ScopeId, string>> = {
   },
   api_gateway: {
     basic: "One secure entry point with keys and rate limits.",
-    advanced: "Per-client policies, request validation, analytics and versioning.",
+    advanced: "Policies for each client, request validation, analytics and versioning.",
     custom: "Partner or public API programme with a developer portal.",
   },
   payments: {
@@ -554,28 +554,28 @@ export const itemScopes: Record<string, Record<ScopeId, string>> = {
   },
   whatsapp: {
     basic: "Notifications and simple replies.",
-    advanced: "Two-way conversations with templates and human handover.",
+    advanced: "Conversations in both directions with templates and human handover.",
     custom: "Campaigns, catalogues and bespoke conversation flows.",
   },
   sms: {
     basic: "Reminders and alerts from templates.",
-    advanced: "Two-way SMS with replies routed to your team.",
+    advanced: "SMS in both directions with replies routed to your team.",
     custom: "Bespoke messaging flows across several numbers or countries.",
   },
   ai_chatbot: {
     basic: "FAQ answers and lead capture from your content.",
     advanced: "Knowledge base answers, system lookups and human handover.",
-    custom: "Multi-language, multi-channel assistant with bespoke actions.",
+    custom: "Assistant in several languages and channels with bespoke actions.",
   },
   ai_agent: {
     basic: "One task in one system, with human approval.",
     advanced: "Several tasks across systems, with tools, memory and approvals.",
-    custom: "Multi-agent workflows and bespoke tools, scoped in discovery.",
+    custom: "Workflows with several agents and bespoke tools, scoped in discovery.",
   },
   rag: {
     basic: "Answers from a single document set or your website.",
-    advanced: "Several sources, automatic re-indexing and source citations.",
-    custom: "Permission-aware search across many systems.",
+    advanced: "Several sources, automatic reindexing and source citations.",
+    custom: "Search across many systems that respects permissions.",
   },
   document_ai: {
     basic: "One document type (for example invoices) with standard fields.",
@@ -590,7 +590,7 @@ export const itemScopes: Record<string, Record<ScopeId, string>> = {
   automation: {
     basic: "One workflow with standard triggers and notifications.",
     advanced: "Several workflows with approvals, exceptions and reporting.",
-    custom: "Organisation-wide orchestration across departments.",
+    custom: "Orchestration across every department.",
   },
   ...Object.fromEntries(
     ["int_crm", "int_erp", "int_accounting", "int_workspace", "int_ecom", "int_spreadsheet", "int_calendar", "int_marketing", "int_other"].map((id) => [
@@ -615,7 +615,7 @@ const groupScopes: Record<ItemGroup, Record<ScopeId, string>> = {
   integrations: integrationScopes,
   communication: {
     basic: "Standard templates and notifications.",
-    advanced: "Two-way messaging, personalisation and delivery tracking.",
+    advanced: "Messaging in both directions, personalisation and delivery tracking.",
     custom: "Bespoke flows across several channels.",
   },
   performance: {
@@ -625,7 +625,7 @@ const groupScopes: Record<ItemGroup, Record<ScopeId, string>> = {
   },
   data: {
     basic: "Managed service with standard settings and daily backups.",
-    advanced: "Higher capacity, read replicas and point-in-time recovery.",
+    advanced: "Higher capacity, read replicas and recovery to any point in time.",
     custom: "Bespoke data design, retention and residency rules.",
   },
   storage: {
@@ -635,8 +635,8 @@ const groupScopes: Record<ItemGroup, Record<ScopeId, string>> = {
   },
   background: {
     basic: "Standard background jobs with retries.",
-    advanced: "Higher throughput, priorities and dead-letter handling.",
-    custom: "Bespoke event-driven processing, scoped with the team.",
+    advanced: "Higher throughput, priorities and handling of failed messages.",
+    custom: "Bespoke processing driven by events, scoped with the team.",
   },
   security: {
     basic: "Standard, recommended configuration.",
@@ -657,7 +657,7 @@ export const scopesFor = (item: PlanItem): Record<ScopeId, string> | null =>
 /** Homepage "pocket money" band: a short, eye-catching starting point (stages stay in the estimate). */
 export const pocketBand = {
   kicker: "Start small",
-  heading: "Big plans. Pocket-money start.",
+  heading: "Big plans. Pocket money start.",
   body: "Get your business online with a basic website, then grow the same solution into a booking portal, an app or AI automation when you're ready.",
   path: ["Basic website", "Business portal", "Mobile app", "AI automation"],
   primary: "Get my estimate",
@@ -666,7 +666,7 @@ export const pocketBand = {
 
 /** Notice printed on every AI-generated quotation (quotation modal and quotation emails). */
 export const quotationNotice = {
-  status: "AI-generated draft, awaiting DotSeek review",
+  status: "AI generated draft, awaiting DotSeek review",
   sections: [
     {
       heading: "Quotation notice",
@@ -678,26 +678,26 @@ export const quotationNotice = {
     {
       heading: "Important",
       body: [
-        "This document is an AI-generated indicative quotation and is not a final commercial agreement.",
+        "This document is an AI generated indicative quotation and is not a final commercial agreement.",
         "Final pricing, scope, delivery timeline, architecture and terms will only be confirmed after the DotSeek team reviews the complete project requirements and issues an approved final quotation or agreement.",
       ],
     },
     {
-      heading: "Customer-specific quotation",
+      heading: "Quotation specific to the customer",
       body: ["This quotation has been prepared specifically around the customer's submitted requirements and budget. The pricing may include:"],
       list: [
         "Custom scope adjustments",
-        "Budget-based recommendations",
+        "Recommendations based on your budget",
         "Introductory offers",
         "Phased development options",
-        "DotSeek-specific pricing",
+        "Pricing specific to DotSeek",
         "Architecture optimisation",
-        "AI-assisted cost optimisation",
+        "Cost optimisation assisted by AI",
       ],
       after: "Therefore, the quotation should not automatically be considered a standard market price for the same project with another provider.",
     },
     {
-      heading: "Third-party and agency warning",
+      heading: "Warning about other agencies and providers",
       body: [
         "Customers should be cautious if another agency, freelancer or intermediary takes this quotation and offers to deliver the project using DotSeek's scope, architecture, pricing or recommendations.",
         "A lower price from another provider does not necessarily mean that the same items will be included:",
@@ -725,7 +725,7 @@ export const quotationNotice = {
       body: [
         "DotSeek uses AI and automation to help businesses identify suitable digital solutions, estimate project requirements and reduce unnecessary development costs.",
         "These tools are designed to support the business relationship, not bypass it.",
-        "AI-generated recommendations should therefore be reviewed by the DotSeek team before they are treated as a final technical or commercial commitment.",
+        "AI generated recommendations should therefore be reviewed by the DotSeek team before they are treated as a final technical or commercial commitment.",
       ],
     },
     {

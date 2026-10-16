@@ -7,8 +7,8 @@ export function HeroAutomationVisual() {
   return (
     <figure className={styles.visual}>
       <figcaption className="sr-only">
-        Illustration of the DotSeek Automation Monitor: a lead-to-invoice workflow where a lead is received, qualified
-        by AI, recorded in the CRM and quoted, then awaits manager approval before invoicing and customer follow-up.
+        Illustration of the DotSeek Automation Monitor: a lead to invoice workflow where a lead is received, qualified
+        by AI, recorded in the CRM and quoted, then awaits manager approval before invoicing and the customer reminder.
       </figcaption>
       <div className={styles.frame} aria-hidden="true">
         <div className={styles.cornerGlow} />

@@ -14,7 +14,7 @@ export function solutionHeadline(plan: Plan, fallback: string): { name: string; 
     : picked("frontend")
       ? plan.solution === "website"
         ? picked("ecommerce")
-          ? "E-commerce website"
+          ? "Online store website"
           : picked("admin") || picked("auth")
             ? "Website with customer portal"
             : "Website"

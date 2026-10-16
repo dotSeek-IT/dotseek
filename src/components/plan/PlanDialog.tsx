@@ -65,7 +65,7 @@ const STATUS: Record<ServiceView["status"], string> = {
 const FEATURE_GROUPS: ItemGroup[] = ["product", "ai", "integrations", "communication"];
 
 /**
- * Full-screen solution plan: AI-generated indicative estimate, architecture
+ * Full-screen solution plan: AI generated indicative estimate, architecture
  * builder and comparisons. Every number comes from the pricing engine and
  * recalculates instantly when the customer changes an option.
  */
@@ -562,7 +562,7 @@ export function PlanDialog(props: PlanDialogProps) {
                 </div>
               )}
               <div>
-                <dt>First-year total</dt>
+                <dt>First year total</dt>
                 <dd>{gbpRange(plan.firstYear)}</dd>
               </div>
             </dl>

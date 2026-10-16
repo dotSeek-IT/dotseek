@@ -39,7 +39,7 @@ const parts = (answer?: string) => (answer ? answer.split(", ").filter(Boolean) 
 export const isSimpleSite = (a: Answers) =>
   solutionOf(a) === "website" &&
   a.web_pages === "Single landing page" &&
-  !["Admin portal or business management system", "E-commerce or payments", "Backend / API for an existing website", "A mobile app to go with it"].some(
+  !["Admin portal or business management system", "Online store or payments", "Backend / API for an existing website", "A mobile app to go with it"].some(
     (o) => includes(a.web_need, o),
   ) &&
   (a.web_backend === undefined || a.web_backend === "Nothing beyond the website" || a.web_backend === "Simple content management (edit pages ourselves)");
@@ -52,7 +52,7 @@ const SYSTEMS = [
   "Salesforce",
   "HubSpot",
   "Xero / accounting",
-  "Shopify / e-commerce",
+  "Shopify or online store",
   "ERP",
   "Spreadsheets",
 ];
@@ -120,7 +120,7 @@ const mobileSteps: EnquiryStep[] = [
   {
     id: "app_build",
     label: "App technology",
-    question: "How should the app be built? Hybrid is one shared codebase; native means a separate app for each platform.",
+    question: "How should the app be built? Hybrid is one shared codebase, and native means a separate app for each platform.",
     kind: "choice",
     options: [APP_HYBRID, APP_NATIVE, "Not sure, please advise"],
     when: (a) => wantsMobile(a) && bothPlatforms(a),
@@ -133,7 +133,7 @@ const mobileSteps: EnquiryStep[] = [
     options: [
       "User accounts and login",
       "Push notifications",
-      "In-app payments or subscriptions",
+      "Payments or subscriptions inside the app",
       "Bookings or orders",
       "Maps and location",
       "Camera, photos or scanning",
@@ -167,7 +167,7 @@ const websiteNeeds = [
   "Frontend development only",
   "Backend / API for an existing website",
   "Admin portal or business management system",
-  "E-commerce or payments",
+  "Online store or payments",
   "AI features or chatbot",
   WEBSITE_WITH_APP,
 ];
@@ -212,7 +212,7 @@ const flows: Record<SolutionId, EnquiryStep[]> = {
       label: "Business type",
       question: "What type of business is the website for?",
       kind: "choice",
-      options: ["Professional services", "Retail & e-commerce", "Hospitality & leisure", "Healthcare", "Education", "Property", "Finance"],
+      options: ["Professional services", "Retail & online stores", "Hospitality & leisure", "Healthcare", "Education", "Property", "Finance"],
       other: true,
     },
     {
@@ -291,7 +291,7 @@ const flows: Record<SolutionId, EnquiryStep[]> = {
       label: "Existing system",
       question: "What do you use for this today?",
       kind: "choice",
-      options: ["Nothing yet", "Spreadsheets and email", "An off-the-shelf tool", "Our own custom system"],
+      options: ["Nothing yet", "Spreadsheets and email", "A ready made tool", "Our own custom system"],
       other: true,
     },
     {
@@ -343,7 +343,7 @@ const flows: Record<SolutionId, EnquiryStep[]> = {
     {
       id: "sw_automation",
       label: "Automation & AI",
-      question: "Would you like automation or AI built in (for example automatic follow-ups or an AI assistant)?",
+      question: "Would you like automation or AI built in (for example automatic reminders or an AI assistant)?",
       kind: "choice",
       options: ["Yes", "Maybe, please advise", "No"],
     },
@@ -399,7 +399,7 @@ const flows: Record<SolutionId, EnquiryStep[]> = {
       label: "Human approval",
       question: "Should a person approve the agent's actions?",
       kind: "choice",
-      options: ["Always, before every action", "Only for important or high-value actions", "No, fully automatic", "Not sure, please advise"],
+      options: ["Always, before every action", "Only for important or high value actions", "No, fully automatic", "Not sure, please advise"],
     },
     {
       id: "agent_integrations",
@@ -663,7 +663,7 @@ const opsSteps: EnquiryStep[] = [
       "Payments or financial data",
       "Health or other sensitive data",
       "Staff sign in with Microsoft or Google (SSO)",
-      "Two-step login (MFA)",
+      "Two step login (MFA)",
       "Full audit trail of changes",
     ],
     when: notSimple,

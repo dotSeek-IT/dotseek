@@ -29,7 +29,7 @@ import type { Offer } from "@/lib/plan/offer";
  *   asking       -> requirement questions, then scale & operations questions
  *   recommending -> AI is choosing a solution for a described problem
  *   choosing     -> visitor confirms the recommendation or picks a solution
- *   plan         -> AI-generated indicative estimate + architecture builder
+ *   plan         -> AI generated indicative estimate + architecture builder
  *   asking       -> contact details
  *   review       -> summary with edit buttons, then send
  *   sending / failed
@@ -94,7 +94,7 @@ export const solutionNoun = (id?: string) => {
 
 export function enquirySummaryText(answers: Answers, plan?: Plan): string {
   const rows = answerRows(answers).map((r) => `- ${r.label}: ${r.value}`);
-  if (plan) rows.push(`- Indicative estimate: ${gbp(plan.build)} (AI-generated, to be confirmed)`);
+  if (plan) rows.push(`- Indicative estimate: ${gbp(plan.build)} (AI generated, to be confirmed)`);
   return rows.join("\n");
 }
 
@@ -262,7 +262,7 @@ export function useEnquiry({
       botSay(
         s.planSeen
           ? "I've updated your estimate and architecture."
-          : "Thanks. I've prepared an AI-generated indicative estimate with a recommended architecture, package options and a market comparison. Open it to turn features on or off, compare options and see what each choice costs.",
+          : "Thanks. I've prepared an AI generated indicative estimate with a recommended architecture, package options and a market comparison. Open it to turn features on or off, compare options and see what each choice costs.",
       );
       commit({ ...base, phase: "plan", planSeen: true, returnTo: undefined });
       return;
@@ -297,7 +297,7 @@ export function useEnquiry({
   const startReference = () => {
     userSay("I have a reference website or app");
     botSay(
-      "Great, paste the link below. I'll look at the publicly visible page to understand the layout style, features and likely complexity, then estimate a similar solution and cheaper options. DotSeek builds an original solution with your own branding and content; we never copy another site.",
+      "Great, paste the link below. I'll look at the publicly visible page to understand the layout style, features and likely complexity, then estimate a similar solution and cheaper options. DotSeek builds an original solution with your own branding and content, and we never copy another site.",
     );
     setState({ ...fresh(), phase: "reference" });
   };
@@ -333,7 +333,7 @@ export function useEnquiry({
   const referenceFromChat = (url: string) => {
     userSay(url);
     botSay(
-      "Thanks, I'll use that link as a reference: I'll look at the publicly visible page to understand the layout style, features and likely complexity, then estimate a similar solution and cheaper options. DotSeek builds an original solution with your own branding and content; we never copy another site.",
+      "Thanks, I'll use that link as a reference: I'll look at the publicly visible page to understand the layout style, features and likely complexity, then estimate a similar solution and cheaper options. DotSeek builds an original solution with your own branding and content, and we never copy another site.",
     );
     void submitReference(url, { ...fresh(), phase: "reference" }, { quiet: true });
   };

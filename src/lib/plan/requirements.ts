@@ -30,7 +30,7 @@ const SYSTEM_ITEMS: Record<string, string | null> = {
   Salesforce: "int_crm",
   HubSpot: "int_crm",
   "Xero / accounting": "int_accounting",
-  "Shopify / e-commerce": "int_ecom",
+  "Shopify or online store": "int_ecom",
   ERP: "int_erp",
   Spreadsheets: "int_spreadsheet",
   "SQL database": null,
@@ -84,7 +84,7 @@ export function readRequirements(answers: Answers, s: Signals): Requirements {
       }
       if (includes(need, "Backend / API for an existing website")) add("backend");
       if (includes(need, "Admin portal or business management system")) add("backend", "admin", "auth");
-      if (includes(need, "E-commerce or payments")) add("backend", "ecommerce", "payments");
+      if (includes(need, "Online store or payments")) add("backend", "ecommerce", "payments");
       if (includes(need, "AI features or chatbot")) add("ai_chatbot");
       if (includes(need, "A mobile app to go with it")) add("backend", "auth", "mobile_app");
       const frontendOnly = includes(need, "Frontend development only") && parts(need).length === 1;
@@ -210,7 +210,7 @@ export function readRequirements(answers: Answers, s: Signals): Requirements {
     const f = answers.app_features;
     if (includes(f, "User accounts and login")) add(...(managed ? ["managed_backend"] : ["auth", "backend"]));
     if (includes(f, "Push notifications") && !managed) add("push");
-    if (includes(f, "In-app payments or subscriptions")) add("payments");
+    if (includes(f, "Payments or subscriptions inside the app")) add("payments");
     if (includes(f, "Bookings or orders")) add("bookings");
     if (includes(f, "Camera, photos or scanning")) add("image_storage", "file_storage");
     if (includes(f, "Chat or messaging")) add("realtime", "inapp");
@@ -254,7 +254,7 @@ export function readRequirements(answers: Answers, s: Signals): Requirements {
   if (parts(answers.agent_behaviour).length >= 3 || parts(answers.agent_integrations).length >= 3) advanced("ai_agent");
   if (includes(answers.bot_knowledge, "CRM or order system") || answers.bot_handoff === "Hand over to live chat") advanced("ai_chatbot");
   if (answers.auto_approvals === "Yes" && answers.auto_frequency === "Many times a day") advanced("automation");
-  if (includes(answers.app_features, "In-app payments or subscriptions") || items.has("ecommerce")) advanced("payments");
+  if (includes(answers.app_features, "Payments or subscriptions inside the app") || items.has("ecommerce")) advanced("payments");
   if (s.solution === "ai_chatbot" && items.has("whatsapp")) advanced("whatsapp");
   if (parts(answers.web_features).length >= 5) advanced("frontend");
 
@@ -265,7 +265,7 @@ export function readRequirements(answers: Answers, s: Signals): Requirements {
     // A hybrid app launched on one platform first: the other follows from the same code.
     const first = answers.app_os === "Android only" ? "Android" : "iPhone";
     labels.mobile_app = `Hybrid mobile app (${first} first)`;
-    summaries.mobile_app = `One Flutter or React Native codebase, released on ${first} first; ${first === "iPhone" ? "Android" : "iPhone"} can follow from the same code. ${store}`;
+    summaries.mobile_app = `One Flutter or React Native codebase, released on ${first} first, and ${first === "iPhone" ? "Android" : "iPhone"} can follow from the same code. ${store}`;
   } else if (answers.app_os === "iPhone (iOS) only") {
     labels.mobile_app = "Native iPhone app (Swift)";
     summaries.mobile_app = `Native iOS app built in Swift and SwiftUI. ${store}`;
@@ -277,7 +277,7 @@ export function readRequirements(answers: Answers, s: Signals): Requirements {
     summaries.mobile_app = `Two native apps: Swift and SwiftUI for iPhone, Kotlin and Jetpack Compose for Android. ${store}`;
   } else {
     labels.mobile_app = "Hybrid mobile app (iOS & Android)";
-    summaries.mobile_app = `One cross-platform app for iPhone and Android, built with Flutter or React Native. ${store}`;
+    summaries.mobile_app = `One shared app for iPhone and Android, built with Flutter or React Native. ${store}`;
   }
 
   return { items, dayAdjust, usageFactor, backgroundTasks: [...new Set(background)], defaultScopes, labels, summaries };

@@ -48,7 +48,15 @@ export const metadata: Metadata = {
   },
   // Set GOOGLE_SITE_VERIFICATION at build time to verify in Google Search Console.
   verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
-  icons: { icon: "/icon.svg" },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: { url: "/apple-touch-icon.png", sizes: "180x180" },
+  },
+  manifest: "/manifest.webmanifest",
   category: "technology",
 };
 
@@ -69,7 +77,8 @@ const structuredData = {
       "@id": `${site.url}/#organization`,
       name: site.name,
       url: site.url,
-      logo: `${site.url}/icon.svg`,
+      logo: { "@type": "ImageObject", url: `${site.url}/logo.png`, width: 512, height: 512 },
+      image: `${site.url}/og-image.png`,
       description: site.description,
       email: site.email,
       address: { "@type": "PostalAddress", addressLocality: "Swansea", addressCountry: "GB" },

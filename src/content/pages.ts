@@ -31,12 +31,12 @@ export const pages: SimplePage[] = [
     description:
       "DotSeek is a UK AI business automation company combining consultancy, AI engineering, system integration and custom software to remove repetitive work.",
     intro:
-      "DotSeek is a UK-based AI Business Automation Solutions company. We combine consultancy, AI engineering, system integration and custom software development to remove repetitive work and connect the systems organisations already rely on.",
+      "DotSeek is an AI Business Automation Solutions company based in the UK. We combine consultancy, AI engineering, system integration and custom software development to remove repetitive work and connect the systems organisations already rely on.",
     sections: [
       {
         heading: "What we do",
         body: [
-          "We design and deliver AI agents, intelligent workflow automation, document and data automation, CRM and ERP integrations, and AI-powered business applications, from discovery through to production support.",
+          "We design and deliver AI agents, intelligent workflow automation, document and data automation, CRM and ERP integrations, and business applications powered by AI, from discovery through to production support.",
         ],
       },
       {
@@ -123,7 +123,7 @@ export const pages: SimplePage[] = [
       {
         heading: "DotSeek Assistant (AI chat)",
         body: [
-          "The DotSeek Assistant is an AI chat powered by Claude, a model provided by Anthropic. When you send a message, the conversation so far is sent from our server to Anthropic to generate a reply. We don't save general chat conversations, and the chat is cleared when you close or reload the page.",
+          "The DotSeek Assistant is an AI chat powered by Claude, a model provided by Anthropic. When you send a message, the conversation so far is sent from our server to Anthropic to generate a reply. We don't save general chat conversations on our servers. Your browser keeps the conversation for the open tab, so a page refresh doesn't lose it, and it is deleted when you close the tab.",
           "Anthropic processes these messages as our service provider under its commercial terms and does not use them to train its models. Like any web service, our hosting provider may record technical request data, such as your IP address, for security and to prevent misuse.",
           "If you start an enquiry in the chat, your project answers are sent to Anthropic so the assistant can suggest a suitable solution and prepare a project brief for you to review. You can edit any answer before sending.",
           "When you send an enquiry, your answers, the project brief and, if you tick the box, a copy of the chat are saved securely in our enquiry system and emailed to our team. We email you a private link where you can follow the conversation with our team and reply. Anyone with that link can view the enquiry, so please keep it private.",
@@ -167,7 +167,7 @@ export const pages: SimplePage[] = [
       {
         heading: "Security",
         body: [
-          "We use appropriate technical and organisational measures to protect personal information, including encrypted connections, access controls and least-privilege access to client systems.",
+          "We use appropriate technical and organisational measures to protect personal information, including encrypted connections, access controls and minimal access rights to client systems.",
         ],
       },
       {
@@ -203,22 +203,25 @@ export const pages: SimplePage[] = [
       },
       {
         heading: "Information stored in your browser",
-        body: ["We store one strictly necessary item in your browser's local storage:"],
+        body: ["We store a few strictly necessary items in your browser. None of them are cookies, none contain tracking information, and none are shared with other websites:"],
         list: [
-          "ds-cookie-notice: remembers that you have dismissed our cookie notice, so it isn't shown on every page. It contains no personal information and stays until you clear your browser data.",
+          "ds-cookie-notice (local storage): remembers that you have dismissed our cookie notice, so it isn't shown on every page. It contains no personal information and stays until you clear your browser data.",
+          "dotseek-chat (session storage): keeps your DotSeek Assistant conversation and estimate while the tab is open, so a page refresh doesn't lose them. It holds the latest 60 messages at most and is deleted when you close the tab.",
+          "dotseek-locale (session storage): your country, worked out from your connection and never your exact location, and our currency settings, so prices show in your currency straight away. It is deleted when you close the tab.",
+          "dotseek-region (local storage): set only if you choose a currency yourself, so the choice is remembered on your next visit. It stays until you clear your browser data.",
         ],
       },
       {
-        heading: "Third-party services",
+        heading: "Third party services",
         body: [
-          "The DotSeek Assistant chat does not use cookies or local storage. Your conversation disappears when you close or reload the page, unless you choose to include it with an enquiry. Messages are sent to our AI provider to generate replies; see our Privacy policy.",
-          "Our fonts are hosted on our own website, so no third-party requests are made when the page loads. If you follow a link to another website, such as LinkedIn or GitHub, that website's own cookie policy applies.",
+          "The DotSeek Assistant chat does not use cookies. Messages you send are passed to our AI provider to generate replies, and the conversation is only saved by DotSeek if you choose to include it with an enquiry. See our Privacy policy for details.",
+          "Our fonts are hosted on our own website, so no requests go to other services when the page loads. If you follow a link to another website, such as LinkedIn or GitHub, that website's own cookie policy applies.",
         ],
       },
       {
         heading: "If this changes",
         body: [
-          "If we introduce analytics or any other non-essential cookies in future, we will ask for your consent before setting them and update this policy.",
+          "If we introduce analytics or any other optional cookies in future, we will ask for your consent before setting them and update this policy.",
         ],
       },
       {
@@ -262,7 +265,7 @@ export const pages: SimplePage[] = [
         list: [
           "Use the website in a way that breaks any law or regulation, or is fraudulent or harmful.",
           "Try to gain unauthorised access to the website, the server it runs on, or any connected system.",
-          "Introduce viruses, malware or any other harmful material, or attack the website through a denial-of-service attack.",
+          "Introduce viruses, malware or any other harmful material, or attack the website through a denial of service attack.",
           "Copy, scrape or harvest content from the website in bulk, including for training AI models, without our written permission.",
           "Present the website, or any part of it, in a way that suggests an association with us that does not exist.",
         ],
@@ -272,14 +275,14 @@ export const pages: SimplePage[] = [
         body: [
           "The content on the website is for general information about DotSeek and our services. It is not professional advice, and you should not rely on it when making business decisions without speaking to us first.",
           "Product screens, workflows, figures and the example engagement shown on the website are illustrations of the kind of work we do. They are not records of a specific client project or a promise of particular results.",
-          "We work to keep the website accurate and up to date, but we don't guarantee that it is complete, error-free or always available. We may change or remove content at any time without notice.",
+          "We work to keep the website accurate and up to date, but we don't guarantee that it is complete, free of errors or always available. We may change or remove content at any time without notice.",
         ],
       },
       {
         heading: "Intellectual property",
         body: [
           "We own, or are licensed to use, all intellectual property in the website and its content, including text, graphics, interface designs, logos and code. You may view the website and print or download extracts for your own reference, but you may not otherwise copy, adapt or reuse any part of it for commercial purposes without our written permission.",
-          "DotSeek and the DotSeek logo are our trade marks. Names of third-party products and services, such as those listed as systems we integrate with, belong to their respective owners. Their mention does not imply any partnership or endorsement.",
+          "DotSeek and the DotSeek logo are our trade marks. Names of other companies' products and services, such as those listed as systems we integrate with, belong to their respective owners. Their mention does not imply any partnership or endorsement.",
         ],
       },
       {

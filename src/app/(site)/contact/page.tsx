@@ -123,7 +123,7 @@ export default function ContactPage() {
               </Button>
             </div>
             <p className={styles.enquiryNote}>
-              Answer a few quick questions in the DotSeek Assistant, or open your email app with a ready-to-fill template addressed to {site.email}. See our{" "}
+              Answer a few quick questions in the DotSeek Assistant, or open your email app with a template ready to fill in, addressed to {site.email}. See our{" "}
               <Link href="/privacy">Privacy policy</Link> for how we handle your details.
             </p>
           </Reveal>

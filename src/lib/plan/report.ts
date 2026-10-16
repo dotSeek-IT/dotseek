@@ -43,7 +43,7 @@ export function planReportText({ plan, solutionTitle }: Pick<ReportInput, "plan"
     `Estimate: minimum ${total(plan.estimate.min)}, recommended ${total(plan.estimate.recommended)}, maximum ${total(plan.estimate.max)} (${weeks(plan.weeks)})`,
     ...(money && !money.isGbp ? [`Reference value: approximately ${money.ref(plan.estimate.recommended)?.replace("≈ ", "")}`] : []),
     `Recommended stage: ${stageById(plan.stage)!.name}`,
-    `Running costs: ${month(plan.monthly.running)}; maintenance: ${month(plan.monthly.maintenance)}`,
+    `Running costs: ${month(plan.monthly.running)}, maintenance: ${month(plan.monthly.maintenance)}`,
     `Typical UK agency range: ${gbpRange(uk.agencyGbp)}`,
     region ? region.taxNote : "",
     pricingMeta.disclaimer,

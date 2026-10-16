@@ -390,7 +390,7 @@ function reasonFor(id: string, s: Signals, req: Requirements, level: number): { 
     case "cdn":
       if (s.regions !== "uk") return { rec: "yes", why: `Your users are in ${where}, so a CDN will deliver pages and files faster from locations close to them.` };
       if (s.publicUsers) return { rec: level >= 2 ? "yes" : "optional", why: "Public pages and images load faster and the server does less work. A free CDN tier is often enough to start." };
-      return { rec: "optional", why: "Mostly internal users in the UK, so a CDN is a nice-to-have rather than essential." };
+      return { rec: "optional", why: "Mostly internal users in the UK, so a CDN is helpful rather than essential." };
     case "redis":
       if (s.usersTier >= 1 || s.staffTier >= 2)
         return { rec: "yes", why: "Several people use the system at the same time and read the same data often. Redis reduces database load and improves response time." };
@@ -402,19 +402,19 @@ function reasonFor(id: string, s: Signals, req: Requirements, level: number): { 
           rec: "yes",
           why: `Your system includes ${tasks.join(", ")}. These should run in the background so users do not have to wait${id === "queue" ? ", and a queue makes sure no task is lost under load" : ""}.`,
         };
-      return { rec: "no", why: "Nothing in your requirement needs long-running background work yet." };
+      return { rec: "no", why: "Nothing in your requirement needs long running background work yet." };
     case "load_balancer":
     case "autoscaling":
       if (s.usersTier >= 2 || s.availability === 2)
         return { rec: "yes", why: "Your traffic and availability needs call for more than one backend instance. A load balancer spreads the load and keeps the service up if one instance fails." };
-      return { rec: "no", why: "Not required at your expected traffic: one well-sized instance is enough, and it can be scaled up later." };
+      return { rec: "no", why: "Not required at your expected traffic: one well sized instance is enough, and it can be scaled up later." };
     case "api_gateway":
       if (req.items.has("mobile_app") && req.items.has("frontend")) return { rec: level >= 2 ? "yes" : "optional", why: "Your web and mobile apps can share one secure entry point to the backend." };
       if (level >= 3) return { rec: "yes", why: "With several services and integrations, a gateway gives one secure, monitored entry point." };
       return { rec: "no", why: "Not required: the apps can call the backend API directly at this size." };
     case "kubernetes":
       if (level >= 4)
-        return { rec: "yes", why: "Several services must scale independently with high availability. Kubernetes (AKS or EKS) gives controlled scaling and zero-downtime releases." };
+        return { rec: "yes", why: "Several services must scale independently with high availability. Kubernetes (AKS or EKS) gives controlled scaling and releases with no downtime." };
       return {
         rec: "no",
         why: "For the expected traffic and current scope, Kubernetes would add unnecessary infrastructure cost and operational complexity. A managed application service or Docker deployment is more suitable.",
@@ -428,12 +428,12 @@ function reasonFor(id: string, s: Signals, req: Requirements, level: number): { 
       return { rec: "no", why: "Automated backups with tested restore are enough for your availability needs." };
     case "waf":
       if (s.security.payments || s.security.sensitive) return { rec: "yes", why: "You handle payment or sensitive data, so a firewall in front of the system blocks common attacks." };
-      if (level >= 3) return { rec: "yes", why: "A high-traffic public system is a target for automated attacks; a WAF filters them out." };
+      if (level >= 3) return { rec: "yes", why: "A busy public system is a target for automated attacks, and a WAF filters them out." };
       return { rec: "optional", why: "Standard security and CDN protection are enough to start." };
     case "monitoring":
       return level >= 2
         ? { rec: "yes", why: "Alerts tell the team about errors or downtime before customers notice." }
-        : { rec: "optional", why: "Basic uptime checks come with managed hosting; full monitoring is optional at this size." };
+        : { rec: "optional", why: "Basic uptime checks come with managed hosting, so full monitoring is optional at this size." };
     case "logging":
       return level >= 3
         ? { rec: "yes", why: "With several services, central logs make problems quick to trace." }
@@ -441,7 +441,7 @@ function reasonFor(id: string, s: Signals, req: Requirements, level: number): { 
     case "staging":
       return level >= 2
         ? { rec: "yes", why: "Changes are tested on a safe copy before they reach customers." }
-        : { rec: "optional", why: "Useful once several people rely on the system; optional for a first release." };
+        : { rec: "optional", why: "Useful once several people rely on the system, and optional for a first release." };
     case "cicd":
       return { rec: level >= 2 ? "yes" : "optional", why: "Automatic tests and repeatable releases reduce the risk of each update." };
     case "docker":
@@ -455,13 +455,13 @@ function reasonFor(id: string, s: Signals, req: Requirements, level: number): { 
       if (required) return { rec: "yes", why: "Your AI needs to answer from your own content, so knowledge search keeps answers grounded and up to date." };
       return { rec: "optional", why: "Only needed if the AI must answer from your own documents or website." };
     case "search":
-      if (required) return { rec: "yes", why: "Customers need fast, typo-tolerant search across many products or records." };
+      if (required) return { rec: "yes", why: "Customers need fast search across many products or records that copes with typos." };
       return { rec: "optional", why: "Database search is enough at this size." };
     case "nosql":
       return { rec: "no", why: "Not needed: a SQL database fits your data. Useful later for very large event or log volumes." };
     case "realtime":
       return required
-        ? { rec: "yes", why: "You need live updates on screen, so real-time connections push changes instantly." }
+        ? { rec: "yes", why: "You need live updates on screen, so live connections push changes instantly." }
         : { rec: "no", why: "Not needed: normal page refresh is fine for your use." };
     case "file_storage":
     case "image_storage":
@@ -472,13 +472,13 @@ function reasonFor(id: string, s: Signals, req: Requirements, level: number): { 
     case "mfa":
       return required || s.security.personal
         ? { rec: "yes", why: "Protects accounts that can see personal or sensitive data." }
-        : { rec: "optional", why: "Recommended for admin users; optional for everyone else." };
+        : { rec: "optional", why: "Recommended for admin users and optional for everyone else." };
     case "sso":
       return required ? { rec: "yes", why: "Your staff can sign in with their existing Microsoft or Google accounts." } : { rec: "optional", why: "Useful if staff already use Microsoft 365 or Google Workspace." };
     case "audit":
-      return required ? { rec: "yes", why: "You need a record of who changed what, and when." } : { rec: "optional", why: "Useful for compliance; not required by your answers." };
+      return required ? { rec: "yes", why: "You need a record of who changed what, and when." } : { rec: "optional", why: "Useful for compliance, but not required by your answers." };
     case "secrets":
-      return level >= 3 ? { rec: "yes", why: "Several services need keys; a vault keeps them out of code and rotates them safely." } : { rec: "optional", why: "Platform environment settings are enough at this size." };
+      return level >= 3 ? { rec: "yes", why: "Several services need keys, and a vault keeps them out of code and rotates them safely." } : { rec: "optional", why: "Platform environment settings are enough at this size." };
     case "hosting":
       return { rec: "yes", why: "Managed hosting for the frontend and API, sized to your architecture level." };
     case "encryption":

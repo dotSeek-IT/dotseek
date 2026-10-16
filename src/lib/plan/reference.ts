@@ -48,7 +48,7 @@ export function referenceAnswers(a: ReferenceAnalysis, keep: Answers = {}): Answ
   } else {
     const need = ["A completely new website"];
     if (has(a, "admin") || has(a, "dashboard")) need.push("Admin portal or business management system");
-    if (has(a, "ecommerce")) need.push("E-commerce or payments");
+    if (has(a, "ecommerce")) need.push("Online store or payments");
     if (has(a, "chatbot") || has(a, "ai")) need.push("AI features or chatbot");
     if (has(a, "mobileApp")) need.push("A mobile app to go with it");
     const features = ["Core pages (home, about, services)"];
@@ -82,7 +82,7 @@ export function referenceAnswers(a: ReferenceAnalysis, keep: Answers = {}): Answ
     const appFeatures = [
       has(a, "auth") && "User accounts and login",
       a.services.includes("Push notifications") && "Push notifications",
-      has(a, "payments") && "In-app payments or subscriptions",
+      has(a, "payments") && "Payments or subscriptions inside the app",
       has(a, "booking") && "Bookings or orders",
       a.services.includes("Maps and location") && "Maps and location",
       (has(a, "roles") || has(a, "chatbot")) && "Chat or messaging",
@@ -175,7 +175,7 @@ function fewerPages(answers: Answers, toSmall: boolean): Answers {
 function leanerApp(answers: Answers, mvp: boolean): Answers {
   if (!answers.app_features) return answers;
   const features = answers.app_features.split(", ");
-  const essential = features.filter((f) => ["User accounts and login", "Bookings or orders", "In-app payments or subscriptions"].includes(f));
+  const essential = features.filter((f) => ["User accounts and login", "Bookings or orders", "Payments or subscriptions inside the app"].includes(f));
   const kept = mvp ? essential.slice(0, 2) : features.slice(0, Math.max(2, features.length - 2));
   return {
     ...answers,
@@ -280,7 +280,7 @@ export function costOptions(answers: Answers, full: PlanChoices, opts: { fromRef
   const options: CostOption[] = [
     {
       id: "full",
-      name: opts.fromReference ? "Full reference-level build" : "Full build",
+      name: opts.fromReference ? "Full build matching the reference" : "Full build",
       scope: opts.fromReference ? "Most comparable functionality and design detail." : "Everything you asked for, as recommended.",
       keep: productLabels(fullPlan),
       simplify: [],
@@ -289,11 +289,11 @@ export function costOptions(answers: Answers, full: PlanChoices, opts: { fromRef
     },
     {
       id: "optimised",
-      name: "Cost-optimised",
+      name: "Cost optimised",
       scope: "Similar visual direction and core functionality with a simpler implementation.",
       keep: [
         "Similar overall visual direction",
-        ...(appFirst ? ["Core app screens", "Sign-up and sign-in"] : ["Core pages and responsive design", "Contact and enquiry flow"]),
+        ...(appFirst ? ["Core app screens", "Sign up and sign in"] : ["Core pages and responsive design", "Contact and enquiry flow"]),
         ...productLabels(optimisedPlan).filter((l) => !/UI\/UX|frontend/i.test(l)),
       ],
       simplify: ["Complex animation and custom design detail", ...appNotes(optimisedAnswers, false), ...removed(fullPlan, optimisedPlan)],
@@ -313,12 +313,12 @@ export function costOptions(answers: Answers, full: PlanChoices, opts: { fromRef
       id: "basic",
       name: "Basic",
       scope: appFirst
-        ? "The smallest real version of the app: one platform first, sign-up and the core feature, ready to grow."
+        ? "The smallest real version of the app: one platform first, sign up and the core feature, ready to grow."
         : simple
           ? "A small responsive website with a similar design direction, static content and a contact form."
           : "The smallest useful pilot.",
       keep: appFirst
-        ? [basicPlan.services.find((x) => x.id === "mobile_app")?.label ?? "Mobile app", "Similar design direction", "Sign-up and sign-in", "Core app feature"]
+        ? [basicPlan.services.find((x) => x.id === "mobile_app")?.label ?? "Mobile app", "Similar design direction", "Sign up and sign in", "Core app feature"]
         : simple
           ? ["Small responsive website", "Similar design direction", "Static content", "Contact form"]
           : productLabels(basicPlan),
@@ -363,7 +363,7 @@ const DRIVERS: { id: string; label: string; items: string[] }[] = [
   { id: "backend", label: "Backend and API", items: ["backend"] },
   { id: "accounts", label: "User accounts", items: ["auth"] },
   { id: "admin", label: "Admin dashboard", items: ["admin"] },
-  { id: "ecommerce", label: "E-commerce", items: ["ecommerce"] },
+  { id: "ecommerce", label: "Online store", items: ["ecommerce"] },
   { id: "payments", label: "Payments", items: ["payments"] },
   { id: "booking", label: "Bookings", items: ["bookings"] },
   { id: "search", label: "Search", items: ["search"] },
@@ -371,9 +371,9 @@ const DRIVERS: { id: string; label: string; items: string[] }[] = [
   { id: "agent", label: "AI agent", items: ["ai_agent"] },
   { id: "mobile", label: "Mobile app", items: ["mobile_app", "push"] },
   { id: "integrations", label: "Custom integrations", items: ["int_crm", "int_erp", "int_accounting", "int_workspace", "int_ecom", "int_calendar", "int_marketing", "int_other"] },
-  { id: "realtime", label: "Real-time features", items: ["realtime"] },
+  { id: "realtime", label: "Live features", items: ["realtime"] },
   { id: "reporting", label: "Advanced reporting", items: ["analytics"] },
-  { id: "languages", label: "Multi-language", items: ["multilang"] },
+  { id: "languages", label: "Multiple languages", items: ["multilang"] },
 ];
 
 /** What drives the cost of this plan, each with Keep / Remove / Add later state. */
@@ -428,8 +428,8 @@ export function setDriverState(choices: PlanChoices, driver: CostDriver, state: 
 /** Plain-language explanation of what drives the cost (used when the AI isn't available). */
 export function costDriverSummary(drivers: CostDriver[], appFirst = false): string {
   const top = drivers.filter((d) => d.state === "keep" && d.impact !== "Low").slice(0, 4).map((d) => d.label.toLowerCase());
-  if (!top.length) return "This is already a lean scope; most of the cost is the core website itself.";
+  if (!top.length) return "This is already a lean scope. Most of the cost is the core website itself.";
   const list = top.length > 1 ? `${top.slice(0, -1).join(", ")} and ${top.at(-1)}` : top[0];
-  const start = appFirst ? "launch the core app with its key screens first" : "launch the customer-facing website first";
-  return `Most of the cost here comes from ${list}. If those are not required initially, we can reduce the first-phase cost significantly while keeping a similar professional design direction. You do not need to build everything on day one: we can ${start} and add the rest later.`;
+  const start = appFirst ? "launch the core app with its key screens first" : "launch the website for customers first";
+  return `Most of the cost here comes from ${list}. If those are not required initially, we can reduce the first phase cost significantly while keeping a similar professional design direction. You do not need to build everything on day one: we can ${start} and add the rest later.`;
 }
