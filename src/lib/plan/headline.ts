@@ -8,8 +8,21 @@ import type { Plan } from "./build";
 export function solutionHeadline(plan: Plan, fallback: string): { name: string; detail: string } {
   const picked = (id: string) => plan.services.find((s) => s.id === id && s.selected);
   const app = picked("mobile_app");
-  const web = picked("frontend") ?? picked("landing");
-  const name = app && web ? `${web.label} + ${app.label}` : (app?.label ?? (plan.solution === "website" && web ? web.label : fallback));
+  // Customer-facing names for the web part (the catalogue's line labels are internal).
+  const web = picked("landing")
+    ? "Landing page website"
+    : picked("frontend")
+      ? plan.solution === "website"
+        ? picked("ecommerce")
+          ? "E-commerce website"
+          : picked("admin") || picked("auth")
+            ? "Website with customer portal"
+            : "Website"
+        : plan.solution === "software"
+          ? "Web application"
+          : null
+      : null;
+  const name = app && web ? `${web} + ${app.label}` : (app?.label ?? web ?? fallback);
   const architecture = plan.tiers.find((t) => t.current)?.name;
   const detail = [
     `${plan.stageInfo.name} stage`,

@@ -5,6 +5,8 @@ import type { SVGProps } from "react";
  * Add new glyphs here rather than importing an icon library.
  */
 const paths = {
+  expand: <path d="M14 4.5h5.5V10M10 19.5H4.5V14M19.5 4.5 13.5 10.5M4.5 19.5l6-6" />,
+  collapse: <path d="M19.5 10H14V4.5M4.5 14H10v5.5M14 10l5.5-5.5M10 14l-5.5 5.5" />,
   search: (
     <>
       <circle cx="11" cy="11" r="6.5" />

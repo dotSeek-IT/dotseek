@@ -771,6 +771,8 @@ export function validateAnswers(input: unknown): Answers | null {
     if (typeof raw.app_build === "string" && [APP_HYBRID, APP_NATIVE].includes(raw.app_build)) answers.app_build = raw.app_build;
     if (raw.app_backend === APP_MANAGED) answers.app_backend = APP_MANAGED;
   }
+  // An unusable phone number is dropped rather than rejecting the whole enquiry.
+  if (answers.phone && !isPhone(answers.phone)) answers.phone = "";
   if (!answers.email || !EMAIL.test(answers.email)) return null;
   if (!solutionOf(answers)) return null;
   return answers;
@@ -811,3 +813,6 @@ export const SHARED_STEP_IDS = [
 
 /** Contact steps come after the solution plan (estimate + architecture) is shown. */
 export const CONTACT_STEP_IDS = ["name", "company", "email", "phone"];
+
+/** A phone number: digits with optional +, spaces, brackets or dashes, 7 to 15 digits. */
+export const isPhone = (value: string) => /^\+?[\d\s().-]+$/.test(value) && (value.match(/\d/g)?.length ?? 0) >= 7 && (value.match(/\d/g)?.length ?? 0) <= 15;

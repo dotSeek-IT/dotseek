@@ -239,7 +239,7 @@ function basicAppAnswers(answers: Answers): Answers {
  * same requirement. Works for any plan (the "Make this cheaper" ladder), with
  * extra detail when it came from a reference URL.
  */
-export function costOptions(answers: Answers, full: PlanChoices): CostOption[] {
+export function costOptions(answers: Answers, full: PlanChoices, opts: { fromReference?: boolean } = {}): CostOption[] {
   const fullPlan = buildPlan(answers, full);
   const ints = fullPlan.selected.filter((id) => id.startsWith("int_"));
 
@@ -277,11 +277,11 @@ export function costOptions(answers: Answers, full: PlanChoices): CostOption[] {
   const removed = (from: Plan, to: Plan) =>
     from.services.filter((s) => s.selected && !to.selected.includes(s.id) && ["product", "ai", "integrations", "background"].includes(s.group)).map((s) => s.label);
 
-  return [
+  const options: CostOption[] = [
     {
       id: "full",
-      name: "Full reference-level build",
-      scope: "Most comparable functionality and design detail.",
+      name: opts.fromReference ? "Full reference-level build" : "Full build",
+      scope: opts.fromReference ? "Most comparable functionality and design detail." : "Everything you asked for, as recommended.",
       keep: productLabels(fullPlan),
       simplify: [],
       plan: fullPlan,
@@ -335,6 +335,9 @@ export function costOptions(answers: Answers, full: PlanChoices): CostOption[] {
       apply: { choices: basic, answers: basicA },
     },
   ];
+  // Each version must be cheaper than the one above it (e.g. a "Basic" small site is no use when the
+  // requirement is already a one-page site); versions that aren't are left out.
+  return options.filter((o, k) => k === 0 || o.plan.estimate.recommended < Math.min(...options.slice(0, k).map((p) => p.plan.estimate.recommended)));
 }
 
 /** The richest option that fits a budget, or null when even Basic doesn't. */

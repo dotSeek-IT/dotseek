@@ -194,7 +194,7 @@ export function useEnquiry({
 
   /** Full / Optimised / MVP / Basic versions of the customer's full requirement (computed on demand). */
   const getOptions = (): CostOption[] =>
-    engine && state ? engine.ref.costOptions({ ...(state.baseAnswers ?? state.answers), ...contactOf(state.answers) }, state.baseChoices) : [];
+    engine && state ? engine.ref.costOptions({ ...(state.baseAnswers ?? state.answers), ...contactOf(state.answers) }, state.baseChoices, { fromReference: Boolean(state.reference) }) : [];
 
   const loadBrief = async (requirement: Answers, planChoices: PlanChoices, key: string) => {
     try {
@@ -512,8 +512,16 @@ export function useEnquiry({
     setState(null);
   };
 
+  /** Brings back a saved enquiry after a page refresh; requests that were in flight start again from their step. */
+  const restore = (saved: EnquiryState) => {
+    const phase: EnquiryPhase =
+      saved.phase === "analysing" ? "reference" : saved.phase === "recommending" ? "choosing" : saved.phase === "sending" ? "review" : saved.phase;
+    setState({ ...saved, phase, briefStatus: saved.briefStatus === "loading" ? "idle" : saved.briefStatus });
+  };
+
   return {
     state,
+    restore,
     plan,
     referencePlan,
     getOptions,

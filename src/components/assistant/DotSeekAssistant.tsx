@@ -20,11 +20,19 @@ import { EnquiryModal } from "./EnquiryModal";
 import { offerFor } from "@/lib/plan/offer";
 import { EnquiryControls } from "./EnquiryControls";
 import { EnquiryReview } from "./EnquiryReview";
-import { enquiryMailto, solutionNoun, solutionTitle, useEnquiry } from "./useEnquiry";
+import { enquiryMailto, solutionNoun, solutionTitle, useEnquiry, type EnquiryState } from "./useEnquiry";
+import { answerRows } from "@/content/enquiryFlows";
 import styles from "./DotSeekAssistant.module.css";
 
 /** The full estimate & architecture view is loaded the first time it opens. */
 const PlanDialog = dynamic(() => import("@/components/plan/PlanDialog").then((m) => m.PlanDialog), { ssr: false });
+/** The expanded chat's quote workspace (right-hand side) is loaded the first time the chat expands. */
+const loadWorkspace = () => import("@/components/plan/QuoteWorkspace");
+const QuoteWorkspace = dynamic(() => loadWorkspace().then((m) => m.QuoteWorkspace), {
+  ssr: false,
+  // Same surface as the workspace, so the right side never flashes empty while it loads.
+  loading: () => <aside className={styles.workspaceLoading} aria-hidden="true" />,
+});
 
 /**
  * Dispatch this window event from any page to open the chat enquiry:
@@ -32,7 +40,11 @@ const PlanDialog = dynamic(() => import("@/components/plan/PlanDialog").then((m)
  * `detail.solution` is optional (no solution = ask what they need; "consult" = describe the problem).
  */
 export const START_ENQUIRY_EVENT = "dotseek:start-enquiry";
-export type StartEnquiryDetail = { solution?: SolutionId | "consult" | "reference" };
+export type StartEnquiryDetail = {
+  solution?: SolutionId | "consult" | "reference";
+  /** From a "Start a fresh quote" link: offer a new enquiry even if one is in progress. */
+  fresh?: boolean;
+};
 
 /** In-band control frame from /api/assistant (consultant tool call). */
 const CONTROL_MARKER = "\u0001";
@@ -48,6 +60,21 @@ type Message = {
   kind?: "enquiry";
   /** Consultant suggestion card: starts the tailored enquiry for this solution. */
   startSolution?: SolutionId;
+  /** A page asked for a different enquiry while one is in progress: offer to switch (once answered, `settled`). */
+  switchTo?: SolutionId | "consult" | "reference" | "new";
+  settled?: boolean;
+};
+
+/** Saved in sessionStorage so the chat survives a refresh in the same tab. */
+const CHAT_KEY = "dotseek-chat";
+type SavedChat = {
+  v: 1;
+  messages: Message[];
+  enquiry: EnquiryState | null;
+  suggestions?: string[];
+  offline?: boolean;
+  open?: boolean;
+  expanded?: boolean;
 };
 
 /** Marker the API sends when a partially streamed reply must be replaced. */
@@ -141,6 +168,9 @@ const byId = (id: string) => intents.find((intent) => intent.id === id);
  */
 export function DotSeekAssistant() {
   const [open, setOpen] = useState(false);
+  /** Full-screen workspace: chat on the left, the live quote on the right (Chat / Quote switch on phones). */
+  const [expanded, setExpanded] = useState(false);
+  const [mobileView, setMobileView] = useState<"chat" | "quote">("chat");
   const [messages, setMessages] = useState<Message[]>(() => [
     { id: 0, from: "bot", text: assistantMeta.greeting.join("\n\n") },
   ]);
@@ -159,17 +189,21 @@ export function DotSeekAssistant() {
 
   const close = useCallback(() => {
     setOpen(false);
+    // Reopening later plays the normal entrance again.
+    setRestoring(false);
     launcherRef.current?.focus();
   }, []);
 
   useEffect(() => {
     if (!open) return;
     setSeen(true);
+    // Fetch the quote workspace early, so expanding (or auto-expanding at the first quote) is instant.
+    void loadWorkspace();
     // On touch devices don't auto-open the keyboard; it resizes the viewport.
     if (!window.matchMedia("(pointer: coarse)").matches) inputRef.current?.focus({ preventScroll: true });
 
     // The mobile bottom sheet covers the page: stop the page scrolling behind it.
-    const sheet = window.matchMedia("(max-width: 559px)").matches;
+    const sheet = expanded || window.matchMedia("(max-width: 559px)").matches;
     const root = document.documentElement;
     if (sheet) {
       root.style.overflow = "hidden";
@@ -177,7 +211,10 @@ export function DotSeekAssistant() {
     }
     const onKey = (event: KeyboardEvent) => {
       // The estimate dialog handles its own Esc; don't close the chat behind it.
-      if (event.key === "Escape" && !document.querySelector("dialog[open]")) close();
+      if (event.key !== "Escape" || document.querySelector("dialog[open]")) return;
+      // Expanded: the first Esc returns to the compact chat.
+      if (expanded) setExpanded(false);
+      else close();
     };
     document.addEventListener("keydown", onKey);
     return () => {
@@ -187,7 +224,7 @@ export function DotSeekAssistant() {
         document.body.style.overflow = "";
       }
     };
-  }, [open, close]);
+  }, [open, close, expanded]);
 
   // Keep the newest message in view before the browser paints (no jump), and
   // again when the log resizes (e.g. enquiry controls or keyboard change height).
@@ -366,8 +403,87 @@ export function DotSeekAssistant() {
   const showReferenceCard = Boolean(enquiryState?.reference && enquiry.referencePlan);
   const showPlanCard = Boolean(enquiryState && plan && enquiryState.planSeen && enquiryState.phase !== "recommending");
   const [cardAt, setCardAt] = useState<{ reference?: number; plan?: number }>({});
-  const questionText = enquiry.currentStep?.question;
+
+  // Keep the conversation and the enquiry (with its quote) for this browser tab, so a refresh or a page
+  // opened from a chat link doesn't lose them. Session storage only: nothing is kept after the tab closes.
+  const restored = useRef(false);
+  /** True for the first render after a restore, so the panel doesn't replay its entrance animation. */
+  const [restoring, setRestoring] = useState(false);
+  // Layout effect: the saved chat is in place before the first paint (no closed-then-open flash).
+  useLayoutEffect(() => {
+    try {
+      const raw = window.sessionStorage.getItem(CHAT_KEY);
+      const saved = raw ? (JSON.parse(raw) as SavedChat) : null;
+      if (saved?.v === 1 && Array.isArray(saved.messages) && saved.messages.length) {
+        const kept = saved.messages.filter((m) => !m.streaming || m.text).map((m) => ({ ...m, streaming: false }));
+        setMessages(kept);
+        nextId.current = Math.max(...kept.map((m) => m.id)) + 1;
+        if (saved.enquiry) enquiry.restore(saved.enquiry);
+        if (saved.suggestions) setSuggestions(saved.suggestions);
+        if (saved.offline) setOffline(true);
+        if (saved.open) {
+          setOpen(true);
+          setRestoring(true);
+        }
+        if (saved.expanded) setExpanded(true);
+        autoExpanded.current = Boolean(saved.enquiry?.planSeen);
+      }
+    } catch {
+      // Storage blocked or unreadable: start fresh.
+    }
+    restored.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
+    if (!restored.current) return;
+    const id = window.setTimeout(() => {
+      try {
+        const saved: SavedChat = { v: 1, messages, enquiry: enquiryState ?? null, suggestions, offline, open, expanded };
+        window.sessionStorage.setItem(CHAT_KEY, JSON.stringify(saved));
+      } catch {
+        // Quota or privacy mode: the chat still works, it just isn't kept.
+      }
+    }, 300);
+    return () => window.clearTimeout(id);
+  }, [messages, enquiryState, suggestions, offline, open, expanded]);
+
+  // The first quote of an enquiry opens the full workspace on larger screens, so it can be read beside the chat.
+  const autoExpanded = useRef(false);
+  const hadQuoteEnquiry = useRef(false);
+  useEffect(() => {
+    if (!enquiryState) {
+      // Only a finished or cancelled enquiry resets it (not the first render before a saved chat is restored).
+      if (hadQuoteEnquiry.current) autoExpanded.current = false;
+      hadQuoteEnquiry.current = false;
+      return;
+    }
+    hadQuoteEnquiry.current = true;
+    if (showPlanCard && !autoExpanded.current && window.matchMedia("(min-width: 1024px)").matches) {
+      autoExpanded.current = true;
+      setExpanded(true);
+    }
+  }, [enquiryState, showPlanCard]);
+  // The most recently sent enquiry (from the chat's confirmation), shown by the idle workspace.
+  const lastSent = (() => {
+    if (enquiryState) return undefined;
+    const message = [...messages].reverse().find((m) => m.links?.some((l) => l.href.includes("/enquiry/")) || /has been sent to the DotSeek team/.test(m.text));
+    if (!message) return undefined;
+    const ref = message.text.match(/\((DS-[A-Z0-9]+)\)/)?.[1];
+    const link = message.links?.find((l) => l.href.includes("/enquiry/"));
+    return { ref, onView: link ? () => setEnquiryView({ url: link.href, title: `Your enquiry${ref ? ` ${ref}` : ""}` }) : undefined };
+  })();
+
+  // A quote that was already generated (e.g. restored after a refresh) waits quietly for the pricing code.
+  const workspaceStatus = !enquiryState
+    ? "idle"
+    : showPlanCard
+      ? "ready"
+      : enquiryState.planSeen && enquiryState.phase !== "recommending"
+        ? "preparing"
+        : "collecting";
+  const questionText = enquiry.currentStep?.question;
+  // Layout effect: a card settles into its place before paint instead of jumping one frame later.
+  useLayoutEffect(() => {
     if (!enquiryState) {
       if (cardAt.reference !== undefined || cardAt.plan !== undefined) setCardAt({});
       return;
@@ -427,6 +543,25 @@ export function DotSeekAssistant() {
       const detail = (event as CustomEvent<StartEnquiryDetail | undefined>).detail;
       if (enquiry.state) {
         setOpen(true);
+        // A different solution (or a reference) was asked for: offer to switch rather than silently ignoring it.
+        const wanted = detail?.fresh ? ("new" as const) : detail?.solution;
+        const current = enquiry.state.answers.solution_id;
+        const different =
+          wanted && (wanted === "new" ? true : wanted === "reference" ? !enquiry.state.reference : wanted === "consult" ? Boolean(current) : wanted !== current);
+        const asked = messages.some((m) => m.switchTo === wanted && !m.settled);
+        if (different && !asked) {
+          const target =
+            wanted === "reference"
+              ? "a quote from a reference website or app"
+              : wanted === "consult" || wanted === "new"
+                ? "a fresh quote"
+                : `${/^[aeiou]/i.test(solutionNoun(wanted)) ? "an" : "a"} ${solutionNoun(wanted)} enquiry`;
+          pushEnquiry(
+            "bot",
+            `You already have ${current ? `${/^[aeiou]/i.test(solutionNoun(current)) ? "an" : "a"} ${solutionNoun(current)} enquiry` : "an enquiry"} in progress. Would you like to start ${target} instead? Your current answers will be cleared.`,
+            { switchTo: wanted },
+          );
+        }
         return;
       }
       startEnquiry(detail?.solution);
@@ -435,14 +570,21 @@ export function DotSeekAssistant() {
     return () => window.removeEventListener(START_ENQUIRY_EVENT, onStart);
   });
 
-  // "Start a fresh quote" links in emails (/?quote=new): open the assistant on a new enquiry, once.
+  // "Start a fresh quote" links in emails (/?quote=new): open the assistant on a new enquiry, once. It waits for
+  // the saved chat to be restored, so an enquiry in progress gets a "start a fresh quote instead?" offer.
+  const [freshRequested, setFreshRequested] = useState(false);
   useEffect(() => {
     const url = new URL(window.location.href);
     if (url.searchParams.get("quote") !== "new") return;
     url.searchParams.delete("quote");
     window.history.replaceState(null, "", url.pathname + url.search + url.hash);
-    window.dispatchEvent(new CustomEvent<StartEnquiryDetail>(START_ENQUIRY_EVENT, { detail: {} }));
+    setFreshRequested(true);
   }, []);
+  useEffect(() => {
+    if (!freshRequested || !restored.current) return;
+    setFreshRequested(false);
+    window.dispatchEvent(new CustomEvent<StartEnquiryDetail>(START_ENQUIRY_EVENT, { detail: { fresh: true } }));
+  }, [freshRequested, enquiryState]);
 
   // After an enquiry finishes or is cancelled, bring back the starter chips.
   const hadEnquiry = useRef(false);
@@ -510,7 +652,25 @@ export function DotSeekAssistant() {
         />
       )}
       {open && (
-        <section id={panelId} className={styles.panel} role="dialog" aria-label={assistantMeta.name}>
+        <section
+          id={panelId}
+          className={`${styles.panel} ${expanded ? styles.panelExpanded : ""}`}
+          data-view={expanded ? mobileView : undefined}
+          data-restoring={restoring || undefined}
+          role="dialog"
+          aria-label={assistantMeta.name}
+          aria-modal={expanded || undefined}
+        >
+          {expanded && (
+            <div className={styles.viewSwitch} role="tablist" aria-label="Show">
+              {(["chat", "quote"] as const).map((v) => (
+                <button key={v} type="button" role="tab" aria-selected={mobileView === v} onClick={() => setMobileView(v)}>
+                  {v === "chat" ? "Chat" : "Quote"}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className={styles.chatCol}>
           <header className={styles.head}>
             <span className={styles.avatar} aria-hidden="true">
               <AssistantMark />
@@ -521,6 +681,19 @@ export function DotSeekAssistant() {
                 <i aria-hidden="true" /> {offline ? assistantMeta.offlineStatus : assistantMeta.status}
               </small>
             </span>
+            <button
+              type="button"
+              className={styles.close}
+              onClick={() => {
+                setExpanded((e) => !e);
+                setMobileView("chat");
+              }}
+              aria-pressed={expanded}
+              aria-label={expanded ? "Back to the compact chat" : "Expand: chat and live quote side by side"}
+              title={expanded ? "Collapse" : "Expand with live quote"}
+            >
+              <Icon name={expanded ? "collapse" : "expand"} />
+            </button>
             <button type="button" className={styles.close} onClick={close} aria-label="Close assistant">
               <Icon name="close" />
             </button>
@@ -551,6 +724,34 @@ export function DotSeekAssistant() {
                       <p>{message.text}</p>
                     )}
                     {message.streaming && <span className={styles.caret} aria-hidden="true" />}
+                    {message.switchTo && !message.settled && (
+                      <span className={styles.links}>
+                        <button
+                          type="button"
+                          className={styles.startCard}
+                          onClick={() => {
+                            const to = message.switchTo;
+                            setMessages((list) => list.map((m) => (m.id === message.id ? { ...m, settled: true } : m)));
+                            startEnquiry(to === "new" ? undefined : to);
+                          }}
+                          disabled={busy}
+                        >
+                          {message.switchTo === "reference"
+                            ? "Start from a reference"
+                            : message.switchTo === "consult" || message.switchTo === "new"
+                              ? "Start a fresh quote"
+                              : `Switch to ${solutionTitle(message.switchTo)}`}{" "}
+                          <Icon name="arrow" />
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.linkButton}
+                          onClick={() => setMessages((list) => list.map((m) => (m.id === message.id ? { ...m, settled: true } : m)))}
+                        >
+                          Keep my current enquiry
+                        </button>
+                      </span>
+                    )}
                     {message.startSolution && (
                       <span className={styles.links}>
                         <button
@@ -716,6 +917,39 @@ export function DotSeekAssistant() {
               Privacy<span className="sr-only"> (opens in a new tab)</span>
             </Link>
           </p>
+          </div>
+          {expanded && (
+            <QuoteWorkspace
+              status={workspaceStatus}
+              plan={showPlanCard ? plan : undefined}
+              title={planTitle}
+              solutionTitle={solutionTitle(plan?.solution)}
+              overview={enquiryState?.brief?.overview}
+              contact={{
+                name: enquiryState?.answers.name,
+                email: enquiryState?.answers.email,
+                company: enquiryState?.answers.company,
+              }}
+              offer={offerQuote}
+              negotiation={enquiryState?.negotiation}
+              reference={enquiryState?.reference}
+              rows={enquiryState ? answerRows(enquiryState.answers) : []}
+              onStart={() => {
+                setMobileView("chat");
+                startEnquiry();
+              }}
+              sent={lastSent}
+              onOpenEstimate={() => setPlanOpen(true)}
+              onContinue={
+                enquiryState?.phase === "plan"
+                  ? () => {
+                      setMobileView("chat");
+                      enquiry.continueToSend();
+                    }
+                  : undefined
+              }
+            />
+          )}
         </section>
       )}
 

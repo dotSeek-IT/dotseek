@@ -773,7 +773,8 @@ function StagePicker({
         {stages.map((st, i) => {
           const floor = i === 0 ? 0 : stages[i - 1]!.upTo;
           const target = Number.isFinite(st.upTo) ? Math.min(st.upTo, max) : max;
-          const available = target >= min && floor < max;
+          // The current stage is always selectable, even when the range starts just above its ceiling.
+          const available = st.id === plan.stage || (target >= min && floor < max);
           return (
             <li key={st.id}>
               <button

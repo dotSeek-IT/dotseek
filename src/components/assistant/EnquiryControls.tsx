@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import type { EnquiryStep } from "@/content/enquiryFlows";
+import { isPhone, type EnquiryStep } from "@/content/enquiryFlows";
 import type { Solution, SolutionId } from "@/content/solutions";
 import { Icon } from "@/components/common/Icon";
 import type { EnquiryPhase, Recommendation } from "./useEnquiry";
@@ -144,6 +144,9 @@ function AskStep({ step, editing, onAnswer, onCancel, onCancelEdit }: EnquiryCon
     }
     if (step.kind === "email" && !EMAIL.test(value)) {
       return setInvalid("That email address doesn't look quite right. Could you check it?");
+    }
+    if (step.kind === "tel" && !isPhone(value)) {
+      return setInvalid("That phone number doesn't look quite right. Use digits, with + and spaces if you like, or skip it.");
     }
     if (step.kind === "multi") return onAnswer([...selected, value].join(", "));
     onAnswer(value);

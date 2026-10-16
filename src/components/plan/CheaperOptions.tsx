@@ -46,7 +46,9 @@ export function CheaperOptions({
   const drivers = useMemo(() => (full ? costDrivers(full.plan, choices).map((d) => ({ ...d, state: costDrivers(plan, choices).find((x) => x.id === d.id)?.state ?? d.state })) : []), [full, plan, choices]);
   const budget = plan.budget?.[1];
   const fitting = budget !== undefined && Number.isFinite(budget) ? optionForBudget(options, budget) : null;
-  const current = (o: CostOption) => Math.abs(o.plan.estimate.recommended - plan.estimate.recommended) < 1;
+  // The version matching the current estimate (only the first, when two cost the same).
+  const currentId = options.find((o) => Math.abs(o.plan.estimate.recommended - plan.estimate.recommended) < 1)?.id;
+  const current = (o: CostOption) => o.id === currentId;
 
   return (
     <>

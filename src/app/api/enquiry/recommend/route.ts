@@ -1,7 +1,8 @@
 import { recommendSolution } from "@/lib/assistant/consultant";
 import { aiConfigured, clientIp, createRateLimiter, logAiError, sameOrigin } from "@/lib/assistant/http";
+import { keywordRecommendation } from "@/lib/assistant/keywordRecommend";
 
-/** POST /api/enquiry/recommend  { problem } -> { recommendation } (AI picks the best solution). */
+/** POST /api/enquiry/recommend  { problem } -> { recommendation } (AI picks the best solution; keywords when AI is unavailable). */
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -9,7 +10,6 @@ export const dynamic = "force-dynamic";
 const rateLimited = createRateLimiter(10 * 60 * 1000, 10);
 
 export async function POST(request: Request) {
-  if (!aiConfigured()) return Response.json({ error: "Not configured." }, { status: 503 });
   if (!sameOrigin(request)) return Response.json({ error: "Forbidden." }, { status: 403 });
   if (rateLimited(clientIp(request))) return Response.json({ error: "Too many requests." }, { status: 429 });
 
@@ -17,12 +17,17 @@ export async function POST(request: Request) {
   const problem = typeof body?.problem === "string" ? body.problem.trim().slice(0, 1500) : "";
   if (problem.length < 5) return Response.json({ error: "Invalid request." }, { status: 400 });
 
+  // Without AI (no key, no credit or an API error), fall back to matching the words in the description.
+  const fallback = () => {
+    const recommendation = keywordRecommendation(problem);
+    return recommendation ? Response.json({ recommendation }) : Response.json({ error: "No recommendation." }, { status: 502 });
+  };
+  if (!aiConfigured()) return fallback();
   try {
     const recommendation = await recommendSolution(problem);
-    if (!recommendation) return Response.json({ error: "No recommendation." }, { status: 502 });
-    return Response.json({ recommendation });
+    return recommendation ? Response.json({ recommendation }) : fallback();
   } catch (error) {
     logAiError("recommend", error);
-    return Response.json({ error: "Unavailable." }, { status: 502 });
+    return fallback();
   }
 }

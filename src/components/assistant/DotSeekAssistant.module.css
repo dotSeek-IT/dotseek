@@ -910,3 +910,102 @@
 details[open] > .reviewSummary {
   margin-bottom: var(--ds-space-2);
 }
+
+/* ---------- Expanded workspace: chat on the left, live quote on the right ---------- */
+.chatCol {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+}
+
+.viewSwitch {
+  display: none;
+}
+
+.panelExpanded {
+  position: fixed;
+  inset: var(--ds-space-4);
+  z-index: calc(var(--ds-z-header) + 2);
+  display: grid;
+  grid-template-columns: minmax(360px, 420px) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  width: auto;
+  height: auto;
+  /* Dim the page behind, like a canvas over the site. */
+  box-shadow: 0 0 0 100vmax rgba(5, 6, 8, 0.78), var(--ds-shadow-float);
+  animation: expand-in 260ms var(--ds-ease-out);
+}
+
+.panelExpanded .chatCol {
+  height: 100%;
+}
+
+.panelExpanded + .launcher {
+  display: none;
+}
+
+@keyframes expand-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+/* Tablets and phones: one view at a time with a Chat / Quote switch. */
+@media (max-width: 1023px) {
+  .panelExpanded {
+    inset: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    border-radius: 0;
+  }
+
+  .panelExpanded .viewSwitch {
+    display: flex;
+    gap: 4px;
+    padding: var(--ds-space-2) var(--ds-space-3);
+    border-bottom: 1px solid var(--ds-color-border);
+    background: var(--ds-color-surface);
+  }
+
+  .viewSwitch button {
+    flex: 1;
+    min-height: 36px;
+    border: 1px solid var(--ds-color-border-strong);
+    border-radius: var(--ds-radius-pill);
+    background: none;
+    color: var(--ds-color-text-muted);
+    font: inherit;
+    font-size: var(--ds-text-label);
+  }
+
+  .viewSwitch button[aria-selected="true"] {
+    border-color: var(--ds-color-brand);
+    background: rgba(236, 241, 94, 0.08);
+    color: var(--ds-color-brand);
+  }
+
+  .panelExpanded[data-view="chat"] > aside,
+  .panelExpanded[data-view="quote"] > .chatCol {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panelExpanded {
+    animation: none;
+  }
+}
+
+/* Restored after a refresh: appear in place, without the entrance animations. */
+.panel[data-restoring],
+.panel[data-restoring] .message {
+  animation: none;
+}
+
+.workspaceLoading {
+  border-left: 1px solid var(--ds-color-border);
+  background: var(--ds-color-surface-sunken);
+}
