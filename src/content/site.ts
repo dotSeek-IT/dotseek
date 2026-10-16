@@ -8,9 +8,9 @@ export const site = {
   /** Production origin. Used for canonical URLs, sitemap and structured data. */
   url: "https://www.dotseek.co.uk",
   /** Search-result title and description for the homepage (and site default). */
-  seoTitle: "DotSeek | AI Automation, Web & App Development Worldwide",
+  seoTitle: "DotSeek | AI Business Solutions, Automation, Web & Apps",
   seoDescription:
-    "DotSeek builds AI automation, AI agents, websites, web and mobile apps and integrations for businesses worldwide. Describe your goal for an instant estimate.",
+    "DotSeek builds AI business solutions: automation, AI agents, websites, web and mobile apps and integrations for businesses worldwide. Get an instant estimate.",
   category: "AI Business Automation & Digital Solutions",
   tagline: "AI automation built around your business.",
   description:
