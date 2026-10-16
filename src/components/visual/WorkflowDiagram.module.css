@@ -263,7 +263,10 @@
 
 .ring > span {
   position: absolute;
+  /* Stay inside the ring's inner circle (r 43 of 120). */
+  max-width: 64%;
   text-align: center;
+  line-height: 1.15;
 }
 
 .ring strong {
@@ -274,7 +277,10 @@
 }
 
 .ring small {
+  display: block;
+  margin-top: 2px;
   font-size: var(--ds-text-micro);
+  color: var(--ds-color-text-subtle);
 }
 
 .table {

@@ -162,7 +162,7 @@ function MeasureView() {
           </svg>
           <span>
             <strong>96%</strong>
-            <small>straight-through</small>
+            <small>automated</small>
           </span>
         </div>
         <table className={styles.table}>
