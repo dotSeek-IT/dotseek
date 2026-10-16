@@ -27,8 +27,8 @@ const SIGNALS: Record<SolutionId, { words: string[]; reason: string; suggestions
     suggestions: ["Handle a defined task end to end", "Human approval before anything is sent", "A log of every action taken"],
   },
   ai_chatbot: {
-    words: ["chatbot", "chat bot", "chat", "faq", "questions", "customer support", "whatsapp", "answer customers", "24/7", "live chat"],
-    reason: "Customers keep asking similar questions, so an AI chatbot can answer them instantly and hand over to your team when needed.",
+    words: ["chatbot", "chat bot", "chat", "faq", "questions", "customer support", "whatsapp", "answer customers", "answering", "24/7", "live chat", "calls", "phone", "receptionist", "appointment", "appointments", "booking calls", "enquiries from customers"],
+    reason: "Customers keep contacting you with the same questions and requests, so an AI assistant can answer them instantly, take bookings and hand over to your team when needed.",
     suggestions: ["Answers from your own content", "Hand over to a person when it can't help", "Capture leads and bookings in the chat"],
   },
   integration: {

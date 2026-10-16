@@ -23,6 +23,7 @@ import { EnquiryControls } from "./EnquiryControls";
 import { EnquiryReview } from "./EnquiryReview";
 import { enquiryMailto, solutionNoun, solutionTitle, useEnquiry, type EnquiryState } from "./useEnquiry";
 import { answerRows } from "@/content/enquiryFlows";
+import { keywordRecommendation } from "@/lib/assistant/keywordRecommend";
 import styles from "./DotSeekAssistant.module.css";
 
 /** The full estimate & architecture view is loaded the first time it opens. */
@@ -253,6 +254,22 @@ export function DotSeekAssistant() {
 
   const answerOffline = (botId: number, question: string, intent?: Intent) => {
     const match = intent ?? matchIntent(question);
+    // A described business problem that no topic matches: suggest the closest solution and offer its enquiry.
+    const advice = match === fallback ? keywordRecommendation(question) : null;
+    if (advice) {
+      updateMessage(botId, {
+        text: `${advice.reason}\n\nI can ask a few quick questions and prepare an indicative estimate for this.`,
+        streaming: false,
+        startSolution: advice.solution,
+      });
+      setSuggestions(["pricing", "process"]);
+      return;
+    }
+    if (match === fallback && question.split(/\s+/).length >= 6) {
+      updateMessage(botId, { text: assistantMeta.offlineProblem, streaming: false });
+      setSuggestions(["enquiry", "pricing", "contact"]);
+      return;
+    }
     updateMessage(botId, { text: match.answer.join("\n\n"), links: match.links, streaming: false });
     setSuggestions(match.next ?? assistantMeta.starters);
   };

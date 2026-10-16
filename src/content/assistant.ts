@@ -24,6 +24,9 @@ export const assistantMeta = {
   name: "DotSeek Assistant",
   status: "AI assistant · powered by DotSeek",
   offlineStatus: "Automated answers",
+  /** Offline reply to a described problem no topic matches: move it into an enquiry rather than a dead end. */
+  offlineProblem:
+    "Thanks for explaining. The quickest way forward is a short enquiry: I'll ask a few questions about your business and prepare an indicative estimate, and the DotSeek team follows up personally.",
   offlineDisclaimer: "Automated answers based on this website. Your messages aren't stored or sent anywhere.",
   greeting: [
     "Hi, I'm the DotSeek AI consultant. Tell me about your business problem or goal, and I'll suggest the right solution: AI automation, AI agents, a website, a web or mobile app, custom software, integrations or reporting.",
