@@ -51,6 +51,12 @@ export type Brief = {
   advice?: { item: string | null; action: "add" | "remove" | "info"; message: string }[];
 };
 
+/** Fired when an AI step fell back to rules or keywords, so the chat shows "Automated answers" honestly. */
+export const AI_OFFLINE_EVENT = "dotseek:ai-offline";
+const aiUnavailable = () => {
+  if (typeof window !== "undefined") window.dispatchEvent(new Event(AI_OFFLINE_EVENT));
+};
+
 export type EnquiryPhase = "reference" | "analysing" | "asking" | "recommending" | "choosing" | "plan" | "review" | "sending" | "failed";
 
 export type EnquiryState = {
@@ -217,6 +223,7 @@ export function useEnquiry({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answers: requirement, choices: planChoices, transcript: transcript() }),
       });
+      if (response.status >= 500) aiUnavailable();
       if (!response.ok) throw new Error();
       const { summary } = (await response.json()) as { summary: Brief };
       setState((s) => (s && s.briefKey === key ? { ...s, brief: summary, briefStatus: "ready" } : s));
@@ -278,8 +285,10 @@ export function useEnquiry({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ problem: requirement.problem }),
       });
+      if (response.status >= 500) aiUnavailable();
       if (!response.ok) throw new Error();
-      const { recommendation } = (await response.json()) as { recommendation: Recommendation };
+      const { recommendation, source } = (await response.json()) as { recommendation: Recommendation; source?: "keywords" };
+      if (source === "keywords") aiUnavailable();
       const suggestions = recommendation.suggestions.length
         ? `\n\nIdeas we could explore:\n${recommendation.suggestions.map((s) => `- ${s}`).join("\n")}`
         : "";
@@ -317,6 +326,7 @@ export function useEnquiry({
       const result = (await response.json().catch(() => ({}))) as { analysis?: ReferenceAnalysis; error?: string };
       if (!response.ok || !result.analysis) throw new Error(result.error || "We couldn't analyse that link.");
       const analysis = result.analysis;
+      if (analysis.source !== "ai") aiUnavailable();
       const ref = engine?.ref ?? (await import("@/lib/plan/reference"));
       const nextAnswers = ref.referenceAnswers(analysis, state.answers);
       const base = ref.referenceChoices(analysis);

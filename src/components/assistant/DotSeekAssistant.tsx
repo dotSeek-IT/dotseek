@@ -21,7 +21,7 @@ import { EnquiryModal } from "./EnquiryModal";
 import { offerFor } from "@/lib/plan/offer";
 import { EnquiryControls } from "./EnquiryControls";
 import { EnquiryReview } from "./EnquiryReview";
-import { enquiryMailto, solutionNoun, solutionTitle, useEnquiry, type EnquiryState } from "./useEnquiry";
+import { AI_OFFLINE_EVENT, enquiryMailto, solutionNoun, solutionTitle, useEnquiry, type EnquiryState } from "./useEnquiry";
 import { answerRows } from "@/content/enquiryFlows";
 import { keywordRecommendation } from "@/lib/assistant/keywordRecommend";
 import styles from "./DotSeekAssistant.module.css";
@@ -248,6 +248,13 @@ export function DotSeekAssistant() {
   }, [open]);
 
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  // An enquiry step (recommendation, reference analysis, brief) fell back without AI: say so in the header.
+  useEffect(() => {
+    const onOffline = () => setOffline(true);
+    window.addEventListener(AI_OFFLINE_EVENT, onOffline);
+    return () => window.removeEventListener(AI_OFFLINE_EVENT, onOffline);
+  }, []);
 
   const updateMessage = (id: number, patch: Partial<Message>) =>
     setMessages((list) => list.map((m) => (m.id === id ? { ...m, ...patch } : m)));

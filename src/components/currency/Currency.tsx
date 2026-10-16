@@ -32,18 +32,14 @@ const countryName = (code: string | null) => {
   }
 };
 
-/** "🇮🇳 Currency: INR ₹ ▼": automatic by location (with the visitor's flag), or any configured currency. Changing it refreshes every price. */
+/** "Currency: 🇮🇳 INR ₹ (India) ▼": automatic by location (with the visitor's flag), or any configured currency. Changing it refreshes every price. */
 export function CurrencySelector({ className }: { className?: string }) {
-  const { regions, choice, detected, region, country } = useRegion();
+  const { regions, choice, detected, country } = useRegion();
   // One entry per currency (International shares GBP with the UK).
   const options = regions.filter((r, i) => regions.findIndex((x) => x.currency === r.currency) === i);
   const where = countryName(country);
-  const shown = choice === "auto" ? regionFlag(detected, country) : regionFlag(region);
   return (
-    <label className={[styles.selector, className].filter(Boolean).join(" ")}>
-      <span className={styles.flag} aria-hidden="true" title={where ? `Your location: ${where}` : undefined}>
-        {shown}
-      </span>
+    <label className={[styles.selector, className].filter(Boolean).join(" ")} title={where ? `Your location: ${where}` : undefined}>
       <span>Currency</span>
       <select value={choice} onChange={(event) => setRegionChoice(event.target.value)}>
         <option value="auto">

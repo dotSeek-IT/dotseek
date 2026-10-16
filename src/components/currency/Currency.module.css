@@ -16,14 +16,6 @@
   color: var(--ds-color-text-subtle);
 }
 
-/* Location flag before the label (emoji; system emoji font so it renders as a flag where supported). */
-.flag {
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-  font-size: 1.25rem;
-  line-height: 1;
-  cursor: default;
-}
-
 .selector select {
   padding: 0.3rem 1.8rem 0.3rem 0.6rem;
   border: 1px solid var(--ds-color-border-strong);

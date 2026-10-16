@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   // Without AI (no key, no credit or an API error), fall back to matching the words in the description.
   const fallback = () => {
     const recommendation = keywordRecommendation(problem);
-    return recommendation ? Response.json({ recommendation }) : Response.json({ error: "No recommendation." }, { status: 502 });
+    return recommendation ? Response.json({ recommendation, source: "keywords" }) : Response.json({ error: "No recommendation." }, { status: 502 });
   };
   if (!aiConfigured()) return fallback();
   try {
