@@ -742,9 +742,12 @@ export function nextStep(answers: Answers): EnquiryStep | undefined {
 }
 
 /** Drops answers for steps that no longer apply (e.g. after editing a branching answer). */
+/** Values that go with an answer but aren't questions themselves; kept while their question is. */
+const COMPANIONS: Record<string, string> = { budget_gbp: "budget", app_build: "app_os", app_backend: "app_os" };
+
 export function pruneAnswers(answers: Answers): Answers {
   const keep = new Set([...stepsFor(answers).map((s) => s.id), "solution_id", "recommendation"]);
-  return Object.fromEntries(Object.entries(answers).filter(([k]) => keep.has(k)));
+  return Object.fromEntries(Object.entries(answers).filter(([k]) => keep.has(k) || (COMPANIONS[k] !== undefined && keep.has(COMPANIONS[k]!))));
 }
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -771,6 +774,8 @@ export function validateAnswers(input: unknown): Answers | null {
     if (typeof raw.app_build === "string" && [APP_HYBRID, APP_NATIVE].includes(raw.app_build)) answers.app_build = raw.app_build;
     if (raw.app_backend === APP_MANAGED) answers.app_backend = APP_MANAGED;
   }
+  // The budget mapped to GBP from the visitor's local brackets (the label itself is kept as answered).
+  if (typeof raw.budget_gbp === "string" && /^\d+(\.\d+)?-(\d+(\.\d+)?|inf)$/.test(raw.budget_gbp) && answers.budget) answers.budget_gbp = raw.budget_gbp;
   // An unusable phone number is dropped rather than rejecting the whole enquiry.
   if (answers.phone && !isPhone(answers.phone)) answers.phone = "";
   if (!answers.email || !EMAIL.test(answers.email)) return null;

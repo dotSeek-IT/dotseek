@@ -26,7 +26,7 @@ export function PortalFrame({ aside, children }: { aside?: ReactNode; children: 
 }
 
 /** Signed-in admin frame: brand, Inbox / Offers navigation, View website and Sign out. */
-export async function AdminFrame({ active, children }: { active: "inbox" | "offers"; children: ReactNode }) {
+export async function AdminFrame({ active, children }: { active: "inbox" | "offers" | "regions"; children: ReactNode }) {
   const all = await listEnquiries().catch(() => []);
   const waiting = all.filter((e) => e.status === "new" || needsReply(e)).length;
   return (
@@ -50,6 +50,11 @@ export async function AdminFrame({ active, children }: { active: "inbox" | "offe
             <Link href="/admin/offers" aria-current={active === "offers" ? "page" : undefined}>
               <Icon name="sparkle" />
               Offers
+            </Link>
+            <Link href="/admin/regions" aria-current={active === "regions" ? "page" : undefined}>
+              <Icon name="globe" />
+              <span className={styles.navLong}>Pricing regions</span>
+              <span className={styles.navShort}>Regions</span>
             </Link>
           </nav>
           <div className={styles.topbarAside}>

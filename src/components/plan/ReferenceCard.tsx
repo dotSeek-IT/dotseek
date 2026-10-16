@@ -1,4 +1,5 @@
 import type { Plan } from "@/lib/plan/build";
+import { useRegion } from "@/components/currency/useRegion";
 import { gbp, weeks } from "@/lib/plan/format";
 import { REFERENCE_FEATURES, REFERENCE_FEATURE_IDS, type ReferenceAnalysis } from "@/lib/plan/referenceFeatures";
 import styles from "./Plan.module.css";
@@ -21,6 +22,7 @@ function likelyServices(plan: Plan): string[] {
 
 /** Chat card after a reference URL is analysed. */
 export function ReferenceCard({ analysis, plan }: { analysis: ReferenceAnalysis; plan: Plan }) {
+  useRegion(); // re-render in the visitor's currency
   const detected = REFERENCE_FEATURE_IDS.filter((f) => analysis.features[f]).map((f) => REFERENCE_FEATURES[f]);
   return (
     <section className={styles.card} aria-label="Reference analysis">

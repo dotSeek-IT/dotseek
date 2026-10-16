@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useRegion } from "@/components/currency/useRegion";
 import type { Plan, PlanChoices } from "@/lib/plan/build";
 import { gbp, weeks } from "@/lib/plan/format";
 import {
@@ -40,6 +41,7 @@ export function CheaperOptions({
   onApplyOption: (option: CostOption) => void;
   onChoices: (choices: PlanChoices) => void;
 }) {
+  useRegion(); // re-render in the visitor's currency
   // Options depend on the requirement (answers), not on every toggle; recompute when the estimate changes.
   const options = useMemo(getOptions, [plan.estimate.recommended, plan.selected.length]); // eslint-disable-line react-hooks/exhaustive-deps
   const full = options.find((o) => o.id === "full");

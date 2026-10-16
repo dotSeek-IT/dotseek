@@ -1088,6 +1088,10 @@
   color: var(--ds-color-brand);
 }
 
+.cardCurrency {
+  justify-self: start;
+}
+
 /* Budget fit: a full-width note (it wraps in the narrow summary column, so not a pill). */
 .budget {
   display: flex;

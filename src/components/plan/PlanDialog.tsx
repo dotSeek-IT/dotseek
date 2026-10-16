@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CurrencyPicker, LocalAmount } from "@/components/currency/LocalAmount";
+import { CurrencySelector, RefAmount } from "@/components/currency/Currency";
+import { useRegion } from "@/components/currency/useRegion";
+import { agencyComparison } from "@/lib/currency/money";
 import { groupLabels, INFRA_GROUPS, marketMeta, pricingMeta, stageById, stages, type ItemGroup } from "@/content/pricing";
 import type { OfferQuote } from "@/lib/plan/offer";
 import { chooseTier, setScope, toggleChoice, type Plan, type PlanChoices, type ServiceView } from "@/lib/plan/build";
@@ -69,6 +71,8 @@ const FEATURE_GROUPS: ItemGroup[] = ["product", "ai", "integrations", "communica
  */
 export function PlanDialog(props: PlanDialogProps) {
   const { plan, brief, briefStatus, choices, onChoices, onClose } = props;
+  // Every amount below is shown in the visitor's currency; this re-renders the dialog when it changes.
+  const { money } = useRegion();
   const ref = useRef<HTMLDialogElement>(null);
   const TABS: { id: Tab; label: string }[] = [
     { id: "quote", label: "Quotation" },
@@ -510,27 +514,27 @@ export function PlanDialog(props: PlanDialogProps) {
             <p className={styles.stagePill}>
               {stage.name} stage · {stage.priceLabel}
             </p>
-            <CurrencyPicker />
+            <CurrencySelector />
             <dl className={styles.figures}>
               <div className={styles.figureMain}>
                 <dt>Recommended estimate</dt>
                 <dd>
-                  {gbp(plan.estimate.recommended)}
-                  <LocalAmount gbp={plan.estimate.recommended} />
+                  {money.total(plan.estimate.recommended)}
+                  <RefAmount gbp={plan.estimate.recommended} />
                 </dd>
               </div>
               <div>
                 <dt>Minimum</dt>
                 <dd>
-                  {gbp(plan.estimate.min)}
-                  <LocalAmount gbp={plan.estimate.min} />
+                  {money.total(plan.estimate.min)}
+                  <RefAmount gbp={plan.estimate.min} />
                 </dd>
               </div>
               <div>
                 <dt>Maximum</dt>
                 <dd>
-                  {gbp(plan.estimate.max)}
-                  <LocalAmount gbp={plan.estimate.max} />
+                  {money.total(plan.estimate.max)}
+                  <RefAmount gbp={plan.estimate.max} />
                 </dd>
               </div>
               <div>
@@ -546,8 +550,8 @@ export function PlanDialog(props: PlanDialogProps) {
                 <dd>{perMonth(plan.monthly.maintenance)}</dd>
               </div>
               <div>
-                <dt>Typical UK agency</dt>
-                <dd>{gbpRange(plan.markets[0].agencyGbp)}</dd>
+                <dt>{agencyComparison(plan.markets, money).label}</dt>
+                <dd>{agencyComparison(plan.markets, money).value}</dd>
               </div>
               {plan.savings && (
                 <div>
@@ -875,7 +879,7 @@ function PriceSlider({
           <span>Your target</span>
           <strong>
             {gbp(value)}
-            <LocalAmount gbp={value} />
+            <RefAmount gbp={value} />
           </strong>
           <span className={styles.priceNow}>Current estimate {gbp(plan.build)}</span>
         </div>
@@ -960,7 +964,9 @@ function Negotiation({
   onDiscuss?: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [budget, setBudget] = useState(value?.preferredBudget ? String(value.preferredBudget) : "");
+  // Typed in the visitor's currency; stored in GBP (base) like every other amount.
+  const { money } = useRegion();
+  const [budget, setBudget] = useState(value?.preferredBudget ? String(money.toLocal(value.preferredBudget)) : "");
   const [note, setNote] = useState(value?.note ?? "");
   const saved = Boolean(value?.preferredBudget || value?.note);
 
@@ -977,13 +983,19 @@ function Negotiation({
           className={styles.negotiateForm}
           onSubmit={(event) => {
             event.preventDefault();
-            const amount = Number(budget.replace(/[£,\s]/g, ""));
-            onSave({ preferredBudget: Number.isFinite(amount) && amount > 0 ? Math.round(amount) : undefined, note: note.trim() || undefined });
+            const amount = Number(budget.replace(/[^\d.]/g, ""));
+            onSave({ preferredBudget: Number.isFinite(amount) && amount > 0 ? Math.round(money.toGbp(amount)) : undefined, note: note.trim() || undefined });
             setOpen(false);
           }}
         >
-          <label htmlFor="plan-budget">Your preferred budget (£)</label>
-          <input id="plan-budget" inputMode="numeric" value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="e.g. 2000" />
+          <label htmlFor="plan-budget">Your preferred budget ({money.region.currency})</label>
+          <input
+            id="plan-budget"
+            inputMode="numeric"
+            value={budget}
+            onChange={(e) => setBudget(e.target.value)}
+            placeholder={`e.g. ${money.fmtLocal(money.region.budgets[2]?.min ?? 2000)}`}
+          />
           <label htmlFor="plan-note">Anything we should know? (optional)</label>
           <textarea id="plan-note" rows={2} maxLength={1000} value={note} onChange={(e) => setNote(e.target.value)} />
           <div className={styles.textActions}>

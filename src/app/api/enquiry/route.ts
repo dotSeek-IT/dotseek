@@ -12,7 +12,8 @@ import { buildPlan, sanitizeChoices } from "@/lib/plan/build";
 import { gbp } from "@/lib/plan/format";
 import { planReportText } from "@/lib/plan/report";
 import { quotationEmailHtml } from "@/lib/plan/quotationEmail";
-import { currencyById, localNote } from "@/content/currencies";
+import { getRegions } from "@/lib/currency/regions.server";
+import { makeMoney, regionForCountry, snapshotFor } from "@/lib/currency/money";
 import { solutionHeadline } from "@/lib/plan/headline";
 
 /**
@@ -78,7 +79,7 @@ export async function POST(request: Request) {
     emailCopy?: unknown;
     negotiation?: unknown;
     reference?: unknown;
-    displayCurrency?: unknown;
+    currency?: unknown;
   } | null;
   const answers = validateAnswers(body?.answers);
   if (!answers) return Response.json({ error: "Please check your answers." }, { status: 400 });
@@ -113,6 +114,15 @@ export async function POST(request: Request) {
     return Response.json({ error: "Enquiries are not configured." }, { status: 503 });
   }
 
+  // The customer's currency: their chosen or detected market, at today's stored rate (saved with the
+  // quotation, so it never changes later). The engine stays in GBP.
+  const rawCurrency = (body?.currency ?? {}) as { regionId?: unknown; country?: unknown; selection?: unknown };
+  const country = typeof rawCurrency.country === "string" && /^[A-Z]{2}$/.test(rawCurrency.country) ? rawCurrency.country : null;
+  const regions = await getRegions();
+  const region = regions.find((r) => r.id === rawCurrency.regionId) ?? regionForCountry(country, regions);
+  const currency = snapshotFor(region, plan.estimate.recommended, country, rawCurrency.selection === "manual" ? "manual" : "auto");
+  const money = makeMoney(region, country);
+
   const enquiry = await createEnquiry({
     solution: solution?.id ?? "unknown",
     answers,
@@ -123,15 +133,13 @@ export async function POST(request: Request) {
     offer,
     negotiation,
     reference,
+    currency,
     transcript: transcript.length ? transcript : undefined,
   });
   const origin = siteOrigin();
   const customerLink = enquiry ? `${origin}/enquiry/${enquiry.token}` : null;
   const adminLink = enquiry ? `${origin}/admin/enquiries/${enquiry.id}` : null;
   const ref = enquiry?.ref ?? "";
-
-  // The customer's display currency (a guide only: the quotation stays in GBP).
-  const localCurrency = typeof body?.displayCurrency === "string" ? currencyById(body.displayCurrency) : null;
 
   // The quotation document (same layout as the on-screen quotation) for both emails.
   const quotation = (extra: {
@@ -150,7 +158,7 @@ export async function POST(request: Request) {
       ref: ref || undefined,
       negotiation,
       reference,
-      localNote: localCurrency ? localNote(plan.estimate.recommended, localCurrency) : undefined,
+      money,
       ...extra,
     });
 
@@ -165,13 +173,13 @@ export async function POST(request: Request) {
   const transcriptText = transcript.length
     ? `\nChat before the enquiry:\n${transcript.map((t) => `${t.role === "user" ? "Visitor" : "Assistant"}: ${t.content}`).join("\n")}\n`
     : "";
-  const subject = `${ref ? `[${ref}] ` : ""}${consultation ? "Consultation request: " : "New "}${solution?.label.toLowerCase() ?? "project"} enquiry${answers.company ? ` from ${answers.company}` : ""} (est. ${gbp(plan.build)})`;
+  const subject = `${ref ? `[${ref}] ` : ""}${consultation ? "Consultation request: " : "New "}${solution?.label.toLowerCase() ?? "project"} enquiry${answers.company ? ` from ${answers.company}` : ""} (est. ${money.total(plan.estimate.recommended)}${money.isGbp ? "" : `, ${gbp(plan.estimate.recommended * region.priceFactor)}`})`;
 
   const teamResult = await sendMail({
     to: teamInbox(),
     replyTo: { name: answers.name, address: answers.email },
     subject,
-    text: `New enquiry from the DotSeek website${ref ? ` (${ref})` : ""}${consultation ? "\nThe customer requested a consultation call." : ""}${reference ? `\nReference: ${reference.url}` : ""}${negotiation ? `\nPreferred budget: ${negotiation.preferredBudget ? gbp(negotiation.preferredBudget) : "not given"}${negotiation.note ? ` (${negotiation.note})` : ""}` : ""}${offer ? `\nOffer: ${offer.label} from ${gbp(offer.price)} (${offer.eligible ? "first enquiry from this email" : "not eligible: email has enquired before"})` : ""}\n${adminLink ? `Open in admin: ${adminLink}\n` : ""}${summaryText(summary)}\n${planReportText(report)}\n\nAnswers\n${rowsText}\n${transcriptText}`,
+    text: `New enquiry from the DotSeek website${ref ? ` (${ref})` : ""}${consultation ? "\nThe customer requested a consultation call." : ""}${reference ? `\nReference: ${reference.url}` : ""}${negotiation ? `\nPreferred budget: ${negotiation.preferredBudget ? money.fmt(negotiation.preferredBudget) : "not given"}${negotiation.note ? ` (${negotiation.note})` : ""}` : ""}${offer ? `\nOffer: ${offer.label} from ${money.fmt(offer.price)} (${offer.eligible ? "first enquiry from this email" : "not eligible: email has enquired before"})` : ""}\n${adminLink ? `Open in admin: ${adminLink}\n` : ""}${summaryText(summary)}\n${planReportText(report, money)}\n\nAnswers\n${rowsText}\n${transcriptText}`,
     html: quotation({
       offer,
       intro: `<p style="margin:0 0 8px;font-size:18px;color:#ffffff">New ${escapeHtml(solution?.title ?? "project")} enquiry${ref ? ` (${escapeHtml(ref)})` : ""}</p>${
@@ -198,7 +206,7 @@ export async function POST(request: Request) {
       to: answers.email,
       replyTo: { name: site.name, address: teamInbox() },
       subject: `We've received your enquiry (${ref})`,
-      text: `Hi ${answers.name},\n\nThank you for your enquiry about ${solution?.title.toLowerCase() ?? "your project"}. Your reference is ${ref}.${consultation ? " We'll be in touch to arrange your consultation call." : ""}\n\nYou can view your enquiry and continue the conversation with our team here:\n${customerLink}\n\nKeep this link private: anyone with it can view your enquiry.\n\n${emailCopy ? `${planReportText(report)}\n\n` : ""}${site.name}`,
+      text: `Hi ${answers.name},\n\nThank you for your enquiry about ${solution?.title.toLowerCase() ?? "your project"}. Your reference is ${ref}.${consultation ? " We'll be in touch to arrange your consultation call." : ""}\n\nYou can view your enquiry and continue the conversation with our team here:\n${customerLink}\n\nKeep this link private: anyone with it can view your enquiry.\n\n${emailCopy ? `${planReportText(report, money)}\n\n` : ""}${site.name}`,
       html: emailCopy
         ? quotation({
             offer: offer?.eligible ? offer : undefined,

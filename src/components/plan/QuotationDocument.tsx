@@ -1,12 +1,13 @@
 import { quotationNotice } from "@/content/pricing";
 import { site } from "@/content/site";
 import type { Plan } from "@/lib/plan/build";
-import { gbp, perMonth, weeks } from "@/lib/plan/format";
+import { weeks } from "@/lib/plan/format";
 import { solutionHeadline } from "@/lib/plan/headline";
 import type { OfferQuote } from "@/lib/plan/offer";
 import type { ReferenceAnalysis } from "@/lib/plan/referenceFeatures";
 import { LogoMark } from "@/components/common/LogoMark";
-import { LocalNote } from "@/components/currency/LocalAmount";
+import { useRegion } from "@/components/currency/useRegion";
+import { formatRateDate, invoiceNote, rateText, type Money } from "@/lib/currency/money";
 import styles from "./Quotation.module.css";
 
 export type QuotationContact = { name?: string; email?: string; company?: string };
@@ -39,7 +40,15 @@ function draftRef(plan: Plan) {
  * Quotation Notice). Shown in the quotation modal and, live, in the chat's
  * quote workspace. Without an email yet, "Prepared for" says so.
  */
-export function QuotationDocument({ plan, title, solutionTitle, overview, contact, offer, negotiation, reference }: QuotationDocumentProps) {
+export function QuotationDocument(props: QuotationDocumentProps & { money?: Money }) {
+  // The visitor's currency in the chat; a stored quotation passes its own Money.
+  const live = useRegion().money;
+  return <Document {...props} money={props.money ?? live} />;
+}
+
+function Document({ plan, title, solutionTitle, overview, contact, offer, negotiation, reference, money }: QuotationDocumentProps & { money: Money }) {
+  const region = money.region;
+  const contract = invoiceNote(region);
   const email = contact.email;
   const today = new Date();
   const valid = new Date(today.getTime() + VALID_DAYS * 86_400_000);
@@ -87,6 +96,10 @@ export function QuotationDocument({ plan, title, solutionTitle, overview, contac
           <div>
             <dt>Status</dt>
             <dd>{quotationNotice.status}</dd>
+          </div>
+          <div>
+            <dt>Currency</dt>
+            <dd>{region.currency}</dd>
           </div>
         </dl>
       </div>
@@ -146,8 +159,8 @@ export function QuotationDocument({ plan, title, solutionTitle, overview, contac
                   <span className={styles.strong}>{l.label}</span>
                   {description(l.id) && <span className={styles.desc}>{description(l.id)}</span>}
                 </td>
-                <td className={`${styles.num} ${styles.muted}`}>{l.min === l.max ? "" : `${gbp(l.min)}–${gbp(l.max)}`}</td>
-                <td className={styles.num}>{gbp(l.cost)}</td>
+                <td className={`${styles.num} ${styles.muted}`}>{l.min === l.max ? "" : `${money.fmt(l.min)}–${money.fmt(l.max)}`}</td>
+                <td className={styles.num}>{money.fmt(l.cost)}</td>
               </tr>
             ))}
           </tbody>
@@ -155,25 +168,33 @@ export function QuotationDocument({ plan, title, solutionTitle, overview, contac
         <dl className={styles.totals}>
           <div>
             <dt>Minimum estimate</dt>
-            <dd>{gbp(plan.estimate.min)}</dd>
+            <dd>{money.total(plan.estimate.min)}</dd>
           </div>
           <div>
             <dt>Maximum estimate</dt>
-            <dd>{gbp(plan.estimate.max)}</dd>
+            <dd>{money.total(plan.estimate.max)}</dd>
           </div>
           {offer && (
             <div className={styles.offerRow}>
               <dt>{offer.label} (first enquiry)</dt>
-              <dd>From {gbp(offer.price)}</dd>
+              <dd>From {money.fmt(offer.price)}</dd>
             </div>
           )}
           <div className={styles.grand}>
             <dt>Recommended estimate</dt>
-            <dd>{gbp(plan.estimate.recommended)}</dd>
+            <dd>{money.total(plan.estimate.recommended)}</dd>
           </div>
         </dl>
-        <p className={styles.muted}>Prices in GBP, excluding VAT. Estimated timeline {weeks(plan.weeks)}.</p>
-        <LocalNote gbp={plan.estimate.recommended} className={styles.muted} />
+        {!money.isGbp && (
+          <p className={styles.muted}>
+            Reference value: approximately {money.ref(plan.estimate.recommended)?.replace("≈ ", "")} · Exchange rate used: {rateText(region)} · Rate checked:{" "}
+            {formatRateDate(region.rateCheckedAt)}
+          </p>
+        )}
+        <p className={styles.muted}>
+          Prices in {region.currency}. {region.taxNote} Estimated timeline {weeks(plan.weeks)}.
+        </p>
+        {contract && <p className={styles.muted}>{contract}</p>}
       </section>
 
       <section className={styles.twoCol}>
@@ -182,11 +203,11 @@ export function QuotationDocument({ plan, title, solutionTitle, overview, contac
           <dl className={styles.list}>
             <div>
               <dt>Infrastructure & usage</dt>
-              <dd>{perMonth(plan.monthly.running)}</dd>
+              <dd>{money.perMonth(plan.monthly.running)}</dd>
             </div>
             <div>
               <dt>Support & maintenance</dt>
-              <dd>{perMonth(plan.monthly.maintenance)}</dd>
+              <dd>{money.perMonth(plan.monthly.maintenance)}</dd>
             </div>
           </dl>
         </div>
@@ -196,13 +217,13 @@ export function QuotationDocument({ plan, title, solutionTitle, overview, contac
             {plan.budget && (
               <div>
                 <dt>Stated budget</dt>
-                <dd>{Number.isFinite(plan.budget[1]) ? `Up to ${gbp(plan.budget[1])}` : `Over ${gbp(plan.budget[0])}`}</dd>
+                <dd>{Number.isFinite(plan.budget[1]) ? `Up to ${money.fmt(plan.budget[1])}` : `Over ${money.fmt(plan.budget[0])}`}</dd>
               </div>
             )}
             {negotiation?.preferredBudget && (
               <div>
                 <dt>Preferred budget</dt>
-                <dd>{gbp(negotiation.preferredBudget)}</dd>
+                <dd>{money.fmt(negotiation.preferredBudget)}</dd>
               </div>
             )}
             <div>
@@ -221,7 +242,7 @@ export function QuotationDocument({ plan, title, solutionTitle, overview, contac
               <li key={ph.name}>
                 <p className={styles.phaseHead}>
                   <span className={styles.strong}>{ph.name}</span>
-                  {ph.cost > 0 && <span>{gbp(ph.cost)}</span>}
+                  {ph.cost > 0 && <span>{money.fmt(ph.cost)}</span>}
                 </p>
                 <p className={styles.muted}>{ph.items.join(" · ")}</p>
               </li>
@@ -235,7 +256,7 @@ export function QuotationDocument({ plan, title, solutionTitle, overview, contac
         <ul className={styles.terms}>
           <li>This is an AI-generated indicative estimate based on your answers and DotSeek&apos;s price catalogue. It is not a binding quotation or offer.</li>
           <li>The final commercial quotation is confirmed by the DotSeek team after reviewing your complete requirements.</li>
-          <li>Running costs depend on the cloud provider and real usage. Content, licences, domains and VAT are excluded unless stated.</li>
+          <li>Running costs depend on the cloud provider and real usage. Content, licences and domains are excluded unless stated. {region.taxNote}</li>
           <li>Valid for {VALID_DAYS} days from the date above.</li>
         </ul>
       </section>

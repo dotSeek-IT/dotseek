@@ -371,3 +371,11 @@
   padding: 0;
   border: 0;
 }
+
+/* Reference value / currency details under a figure (quotations in another currency). */
+.refValue {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--ds-text-caption);
+  color: var(--ds-color-text-subtle);
+}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { moneyForSnapshot } from "@/lib/currency/money";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Icon } from "@/components/common/Icon";
@@ -155,8 +156,8 @@ export default async function AdminInboxPage({ searchParams }: { searchParams: P
                       </span>
                     </span>
                     <span className={styles.amount}>
-                      {estimate ? gbp(estimate) : "-"}
-                      <small>recommended</small>
+                      {estimate ? moneyForSnapshot(e.currency).total(estimate) : "-"}
+                      <small>{e.currency && e.currency.customerCurrency !== "GBP" ? `${gbp(estimate ?? 0)} base · recommended` : "recommended"}</small>
                     </span>
                     <span className={styles.itemMeta}>
                       <StatusPill status={e.status} />

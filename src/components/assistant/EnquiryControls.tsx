@@ -6,6 +6,7 @@ import { isPhone, type EnquiryStep } from "@/content/enquiryFlows";
 import type { Solution, SolutionId } from "@/content/solutions";
 import { Icon } from "@/components/common/Icon";
 import { LogoMark } from "@/components/common/LogoMark";
+import { useRegion } from "@/components/currency/useRegion";
 import type { EnquiryPhase, Recommendation } from "./useEnquiry";
 import styles from "./DotSeekAssistant.module.css";
 
@@ -113,7 +114,11 @@ export function EnquiryControls(props: EnquiryControlsProps) {
   return props.step ? <AskStep {...props} step={props.step} /> : null;
 }
 
-function AskStep({ step, editing, onAnswer, onCancel, onCancelEdit }: EnquiryControlsProps & { step: EnquiryStep }) {
+function AskStep({ step: baseStep, editing, onAnswer, onCancel, onCancelEdit }: EnquiryControlsProps & { step: EnquiryStep }) {
+  // The budget question uses clean brackets in the visitor's currency.
+  const { region } = useRegion();
+  const step: EnquiryStep =
+    baseStep.id === "budget" ? { ...baseStep, options: [...region.budgets.map((b) => b.label), "Not sure yet"] } : baseStep;
   const [selected, setSelected] = useState<string[]>([]);
   const [otherOpen, setOtherOpen] = useState(false);
   const [text, setText] = useState("");

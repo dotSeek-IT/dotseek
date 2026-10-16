@@ -10,6 +10,7 @@ import { createRateLimiter } from "@/lib/assistant/http";
 import { addMessage, getEnquiryByToken, setStatus, type EnquiryStatus } from "@/lib/enquiries/store";
 import { emailHtml, escapeHtml, sendMail, siteOrigin, teamInbox } from "@/lib/mail";
 import { saveOffer } from "@/lib/offers/store";
+import { getRegions, refreshRates, saveRegion } from "@/lib/currency/regions.server";
 import { solutionCatalogue } from "@/content/solutions";
 
 /** Server actions for the admin inbox and the customer's private enquiry page. */
@@ -122,4 +123,59 @@ export async function saveOfferAction(_: string | undefined, formData: FormData)
   });
   revalidatePath("/admin/offers");
   return ok ? "Saved." : "Couldn't save: storage isn't configured.";
+}
+
+// ---------- Pricing regions (admin only) ----------
+
+/** Save one region's currency, pricing, budget and tax settings. */
+export async function saveRegionAction(_: string | undefined, formData: FormData): Promise<string | undefined> {
+  if (!(await isAdmin())) redirect("/admin/login");
+  const id = String(formData.get("id") ?? "");
+  const current = (await getRegions()).find((r) => r.id === id);
+  if (!current) return "Unknown region.";
+  const text = (k: string, max = 200) => String(formData.get(k) ?? "").trim().slice(0, max);
+  const num = (k: string, min: number, max: number, fallback: number) => {
+    const n = Number(String(formData.get(k) ?? "").replace(/[,\s]/g, ""));
+    return Number.isFinite(n) && n >= min && n <= max ? n : fallback;
+  };
+  const currency = text("currency", 3).toUpperCase();
+  if (!/^[A-Z]{3}$/.test(currency)) return "Currency must be a three-letter code, e.g. INR.";
+  const budgets = text("budgets", 2000)
+    .split("\n")
+    .map((line) => line.split("|").map((p) => p.trim()))
+    .filter((p) => p.length >= 2 && p[0])
+    .map(([label, min, max]) => ({ label: label!.slice(0, 60), min: Math.max(0, Number(min) || 0), max: max && max !== "+" && Number(max) > 0 ? Number(max) : null }));
+  if (!budgets.length) return "Add at least one budget bracket (label | min | max).";
+  const perGbp = num("perGbp", 0.0001, 100000, current.perGbp);
+  const rateSource = (["fixed", "ecb", "usd-peg", "manual"] as const).find((s) => s === formData.get("rateSource")) ?? current.rateSource;
+  const countries = text("countries", 400)
+    .split(/[\s,]+/)
+    .map((c) => c.toUpperCase())
+    .filter((c) => /^[A-Z]{2}$|^\*$/.test(c));
+  const ok = await saveRegion(id, {
+    countries: countries.length ? countries : current.countries,
+    currency,
+    symbol: text("symbol", 6) || currency,
+    locale: text("locale", 12) || current.locale,
+    perGbp,
+    rateSource,
+    rateCheckedAt: perGbp !== current.perGbp ? new Date().toISOString() : current.rateCheckedAt,
+    priceFactor: num("priceFactor", 0.1, 5, current.priceFactor),
+    minProject: num("minProject", 0, 100000000, current.minProject),
+    roundTo: num("roundTo", 1, 100000, current.roundTo),
+    decimals: Math.round(num("decimals", 0, 2, current.decimals)),
+    budgets,
+    taxNote: text("taxNote", 300) || current.taxNote,
+    invoiceCurrency: (text("invoiceCurrency", 3) || current.invoiceCurrency).toUpperCase(),
+  });
+  revalidatePath("/admin/regions");
+  return ok ? `Saved ${current.name}.` : "Couldn't save: storage isn't configured.";
+}
+
+/** Update exchange rates from the provider (ECB via Frankfurter; AED and SAR from their US dollar pegs). */
+export async function refreshRatesAction(): Promise<string | undefined> {
+  if (!(await isAdmin())) redirect("/admin/login");
+  const result = await refreshRates();
+  revalidatePath("/admin/regions");
+  return result.message;
 }

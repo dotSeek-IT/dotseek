@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { currentDisplayCurrencyId } from "@/components/currency/useDisplayCurrency";
+import { currentRegion } from "@/components/currency/useRegion";
 import {
   CONTACT_STEP_IDS,
   NOT_SURE,
@@ -129,6 +129,19 @@ const fresh = (): EnquiryState => ({
 
 /** The question as said in the chat; optional ones say so, so the Skip button makes sense. */
 const ask = (step: EnquiryStep) => (step.optional ? `${step.question} (Optional: answer below, or skip this question.)` : step.question);
+
+/** A budget answer (local bracket label or typed amount, e.g. "₹2 lakh", "80,000") as "min-max" in GBP. */
+function budgetToGbp(value: string): string | undefined {
+  const { region, money } = currentRegion();
+  const g = (local: number) => Math.round(money.toGbp(local));
+  const bracket = region.budgets.find((b) => b.label === value);
+  if (bracket) return `${g(bracket.min)}-${bracket.max === null ? "inf" : g(bracket.max)}`;
+  const m = value.replace(/,/g, "").match(/(\d+(?:\.\d+)?)\s*(k|lakh|lac|crore|cr)?/i);
+  if (!m) return undefined;
+  const unit = (m[2] ?? "").toLowerCase();
+  const amount = Number(m[1]) * (unit === "k" ? 1e3 : unit === "lakh" || unit === "lac" ? 1e5 : unit === "crore" || unit === "cr" ? 1e7 : 1);
+  return amount > 0 ? `0-${g(amount)}` : undefined;
+}
 
 export function useEnquiry({
   botSay,
@@ -375,6 +388,13 @@ export function useEnquiry({
     let nextAnswers: Answers = { ...state.answers, [step.id]: value };
     let nextChoices = state.choices;
 
+    // Budget: answered in the visitor's currency (their market's brackets or a typed amount), mapped to GBP for the engine.
+    if (step.id === "budget") {
+      const mapped = budgetToGbp(value);
+      if (mapped) nextAnswers.budget_gbp = mapped;
+      else delete nextAnswers.budget_gbp;
+    }
+
     if (step.id === "solution") {
       // Switching solution: keep shared answers (scale, budget, contact...), drop the old flow and plan choices.
       const shared = Object.fromEntries(Object.entries(state.answers).filter(([k]) => SHARED_STEP_IDS.includes(k)));
@@ -482,7 +502,10 @@ export function useEnquiry({
           reference: state.reference,
           transcript: transcript(),
           includeTranscript: state.includeTranscript && hasTranscript,
-          displayCurrency: currentDisplayCurrencyId(),
+          currency: (() => {
+            const { region, country, selection } = currentRegion();
+            return { regionId: region.id, country, selection };
+          })(),
         }),
       });
       const result = (await response.json().catch(() => ({}))) as { ref?: string; link?: string; error?: string };

@@ -1,8 +1,9 @@
 import { answerRows } from "@/content/enquiryFlows";
+import { agencyComparison, formatRateDate, moneyForSnapshot, rateText } from "@/lib/currency/money";
 import { solutionById } from "@/content/solutions";
 import { pricingMeta, stageById, tierById } from "@/content/pricing";
 import type { Enquiry, EnquiryStatus } from "@/lib/enquiries/store";
-import { gbp, gbpRange, perMonth, weeks } from "@/lib/plan/format";
+import { gbp, weeks } from "@/lib/plan/format";
 import { ArchitectureDiagram } from "@/components/plan/ArchitectureDiagram";
 import styles from "./Portal.module.css";
 
@@ -57,7 +58,7 @@ export function EnquiryDetails({ enquiry, showTranscript }: { enquiry: Enquiry; 
         </section>
       )}
 
-      {enquiry.plan && <PlanSnapshot enquiry={enquiry} />}
+      {enquiry.plan && <PlanSnapshot enquiry={enquiry} team={showTranscript} />}
 
       <section className={styles.card} aria-labelledby="answers-title">
         <p className={styles.kicker}>{solution?.title ?? "Enquiry"}</p>
@@ -94,8 +95,12 @@ export function EnquiryDetails({ enquiry, showTranscript }: { enquiry: Enquiry; 
 }
 
 /** The AI-generated indicative estimate and architecture saved with the enquiry. */
-function PlanSnapshot({ enquiry }: { enquiry: Enquiry }) {
+/** `team`: the admin view, which also shows the GBP base and how the currency was set. */
+function PlanSnapshot({ enquiry, team }: { enquiry: Enquiry; team: boolean }) {
   const plan = enquiry.plan!;
+  // Shown in the currency the customer saw, at the rate saved with the quotation.
+  const money = moneyForSnapshot(enquiry.currency);
+  const cur = enquiry.currency;
   const uk = plan.markets.find((m) => m.id === "uk");
   const advice = [...plan.advice.map((a) => a.message), ...(enquiry.summary?.advice ?? []).map((a) => a.message)];
   return (
@@ -108,13 +113,34 @@ function PlanSnapshot({ enquiry }: { enquiry: Enquiry }) {
       <dl className={styles.figures}>
         <div>
           <dt>Recommended</dt>
-          <dd>{gbp(plan.estimate?.recommended ?? plan.build)}</dd>
+          <dd>
+            {money.total(plan.estimate?.recommended ?? plan.build)}
+            {!money.isGbp && (
+              <small className={styles.refValue}>
+                {money.ref(plan.estimate?.recommended ?? plan.build)}
+                {team && ` (GBP base ${gbp(plan.estimate?.recommended ?? plan.build)})`}
+              </small>
+            )}
+          </dd>
         </div>
+        {cur && !money.isGbp && (
+          <div>
+            <dt>Currency</dt>
+            <dd>
+              {cur.customerCurrency}, {rateText(cur.region)}
+              <small className={styles.refValue}>
+                Rate checked {formatRateDate(cur.rateCheckedAt)}
+                {team &&
+                  ` · ${cur.selection === "manual" ? "chosen by the customer" : `detected (${cur.detectedCountry ?? "unknown"})`} · regional factor ${cur.regionalFactor} · invoice in ${cur.invoiceCurrency}`}
+              </small>
+            </dd>
+          </div>
+        )}
         {plan.estimate && (
           <div>
             <dt>Estimate range</dt>
             <dd>
-              {gbp(plan.estimate.min)}–{gbp(plan.estimate.max)}
+              {money.total(plan.estimate.min)}–{money.total(plan.estimate.max)}
             </dd>
           </div>
         )}
@@ -128,7 +154,7 @@ function PlanSnapshot({ enquiry }: { enquiry: Enquiry }) {
           <div>
             <dt>{enquiry.offer.label}</dt>
             <dd>
-              From {gbp(enquiry.offer.price)}
+              From {money.fmt(enquiry.offer.price)}
               {!enquiry.offer.eligible && " (not first enquiry)"}
             </dd>
           </div>
@@ -136,7 +162,7 @@ function PlanSnapshot({ enquiry }: { enquiry: Enquiry }) {
         {enquiry.negotiation?.preferredBudget && (
           <div>
             <dt>Preferred budget</dt>
-            <dd>{gbp(enquiry.negotiation.preferredBudget)}</dd>
+            <dd>{money.fmt(enquiry.negotiation.preferredBudget)}</dd>
           </div>
         )}
         <div>
@@ -145,16 +171,16 @@ function PlanSnapshot({ enquiry }: { enquiry: Enquiry }) {
         </div>
         <div>
           <dt>Running costs</dt>
-          <dd>{perMonth(plan.monthly.running)}</dd>
+          <dd>{money.perMonth(plan.monthly.running)}</dd>
         </div>
         <div>
           <dt>Maintenance</dt>
-          <dd>{perMonth(plan.monthly.maintenance)}</dd>
+          <dd>{money.perMonth(plan.monthly.maintenance)}</dd>
         </div>
         {uk?.agencyGbp && (
           <div>
-            <dt>Typical UK agency</dt>
-            <dd>{gbpRange(uk.agencyGbp)}</dd>
+            <dt>{agencyComparison(plan.markets, money).label}</dt>
+            <dd>{agencyComparison(plan.markets, money).value}</dd>
           </div>
         )}
       </dl>
@@ -179,14 +205,14 @@ function PlanSnapshot({ enquiry }: { enquiry: Enquiry }) {
           {plan.lines.map((l) => (
             <tr key={l.id}>
               <td>{l.label}</td>
-              <td>{gbp(l.cost)}</td>
+              <td>{money.fmt(l.cost)}</td>
             </tr>
           ))}
         </tbody>
         <tfoot>
           <tr>
             <th scope="row">Estimated total</th>
-            <td>{gbp(plan.build)}</td>
+            <td>{money.total(plan.build)}</td>
           </tr>
         </tfoot>
       </table>

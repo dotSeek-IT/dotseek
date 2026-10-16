@@ -1,4 +1,5 @@
 import "server-only";
+import type { CurrencySnapshot } from "@/lib/currency/money";
 import { randomBytes, randomUUID } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
@@ -58,6 +59,8 @@ export type Enquiry = {
   negotiation?: { preferredBudget?: number; note?: string };
   /** Reference website or app the customer shared (used for scope only, never copied). */
   reference?: ReferenceAnalysis;
+  /** Currency the customer saw (and the rate used), so the quotation always shows exactly the same. */
+  currency?: CurrencySnapshot;
   /** AI chat before the enquiry, included with the visitor's consent. */
   transcript?: { role: "user" | "assistant"; content: string }[];
   thread: ThreadMessage[];
@@ -65,7 +68,7 @@ export type Enquiry = {
 
 export type EnquiryInput = Pick<
   Enquiry,
-  "solution" | "answers" | "summary" | "transcript" | "plan" | "choices" | "consultation" | "offer" | "negotiation" | "reference"
+  "solution" | "answers" | "summary" | "transcript" | "plan" | "choices" | "consultation" | "offer" | "negotiation" | "reference" | "currency"
 >;
 
 interface Backend {

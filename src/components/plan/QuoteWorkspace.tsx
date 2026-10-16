@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Plan } from "@/lib/plan/build";
-import { gbp, weeks } from "@/lib/plan/format";
+import { weeks } from "@/lib/plan/format";
 import type { OfferQuote } from "@/lib/plan/offer";
 import type { ReferenceAnalysis } from "@/lib/plan/referenceFeatures";
 import { Icon } from "@/components/common/Icon";
 import { LogoMark } from "@/components/common/LogoMark";
-import { CurrencyPicker, LocalAmount } from "@/components/currency/LocalAmount";
+import { CurrencySelector, RefAmount } from "@/components/currency/Currency";
+import { useRegion } from "@/components/currency/useRegion";
 import { QuotationDocument, type QuotationContact } from "./QuotationDocument";
 import styles from "./QuoteWorkspace.module.css";
 
@@ -51,6 +52,7 @@ const STEPS = [
  */
 export function QuoteWorkspace(props: QuoteWorkspaceProps) {
   const { status, plan } = props;
+  const { money } = useRegion();
   const existing = status === "ready" || status === "preparing";
   const [step, setStep] = useState(existing ? STEPS.length : -1);
   const [updating, setUpdating] = useState(false);
@@ -101,14 +103,14 @@ export function QuoteWorkspace(props: QuoteWorkspaceProps) {
         {status === "ready" && plan && !generating && (
           <div className={styles.total} data-updating={updating || undefined} aria-live="polite">
             <span>{updating ? "Updating" : "Recommended"}</span>
-            <strong>{gbp(plan.estimate.recommended)}</strong>
+            <strong>{money.total(plan.estimate.recommended)}</strong>
             <small>
-              {gbp(plan.estimate.min)}–{gbp(plan.estimate.max)} · {weeks(plan.weeks)}
+              {money.total(plan.estimate.min)}–{money.total(plan.estimate.max)} · {weeks(plan.weeks)}
             </small>
-            <LocalAmount gbp={plan.estimate.recommended} />
+            <RefAmount gbp={plan.estimate.recommended} />
           </div>
         )}
-        {status === "ready" && plan && !generating && <CurrencyPicker className={styles.picker} />}
+        {status === "ready" && plan && !generating && <CurrencySelector className={styles.picker} />}
       </header>
 
       <div className={styles.body}>

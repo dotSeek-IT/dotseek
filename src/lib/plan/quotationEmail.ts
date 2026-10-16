@@ -3,7 +3,9 @@ import { site } from "@/content/site";
 import { EMAIL_LETTERHEAD_PATH, EMAIL_LOGO_CID } from "@/lib/emailLogo";
 import type { Plan } from "./build";
 import { solutionHeadline } from "./headline";
-import { gbp, perMonth, weeks } from "./format";
+import { weeks } from "./format";
+import { defaultRegions } from "@/content/regions";
+import { formatRateDate, invoiceNote, makeMoney, rateText, type Money } from "@/lib/currency/money";
 import type { ReferenceAnalysis } from "./referenceFeatures";
 
 /**
@@ -27,8 +29,8 @@ export type QuotationEmailInput = {
   cta?: { label: string; href: string };
   /** Customer copy: how to change the scope (private enquiry page) or start again (fresh quote link). */
   requote?: { enquiryHref: string; freshHref: string };
-  /** "Approx. $9,210 at 1.27 USD per GBP … The quotation is in GBP." for a customer abroad. */
-  localNote?: string;
+  /** The customer's currency (from the quotation's saved currency details); GBP when absent. */
+  money?: Money;
   /** HTML shown above the sheet (greeting) and below it (team-only details). */
   intro?: string;
   after?: string;
@@ -73,6 +75,9 @@ const row = (dt: string, dd: string, extra = "") =>
 /** The full email HTML document (doctype included). */
 export function quotationEmailHtml(input: QuotationEmailInput): string {
   const { plan, title, solutionTitle, overview, contact, ref, offer, negotiation, reference, cta, intro, after, requote } = input;
+  const money = input.money ?? makeMoney(defaultRegions[0]!);
+  const region = money.region;
+  const contract = invoiceNote(region);
   const today = input.date ?? new Date();
   const valid = new Date(today.getTime() + VALID_DAYS * 86_400_000);
   const lines = [...plan.lines.filter((l) => !OVERHEAD.includes(l.id)), ...plan.lines.filter((l) => OVERHEAD.includes(l.id))];
@@ -104,6 +109,7 @@ export function quotationEmailHtml(input: QuotationEmailInput): string {
     ["Date", fmtDate(today)],
     ["Valid until", fmtDate(valid)],
     ["Status", esc(quotationNotice.status)],
+    ["Currency", esc(region.currency)],
   ]
     .map(
       ([k, v]) =>
@@ -157,17 +163,17 @@ export function quotationEmailHtml(input: QuotationEmailInput): string {
         <td valign="top" style="padding:10px 8px 10px 0;border-bottom:1px solid ${C.lineSoft}"><p style="margin:0;font-size:13px;color:${C.ink};font-weight:600">${esc(l.label)}</p>${
           desc ? `<p style="margin:2px 0 0;font-size:12px;color:${C.subtle}">${esc(desc)}</p>` : ""
         }</td>
-        <td valign="top" align="right" style="padding:10px 8px 10px 0;border-bottom:1px solid ${C.lineSoft};font-size:12px;color:${C.subtle};white-space:nowrap">${l.min === l.max ? "" : `${gbp(l.min)}–${gbp(l.max)}`}</td>
-        <td valign="top" align="right" style="padding:10px 0;border-bottom:1px solid ${C.lineSoft};font-size:13px;color:${C.text};font-weight:600;white-space:nowrap">${gbp(l.cost)}</td>
+        <td valign="top" align="right" style="padding:10px 8px 10px 0;border-bottom:1px solid ${C.lineSoft};font-size:12px;color:${C.subtle};white-space:nowrap">${l.min === l.max ? "" : `${money.fmt(l.min)}–${money.fmt(l.max)}`}</td>
+        <td valign="top" align="right" style="padding:10px 0;border-bottom:1px solid ${C.lineSoft};font-size:13px;color:${C.text};font-weight:600;white-space:nowrap">${money.fmt(l.cost)}</td>
       </tr>`;
     })
     .join("");
 
   const totals = `<table role="presentation" align="right" cellpadding="0" cellspacing="0" style="width:300px;margin-top:16px">
-      ${row("Minimum estimate", gbp(plan.estimate.min))}
-      ${row("Maximum estimate", gbp(plan.estimate.max))}
-      ${offer ? row(`${esc(offer.label)} (first enquiry)`, `From ${gbp(offer.price)}`, `;color:${C.accentInk}`) : ""}
-      <tr><td style="padding:12px 14px;background:${C.page};border-radius:6px 0 0 6px;font-size:13px;color:#ffffff">Recommended estimate</td><td align="right" style="padding:12px 14px;background:${C.page};border-radius:0 6px 6px 0;font-size:18px;color:${C.brand};font-weight:700;white-space:nowrap">${gbp(plan.estimate.recommended)}</td></tr>
+      ${row("Minimum estimate", money.total(plan.estimate.min))}
+      ${row("Maximum estimate", money.total(plan.estimate.max))}
+      ${offer ? row(`${esc(offer.label)} (first enquiry)`, `From ${money.fmt(offer.price)}`, `;color:${C.accentInk}`) : ""}
+      <tr><td style="padding:12px 14px;background:${C.page};border-radius:6px 0 0 6px;font-size:13px;color:#ffffff">Recommended estimate</td><td align="right" style="padding:12px 14px;background:${C.page};border-radius:0 6px 6px 0;font-size:18px;color:${C.brand};font-weight:700;white-space:nowrap">${money.total(plan.estimate.recommended)}</td></tr>
     </table>`;
 
   const development = section(
@@ -178,22 +184,27 @@ export function quotationEmailHtml(input: QuotationEmailInput): string {
     </table>
     ${totals}
     <div style="clear:both"></div>
-    <p style="margin:12px 0 0;font-size:12px;color:${C.subtle}">Prices in GBP, excluding VAT. Estimated timeline ${esc(weeks(plan.weeks))}.</p>${
-      input.localNote ? `<p style="margin:4px 0 0;font-size:12px;color:${C.subtle}">${esc(input.localNote)}</p>` : ""
+    ${
+      money.isGbp
+        ? ""
+        : `<p style="margin:12px 0 0;font-size:12px;color:${C.subtle}">Reference value: approximately ${esc(money.ref(plan.estimate.recommended)?.replace("≈ ", "") ?? "")} · Exchange rate used: ${esc(rateText(region))} · Rate checked: ${esc(formatRateDate(region.rateCheckedAt))}</p>`
+    }
+    <p style="margin:${money.isGbp ? 12 : 4}px 0 0;font-size:12px;color:${C.subtle}">Prices in ${esc(region.currency)}. ${esc(region.taxNote)} Estimated timeline ${esc(weeks(plan.weeks))}.</p>${
+      contract ? `<p style="margin:4px 0 0;font-size:12px;color:${C.subtle}">${esc(contract)}</p>` : ""
     }`,
   );
 
   const budgetRows = [
-    plan.budget ? row("Stated budget", Number.isFinite(plan.budget[1]) ? `Up to ${gbp(plan.budget[1])}` : `Over ${gbp(plan.budget[0])}`) : "",
-    negotiation?.preferredBudget ? row("Preferred budget", gbp(negotiation.preferredBudget)) : "",
+    plan.budget ? row("Stated budget", Number.isFinite(plan.budget[1]) ? `Up to ${money.fmt(plan.budget[1])}` : `Over ${money.fmt(plan.budget[0])}`) : "",
+    negotiation?.preferredBudget ? row("Preferred budget", money.fmt(negotiation.preferredBudget)) : "",
     row("Fit", fit),
   ].join("");
   const twoCol = section(
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
       <td valign="top" width="48%">${heading("Running costs")}<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${row(
         "Infrastructure &amp; usage",
-        perMonth(plan.monthly.running),
-      )}${row("Support &amp; maintenance", perMonth(plan.monthly.maintenance))}</table></td>
+        money.perMonth(plan.monthly.running),
+      )}${row("Support &amp; maintenance", money.perMonth(plan.monthly.maintenance))}</table></td>
       <td width="4%"></td>
       <td valign="top" width="48%">${heading("Your budget")}<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${budgetRows}</table></td>
     </tr></table>`,
@@ -205,7 +216,7 @@ export function quotationEmailHtml(input: QuotationEmailInput): string {
           `${heading("Implementation plan")}${plan.phases
             .map(
               (ph) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px"><tr><td style="border-left:3px solid ${C.brand};padding:4px 0 4px 12px">
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="font-size:13px;color:${C.ink};font-weight:600">${esc(ph.name)}</td><td align="right" style="font-size:13px;color:${C.text};font-weight:600">${ph.cost > 0 ? gbp(ph.cost) : ""}</td></tr></table>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="font-size:13px;color:${C.ink};font-weight:600">${esc(ph.name)}</td><td align="right" style="font-size:13px;color:${C.text};font-weight:600">${ph.cost > 0 ? money.fmt(ph.cost) : ""}</td></tr></table>
                 <p style="margin:2px 0 0;font-size:12px;color:${C.subtle}">${esc(ph.items.join(" · "))}</p>
               </td></tr></table>`,
             )
@@ -217,7 +228,7 @@ export function quotationEmailHtml(input: QuotationEmailInput): string {
     `${heading("Notes and terms")}<ul style="margin:0;padding-left:18px;font-size:12px;line-height:1.7;color:${C.muted}">
       <li>This is an AI-generated indicative estimate based on your answers and DotSeek's price catalogue. It is not a binding quotation or offer.</li>
       <li>The final commercial quotation is confirmed by the DotSeek team after reviewing your complete requirements.</li>
-      <li>Running costs depend on the cloud provider and real usage. Content, licences, domains and VAT are excluded unless stated.</li>
+      <li>Running costs depend on the cloud provider and real usage. Content, licences and domains are excluded unless stated. ${esc(region.taxNote)}</li>
       <li>Valid for ${VALID_DAYS} days from the date above.</li>
     </ul>`,
   );

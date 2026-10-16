@@ -45,6 +45,13 @@ const BUDGETS: Record<string, [number, number]> = {
   "Over £10,000": [10000, Infinity],
 };
 
+/** The budget mapped to GBP by the chat ("min-max" or "min-inf", from the visitor's local brackets). */
+export function parseBudgetGbp(value?: string): [number, number] | undefined {
+  const m = value?.match(/^(\d+(?:\.\d+)?)-(\d+(?:\.\d+)?|inf)$/);
+  if (!m) return undefined;
+  return [Number(m[1]), m[2] === "inf" ? Infinity : Number(m[2])];
+}
+
 /** Budget from a range option or a typed amount such as "£1,500" or "1500". */
 export function parseBudget(answer?: string): [number, number] | undefined {
   if (!answer) return undefined;
@@ -120,7 +127,7 @@ export function readSignals(answers: Answers): Signals {
     },
     growth: pick(answers.ops_growth, { "About the same": 0, "Steady growth": 1, "Fast growth, we're scaling up": 2 }, answers.biz_stage === "Growing and scaling" ? 2 : 1),
     publicUsers,
-    budget: parseBudget(answers.budget),
+    budget: parseBudgetGbp(answers.budget_gbp) ?? parseBudget(answers.budget),
   };
 }
 
