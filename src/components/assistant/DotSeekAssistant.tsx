@@ -12,6 +12,7 @@ import {
 } from "@/content/assistant";
 import { solutionById, type SolutionId } from "@/content/solutions";
 import { Icon } from "@/components/common/Icon";
+import { LogoMark } from "@/components/common/LogoMark";
 import dynamic from "next/dynamic";
 import { PlanCard } from "@/components/plan/PlanCard";
 import { ReferenceCard } from "@/components/plan/ReferenceCard";
@@ -710,10 +711,9 @@ export function DotSeekAssistant() {
                   </span>
                 )}
                 {message.streaming && !message.text ? (
-                  <div className={`${styles.bubble} ${styles.typing}`} aria-label="Assistant is typing">
-                    <i />
-                    <i />
-                    <i />
+                  <div className={`${styles.bubble} ${styles.typing}`} role="status" aria-label="Assistant is typing">
+                    <LogoMark spin size={20} />
+                    <span>Thinking</span>
                   </div>
                 ) : (
                   <div className={styles.bubble}>
@@ -971,10 +971,5 @@ export function DotSeekAssistant() {
 }
 
 function AssistantMark() {
-  return (
-    <svg viewBox="0 0 32 32" width="22" height="22" focusable="false">
-      <circle cx="16" cy="16" r="10.5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeDasharray="46 18" strokeLinecap="round" />
-      <circle cx="16" cy="16" r="4" fill="currentColor" />
-    </svg>
-  );
+  return <LogoMark size={22} />;
 }

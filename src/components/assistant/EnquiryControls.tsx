@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { isPhone, type EnquiryStep } from "@/content/enquiryFlows";
 import type { Solution, SolutionId } from "@/content/solutions";
 import { Icon } from "@/components/common/Icon";
+import { LogoMark } from "@/components/common/LogoMark";
 import type { EnquiryPhase, Recommendation } from "./useEnquiry";
 import styles from "./DotSeekAssistant.module.css";
 
@@ -50,11 +51,7 @@ export function EnquiryControls(props: EnquiryControlsProps) {
     return (
       <div className={styles.enquiry}>
         <p className={styles.thinkingRow} role="status">
-          <span className={styles.typingInline} aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
+          <LogoMark spin size={18} className={styles.loaderMark} />
           Finding the best solution for your business…
         </p>
       </div>
@@ -67,11 +64,7 @@ export function EnquiryControls(props: EnquiryControlsProps) {
     return (
       <div className={styles.enquiry}>
         <p className={styles.thinkingRow} role="status">
-          <span className={styles.typingInline} aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
+          <LogoMark spin size={18} className={styles.loaderMark} />
           Analysing the reference: pages, features and complexity…
         </p>
       </div>

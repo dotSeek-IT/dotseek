@@ -6,6 +6,7 @@ import { gbp, weeks } from "@/lib/plan/format";
 import type { OfferQuote } from "@/lib/plan/offer";
 import type { ReferenceAnalysis } from "@/lib/plan/referenceFeatures";
 import { Icon } from "@/components/common/Icon";
+import { LogoMark } from "@/components/common/LogoMark";
 import { QuotationDocument, type QuotationContact } from "./QuotationDocument";
 import styles from "./QuoteWorkspace.module.css";
 
@@ -181,7 +182,7 @@ function Collecting({ rows }: { rows: QuoteWorkspaceProps["rows"] }) {
   return (
     <div className={styles.collecting}>
       <p className={styles.status} role="status">
-        <span className={styles.spinner} aria-hidden="true" />
+        <LogoMark spin size={18} className={styles.loader} />
         Gathering your requirement: {rows.length} {rows.length === 1 ? "answer" : "answers"} so far
       </p>
       {rows.length > 0 && (
@@ -207,7 +208,7 @@ function Generating({ step }: { step: number }) {
         {STEPS.map((label, i) => (
           <li key={label} data-state={i < step ? "done" : i === step ? "active" : "waiting"}>
             <span className={styles.stepIcon} aria-hidden="true">
-              {i < step ? <Icon name="check" /> : i === step ? <span className={styles.spinner} /> : null}
+              {i < step ? <Icon name="check" /> : i === step ? <LogoMark spin size={16} className={styles.loader} /> : null}
             </span>
             {label}
             {i === step && <span className={styles.dots} aria-hidden="true" />}

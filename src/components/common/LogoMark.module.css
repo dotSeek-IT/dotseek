@@ -1,0 +1,49 @@
+.mark {
+  flex: none;
+  overflow: visible;
+}
+
+.orbit,
+.core {
+  transform-box: view-box;
+  transform-origin: 16px 16px;
+}
+
+/* Loading: the ring and its orbit dot turn; the centre stays put and breathes. */
+.spin .orbit {
+  animation: orbit 1.1s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.spin .core {
+  animation: core 1.1s ease-in-out infinite;
+}
+
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes core {
+  50% {
+    transform: scale(0.82);
+    opacity: 0.75;
+  }
+}
+
+/* Reduced motion: no turning, only a slow fade so it still reads as "working". */
+@media (prefers-reduced-motion: reduce) {
+  .spin .orbit {
+    animation: fade 1.6s ease-in-out infinite;
+  }
+
+  .spin .core {
+    animation: none;
+  }
+
+  @keyframes fade {
+    50% {
+      opacity: 0.45;
+    }
+  }
+}

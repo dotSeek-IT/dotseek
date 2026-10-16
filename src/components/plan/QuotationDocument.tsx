@@ -5,6 +5,7 @@ import { gbp, perMonth, weeks } from "@/lib/plan/format";
 import { solutionHeadline } from "@/lib/plan/headline";
 import type { OfferQuote } from "@/lib/plan/offer";
 import type { ReferenceAnalysis } from "@/lib/plan/referenceFeatures";
+import { LogoMark } from "@/components/common/LogoMark";
 import styles from "./Quotation.module.css";
 
 export type QuotationContact = { name?: string; email?: string; company?: string };
@@ -51,11 +52,7 @@ export function QuotationDocument({ plan, title, solutionTitle, overview, contac
       <header className={styles.letterhead}>
         <div className={styles.brand}>
           <span className={styles.logo}>
-            <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false">
-              <circle cx="16" cy="16" r="11.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeDasharray="52 20" strokeLinecap="round" />
-              <circle cx="16" cy="16" r="4.4" fill="currentColor" />
-              <circle cx="27.2" cy="8" r="2" fill="currentColor" />
-            </svg>
+            <LogoMark size={30} />
             {site.name}
           </span>
           <p>{site.category}</p>

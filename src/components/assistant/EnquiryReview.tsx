@@ -1,6 +1,7 @@
 "use client";
 
 import { answerRows, type Answers } from "@/content/enquiryFlows";
+import { LogoMark } from "@/components/common/LogoMark";
 import type { Brief } from "./useEnquiry";
 import styles from "./DotSeekAssistant.module.css";
 
@@ -48,11 +49,7 @@ export function EnquiryReview({ answers, brief, briefStatus, disabled, onEdit, a
         <p className={styles.reviewKicker}>Project brief</p>
         {briefStatus === "loading" && (
           <p className={styles.thinkingRow}>
-            <span className={styles.typingInline} aria-hidden="true">
-              <i />
-              <i />
-              <i />
-            </span>
+            <LogoMark spin size={18} className={styles.loaderMark} />
             Preparing your project brief…
           </p>
         )}
