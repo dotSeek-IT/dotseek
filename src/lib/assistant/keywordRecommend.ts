@@ -12,7 +12,7 @@ const SIGNALS: Record<SolutionId, { words: string[]; reason: string; suggestions
     suggestions: ["Online ordering or bookings on the website", "An admin view so staff see every order in one place", "Automatic confirmation emails"],
   },
   software: {
-    words: ["mobile app", "app", "ios", "android", "portal", "crm", "platform", "software", "system for", "staff system", "one place", "internal tool", "dashboard for staff"],
+    words: ["mobile app", "app", "ios", "android", "portal", "crm", "platform", "software", "system for", "staff system", "one place", "internal tool", "dashboard for staff", "losing track", "keep track", "who is doing what", "tasks", "rota", "scheduling", "jobs"],
     reason: "This sounds like a custom application your team and customers use every day, built around how you work.",
     suggestions: ["Shared accounts and data for staff and customers", "A mobile app if people work on the move", "Room to add automation later"],
   },

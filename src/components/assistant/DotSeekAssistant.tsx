@@ -86,8 +86,8 @@ const REPLACE_MARKER = "\u0000";
 
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-/** Offline fallback: scores intents by keyword hits and returns the best match. */
-function matchIntent(input: string): Intent {
+/** Offline fallback: scores intents by keyword hits and returns the best match (with its score). */
+function scoreIntent(input: string): { intent: Intent; score: number } {
   const text = ` ${input.toLowerCase().replace(/[^a-z0-9£&+\s]/g, " ").replace(/\s+/g, " ")} `;
   let best: Intent = fallback;
   let bestScore = 0;
@@ -101,7 +101,7 @@ function matchIntent(input: string): Intent {
       bestScore = score;
     }
   }
-  return best;
+  return { intent: best, score: bestScore };
 }
 
 /** The first website or app link in a message (with or without https://), or null. */
@@ -253,9 +253,12 @@ export function DotSeekAssistant() {
     setMessages((list) => list.map((m) => (m.id === id ? { ...m, ...patch } : m)));
 
   const answerOffline = (botId: number, question: string, intent?: Intent) => {
-    const match = intent ?? matchIntent(question);
-    // A described business problem that no topic matches: suggest the closest solution and offer its enquiry.
-    const advice = match === fallback ? keywordRecommendation(question) : null;
+    const scored = intent ? { intent, score: Infinity } : scoreIntent(question);
+    const match = scored.intent;
+    // A described business problem that no topic (or only one weak keyword, like "team") matches:
+    // suggest the closest solution and offer its enquiry.
+    const describesProblem = question.split(/\s+/).length >= 6;
+    const advice = match === fallback || (describesProblem && scored.score <= 1) ? keywordRecommendation(question) : null;
     if (advice) {
       updateMessage(botId, {
         text: `${advice.reason}\n\nI can ask a few quick questions and prepare an indicative estimate for this.`,
@@ -265,7 +268,7 @@ export function DotSeekAssistant() {
       setSuggestions(["pricing", "process"]);
       return;
     }
-    if (match === fallback && question.split(/\s+/).length >= 6) {
+    if (match === fallback && describesProblem) {
       updateMessage(botId, { text: assistantMeta.offlineProblem, streaming: false });
       setSuggestions(["enquiry", "pricing", "contact"]);
       return;
@@ -332,7 +335,8 @@ export function DotSeekAssistant() {
         return;
       }
       if (!response.ok || !response.body) {
-        if (response.status === 503) setOffline(true);
+        // Not configured (503) or failing (502): show "Automated answers" for the rest of this tab.
+        if (response.status >= 500) setOffline(true);
         answerOffline(botId, question, intent);
         return;
       }
