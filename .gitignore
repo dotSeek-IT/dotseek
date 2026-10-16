@@ -8,3 +8,6 @@ next-env.d.ts
 .env
 .vercel
 .data
+
+# Local promo video, never deployed
+video.mp4
