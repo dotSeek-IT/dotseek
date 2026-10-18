@@ -126,9 +126,9 @@ export const pages: SimplePage[] = [
       {
         heading: "DotSeek Assistant (AI chat)",
         body: [
-          "The DotSeek Assistant is an AI chat powered by Claude, a model provided by Anthropic. When you send a message, the conversation so far is sent from our server to Anthropic to generate a reply. We don't save general chat conversations on our servers. Your browser keeps the conversation for the open tab, so a page refresh doesn't lose it, and it is deleted when you close the tab.",
-          "Anthropic processes these messages as our service provider under its commercial terms and does not use them to train its models. Like any web service, our hosting provider may record technical request data, such as your IP address, for security and to prevent misuse.",
-          "If you start an enquiry in the chat, your project answers are sent to Anthropic so the assistant can suggest a suitable solution and prepare a project brief for you to review. You can edit any answer before sending.",
+          "The DotSeek Assistant is an AI chat built and run by DotSeek. When you send a message, the conversation so far is sent from our server to our AI service provider to generate a reply. We don't save general chat conversations on our servers. Your browser keeps the conversation for the open tab, so a page refresh doesn't lose it, and it is deleted when you close the tab.",
+          "Our AI service provider processes these messages on our behalf under its commercial terms and does not use them to train its models. Like any web service, our hosting provider may record technical request data, such as your IP address, for security and to prevent misuse.",
+          "If you start an enquiry in the chat, your project answers are sent to our AI service provider so the assistant can suggest a suitable solution and prepare a project brief for you to review. You can edit any answer before sending.",
           "When you send an enquiry, your answers, the project brief and, if you tick the box, a copy of the chat are saved securely in our enquiry system and emailed to our team. We email you a private link where you can follow the conversation with our team and reply. Anyone with that link can view the enquiry, so please keep it private.",
           "Please don't share sensitive personal information, passwords or confidential business documents in the chat. AI answers can contain mistakes, so confirm anything important with our team.",
         ],
@@ -136,7 +136,7 @@ export const pages: SimplePage[] = [
       {
         heading: "Sharing your information",
         body: [
-          "We never sell your personal information. We share it only with trusted providers who help us run our business, such as email, hosting, database and IT service providers, and Anthropic for the DotSeek Assistant, and with professional advisers or authorities where the law requires it. These providers may only use your information on our instructions.",
+          "We never sell your personal information. We share it only with trusted providers who help us run our business, such as email, hosting, database and IT service providers, and our AI service provider for the DotSeek Assistant, and with professional advisers or authorities where the law requires it. These providers may only use your information on our instructions.",
           "If information is transferred outside the UK, we make sure appropriate safeguards are in place, such as UK adequacy regulations or the International Data Transfer Agreement.",
         ],
       },
